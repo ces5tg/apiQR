@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CRUD de Usuarios</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      /* Agregue aquí sus estilos personalizados */
+    </style>
+  </head>
+  <body class="bg-gray-100 p-8">
+    <div class="flex justify-center mt-8">
+    
+        <hr class="my-8" />
+        <h2 class="text-2xl font-bold mb-4">Lista de Usuarios</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Email</th>
+            
+            </tr>
+          </thead>
+          <tbody>
+            <% horarioPersona.forEach((user) => { %>
+            <tr class="">
+              <td><%= user.asistencia %></td>
+              <td><%= user.estado %></td>
+             
+            </tr>
+    
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+  </body>
+</html>
