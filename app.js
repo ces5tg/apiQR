@@ -21,6 +21,7 @@ mongoose.connect("mongodb://127.0.0.1:27017/apiQR", {
     
     res.redirect('/rutas');
   });
+
   
   app.listen(3000, () => {
     console.log(`Server started on port ${process.env.PORT}`);
