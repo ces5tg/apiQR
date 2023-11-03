@@ -1,10 +1,10 @@
 const express=require( 'express' );
-const bodyParser = require('body-parser');
+const bodyParser=require( 'body-parser' );
 const mongoose=require( 'mongoose' );
 const router=express.Router();
 const ObjectId=mongoose.Types.ObjectId
 
-router.use(bodyParser.json());
+router.use( bodyParser.json() );
 const PersonaSchema=new mongoose.Schema( {
     name: String,
 } );
@@ -87,31 +87,32 @@ router.get( '/horario/:aula_id?', async ( req, res ) => {
         const horarios=await Horario.find( { aula: req.params.aula_id } )
         res.json( horarios )
     } catch ( error ) {
-        console.log("error horarios")
+        console.log( "error horarios" )
     }
 
 } )
-router.get('/horario_persona/:horario_id' , async(req , res) =>{
+router.get( '/horario_persona/:horario_id', async ( req, res ) => {
     try {
         const horarioPersona=await HorarioPersona.find( { id_horario: req.params.horario_id } )
         res.json( horarioPersona )
     } catch ( error ) {
-        console.log("error horarios")
+        console.log( "error horarios" )
     }
-})
-router.post('/asistencia' , async(req , res) =>{
+} )
+router.post( '/asistencia', async ( req, res ) => {
     try {
-        /* const {asistencia , id_horario} = req.body */
-        const asistencia = req.body.asistencia
-        const id_horario = req.body.id_horario
-  
-        console.log(asistencia + " -- "+ id_horario)
-        const horarioPersona = await HorarioPersona.updateOne({ _id: id_horario }, {asistencia : asistencia});
+        const { asistencia, id_horario }=req.body
+        /*    const asistencia = req.body.asistencia
+           const id_horario = req.body.id_horario
+      */
+
+        console.log( asistencia+" -- "+id_horario )
+        const horarioPersona=await HorarioPersona.updateOne( { _id: id_horario }, { asistencia: asistencia } );
         //const horarioPersona=await HorarioPersona.find( { _id: id_horario } )
         res.json( horarioPersona )
     } catch ( error ) {
-        console.log("error horarios")
+        console.log( "error horarios" )
     }
-})
+} )
 module.exports=router;
- //6539c69532676c5408d6396f ->aula
+//6539c69532676c5408d6396f ->aula
