@@ -3,6 +3,7 @@ const express=require( 'express' );
 const bodyParser=require( 'body-parser' );
 const mongoose=require( 'mongoose' );
 const rutasRouter=require( './routes/rutas' );
+const PORT = process.env.PORT || 3000;
 
 const app=express();
 
@@ -24,15 +25,16 @@ app.set( 'view engine', 'ejs' );
 app.use( bodyParser.urlencoded( { extended: false } ) );
 app.use( '/rutas', rutasRouter );
 
+
 app.get( '/', ( req, res ) => {
 
   res.redirect( '/rutas' );
 } );
 
 
-app.listen( 3000, () => {
-  console.log( `Server started on port ${ process.env.PORT }` );
-} );
+app.listen(PORT, () => {
+  console.log(`Server started on port ${PORT}`);
+});
 
 
 

@@ -3,6 +3,7 @@ const bodyParser=require( 'body-parser' );
 const mongoose=require( 'mongoose' );
 const router=express.Router();
 const ObjectId=mongoose.Types.ObjectId
+const path = require('path');
 
 router.use( bodyParser.json() );
 const PersonaSchema=new mongoose.Schema( {
@@ -56,6 +57,52 @@ const HorarioPersonaSchema=new mongoose.Schema( {
 
 const HorarioPersona=mongoose.model( 'HorarioPersona', HorarioPersonaSchema );
 
+// Rutas CRUD para Persona
+router.post('/persona', async (req, res) => {
+    try {
+        const { name } = req.body;
+        const nuevaPersona = new Persona({ name });
+        const personaGuardada = await nuevaPersona.save();
+        res.json(personaGuardada);
+    } catch (error) {
+        res.status(500).json({ message: 'Error al guardar la persona' });
+    }
+});
+
+router.get('/persona/:id', async (req, res) => {
+    try {
+        const persona = await Persona.findById(req.params.id);
+        res.json(persona);
+    } catch (error) {
+        res.status(500).json({ message: 'Error al obtener la información de la persona' });
+    }
+});
+
+router.put('/persona/:id', async (req, res) => {
+    try {
+        const { name } = req.body;
+        const personaActualizada = await Persona.findByIdAndUpdate(
+            req.params.id,
+            { name },
+            { new: true }
+        );
+        res.json(personaActualizada);
+    } catch (error) {
+        res.status(500).json({ message: 'Error al actualizar la persona' });
+    }
+});
+
+router.delete('/persona/:id', async (req, res) => {
+    try {
+        await Persona.findByIdAndDelete(req.params.id);
+        res.json({ message: 'Persona eliminada correctamente' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error al eliminar la persona' });
+    }
+});
+
+//termina crud de persona
+
 router.get( '/', async ( req, res ) => {
     try {
         const horarioPersona=await HorarioPersona.find()
@@ -73,6 +120,60 @@ router.get( '/', async ( req, res ) => {
         res.status( 500 ).json( { message: 'Error al obtener la información de HorarioPersona' } );
     }
 } );
+
+//RUTAS CRUD PARA AULA 
+router.post('/aula', async (req, res) => {
+    try {
+        const { name, descripcion, Zona, Codigo } = req.body;
+        const nuevaAula = new Aula({ name, descripcion, Zona, Codigo });
+        const aulaGuardada = await nuevaAula.save();
+        res.json(aulaGuardada);
+    } catch (error) {
+        res.status(500).json({ message: 'Error al guardar el aula' });
+    }
+});
+
+router.get('/aula', async (req, res) => {
+    try {
+        const aulas = await Aula.find();
+        res.render(path.join(__dirname, '..', 'views', 'aulas.ejs'), { aulas });
+    } catch (error) {
+        res.status(500).json({ message: 'Error al obtener la información de las aulas' });
+    }
+});
+
+router.get('/aula/:id', async (req, res) => {
+    try {
+        const aula = await Aula.findById(req.params.id);
+        res.json(aula);
+    } catch (error) {
+        res.status(500).json({ message: 'Error al obtener la información del aula' });
+    }
+});
+
+router.put('/aula/:id', async (req, res) => {
+    try {
+        const { name, descripcion, Zona, Codigo } = req.body;
+        const aulaActualizada = await Aula.findByIdAndUpdate(
+            req.params.id,
+            { name, descripcion, Zona, Codigo },
+            { new: true }
+        );
+        res.json(aulaActualizada);
+    } catch (error) {
+        res.status(500).json({ message: 'Error al actualizar el aula' });
+    }
+});
+
+router.delete('/aula/:id', async (req, res) => {
+    try {
+        await Aula.findByIdAndDelete(req.params.id);
+        res.json({ message: 'Aula eliminada correctamente' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error al eliminar el aula' });
+    }
+});
+
 router.get( '/aula/:name', async ( req, res ) => {
     try {
         const aula=await Aula.findOne( { name: req.params.name } )

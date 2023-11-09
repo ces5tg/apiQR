@@ -1,0 +1,46 @@
+<!-- aulas.ejs -->
+<script src="/views/script.js"></script>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Aulas</title>
+</head>
+<body>
+    <h2>Lista de Aulas</h2>
+    
+    <!-- Botón para crear nueva aula -->
+    <button onclick="mostrarFormulario()">Crear Nueva Aula</button>
+
+    <!-- Formulario para crear nueva aula (inicialmente oculto) -->
+    <div id="formularioCrear" style="display: none;">
+        <h3>Crear Nueva Aula</h3>
+        <form id="formulario">
+            <!-- Campos del formulario -->
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" required>
+            <label for="descripcion">Descripción:</label>
+            <input type="text" id="descripcion" name="descripcion" required>
+            <label for="zona">Zona:</label>
+            <input type="text" id="zona" name="zona" required>
+            <label for="codigo">Código:</label>
+            <input type="text" id="codigo" name="codigo" required>
+
+            <!-- Botón para enviar el formulario -->
+            <button type="button" onclick="crearAula()">Guardar</button>
+        </form>
+    </div>
+
+    <!-- Lista de aulas -->
+    <ul id="listaAulas">
+        <% aulas.forEach(function(aula) { %>
+            <li><%= aula.name %> - <%= aula.descripcion %> - <%= aula.Zona %> - <%= aula.Codigo %></li>
+        <% }); %>
+    </ul>
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
