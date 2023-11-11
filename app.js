@@ -23,6 +23,9 @@ app.use( '/api/movil', apiMovil);
 
 
 
+
+
+
 app.get( '/', ( req, res ) => {//Por defecto la ruta de inicio es esta /api
 
   res.render( 'home' );
