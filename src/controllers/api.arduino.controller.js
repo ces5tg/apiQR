@@ -1,4 +1,5 @@
 const {Aula} = require('../models/collections.schema')
+
 const getByNameAula = async(req , res) =>{
     try {
         const aula=await Aula.findOne( { name: req.params.name } )

@@ -32,7 +32,7 @@ router.get( '/createAula', async ( req, res ) => {
 } );
 router.post( '/form', async ( req, res ) => {
     const { nombre }=req.body
-    const urlAula=`http://localhost:3000/validar/${ nombre }`;
+    const urlAula=`http://localhost:3000/api/movil/validar/${ nombre }`;
     // Generar el código QR como una imagen en formato base64
     const imagenBase64=await qr.toDataURL( urlAula );
 
@@ -40,8 +40,8 @@ router.post( '/form', async ( req, res ) => {
     const nuevaAula=new Aula( {
         name: nombre,
         descripcion: nombre,
-        Zona: "pabellon A",
-        Codigo: imagenBase64,
+        zona: "pabellon A",
+        codigo: imagenBase64,
     } );
     await nuevaAula.save();
 
