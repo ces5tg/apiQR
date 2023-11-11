@@ -1,4 +1,5 @@
-
+const http = require('http');
+const fs = require('fs')
 const express=require( 'express' );
 const bodyParser=require( 'body-parser' );
 
@@ -9,7 +10,7 @@ const apiMovil=require( './src/routes/api.movil' );
 const app=express();
 app.use(cors());
 
-
+const homePage = fs.readFileSync('home.ejs', 'utf8')
 
   
 app.set( 'view engine', 'ejs' );
