@@ -10,7 +10,6 @@ const apiMovil=require( './src/routes/api.movil' );
 const app=express();
 app.use(cors());
 
-const homePage = fs.readFileSync('home.ejs', 'utf8')
 
   
 app.set( 'view engine', 'ejs' );
