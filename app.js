@@ -1,28 +1,21 @@
 
 const express=require( 'express' );
 const bodyParser=require( 'body-parser' );
-const mongoose=require( 'mongoose' );
-const rutasRouter=require( './routes/rutas' );
-
+const cors = require('cors')
+const apiArduino=require( './src/routes/api.arduino' );
+const apiMovil=require( './src/routes/api.movil' );
 const app=express();
+app.use(cors());
 
-/* mongoose.connect( "mongodb://127.0.0.1:27017/apiQR", {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-} )
-  .then( () => console.log( 'MongoDB connected!' ) )
-  .catch( ( error ) => console.error( 'MongoDB connection error:', error ) );
- */
-  mongoose.connect( "mongodb+srv://admin:g9CuxmY2dZ72H5AX@apiqr.s0gdkma.mongodb.net/apiQR?retryWrites=true&w=majority", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  } )
-    .then( () => console.log( 'MongoDB connected!' ) )
-    .catch( ( error ) => console.error( 'MongoDB connection error:', error ) );
+
+
   
 app.set( 'view engine', 'ejs' );
 app.use( bodyParser.urlencoded( { extended: false } ) );
-app.use( '/rutas', rutasRouter );
+
+
+app.use( '/api/arduino', apiArduino);
+app.use( '/api', apiMovil);
 
 app.get( '/', ( req, res ) => {
 
@@ -30,9 +23,19 @@ app.get( '/', ( req, res ) => {
 } );
 
 
-app.listen( 3000, () => {
-  console.log( `Server started on port ${ process.env.PORT }` );
-} );
+module.exports ={
+  app
+}
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Listado de Aulas</title>
+</head>
+<body>
+  <h1>Listado de Aulas</h1>
+  <table border="1">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Descripción</th>
+        <th>Zona</th>
+        <th>Código</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% aulas.forEach(aula => { %>
+        <tr>
+          <td><%= aula._id %></td>
+          <td><%= aula.name %></td>
+          <td><%= aula.descripcion %></td>
+          <td><%= aula.Zona %></td>
+          <td><img src="<%= aula.Codigo %>" alt="Código QR de <%= aula.name %>"></td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</body>
+</html>

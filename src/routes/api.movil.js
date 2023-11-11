@@ -1,17 +1,16 @@
 const express=require( 'express' );
 const bodyParser=require( 'body-parser' );
 const qr=require( 'qrcode' );
-const router=express.Router();
 const moment=require( 'moment-timezone' );
-
+const router=express.Router();
 router.use( bodyParser.json() );
 
-const {Aula , Persona , Horario , HorarioPersona} = require('../src/models/collections.schema')
-
+const {Aula , Persona , Horario , HorarioPersona} = require('../models/collections.schema')
 
 
 router.post( '/validarApp', async ( req, res ) => {
     const { aula_qr, id_persona }=req.body
+
     try {
         console.log( aula_qr )
         const busquedaAula=await Aula.findOne( { descripcion: new RegExp( aula_qr, 'i' ) } );
@@ -111,4 +110,3 @@ router.get( '/listarAulas', async ( req, res ) => {
 } );
 
 module.exports=router;
-//6539c69532676c5408d6396f ->aula
