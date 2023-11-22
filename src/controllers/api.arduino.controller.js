@@ -1,4 +1,4 @@
-const {Aula} = require('../models/collections.schema')
+const Aula = require('../models/aula');
 
 const getByNameAula = async(req , res) =>{
     try {
