@@ -38,7 +38,6 @@ router.post( '/validarHorario', async ( req, res ) => {
             hora_fin: { $gt: horaActual },  // Mayor que la hora actual
         } );
    
-      
         const searchHorarioPersona=await HorarioPersona.findOne( {
             id_horario: { $exists: true, $eq: searchHorario._id },
             id_persona: { $exists: true, $eq: idPersona },

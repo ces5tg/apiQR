@@ -1,0 +1,141 @@
+<!-- Este es tu archivo CRUD para Aulas -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD de Aulas</title>
+</head>
+
+<body>
+    <h1>CRUD de Aulas</h1>
+
+    <!-- Formulario para Crear Aula -->
+    <form id="createForm" action="/api/web/aula" method="POST" onsubmit="return createAula()">
+        <label for="name">Nombre:</label>
+        <input type="text" name="name" id="aulaName" required>
+        <button type="submit">Crear Aula</button>
+    </form>
+
+    <!-- Tabla de Aulas -->
+    <table>
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% aulas.forEach(aula => { %>
+                <tr>
+                    <!-- Detalles de Aula -->
+                    <td><a href="/api/web/aula/<%= aula._id %>"><%= aula.name %></a></td>
+                    <!-- Enlace para Editar Aula -->
+                    <td><a href="#" onclick="showEditForm('<%= aula._id %>', '<%= aula.name %>'); event.preventDefault();">Editar</a></td>
+                    <!-- Botón para Eliminar Aula -->
+                    <td>
+                        <button type="button" onclick="confirmDelete('<%= aula._id %>')">Eliminar</button>
+                    </td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+
+    <!-- Formulario para Editar Aula -->
+    <form id="editForm" style="display: none;" onsubmit="return editAula()">
+        <input type="hidden" id="editId" name="_id">
+        <label for="editName">Nuevo Nombre:</label>
+        <input type="text" id="editName" name="name" required>
+        <button type="submit">Guardar Cambios</button>
+    </form>
+
+    <script>
+        // Función para mostrar el formulario de edición
+        function showEditForm(id, name) {
+            // Ocultar todos los formularios de edición antes de mostrar uno nuevo
+            hideAllEditForms();
+            document.getElementById('editId').value = id;
+            document.getElementById('editName').value = name;
+            document.getElementById('editForm').style.display = 'block';
+        }
+
+        // Función para ocultar todos los formularios de edición
+        function hideAllEditForms() {
+            const editForms = document.querySelectorAll('.edit-form');
+            editForms.forEach(form => {
+                form.style.display = 'none';
+            });
+        }
+
+        // Función para confirmar antes de eliminar
+        function confirmDelete(aulaId) {
+            if (confirm('¿Estás seguro de que deseas eliminar esta aula?')) {
+                // Realizar eliminación de manera asíncrona (AJAX)
+                fetch(`/api/web/aula/${aulaId}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Actualizar la página sin recargar
+                    location.reload();
+                })
+                .catch(error => console.error('Error al eliminar aula:', error));
+            }
+        }
+
+        // Función para realizar la creación de aula y recargar la página
+        function createAula() {
+            // Obtener el valor del campo de nombre
+            const aulaName = document.getElementById('aulaName').value;
+
+            // Realizar la creación de manera asíncrona (AJAX)
+            fetch("/api/web/aula", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ name: aulaName }), // Enviar el nombre como JSON
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    // Actualizar la página sin recargar
+                    location.reload();
+                    return false; // Evitar la recarga por defecto del formulario
+                })
+                .catch((error) => console.error("Error al crear aula:", error));
+
+            return false; // Evitar el envío por defecto del formulario
+        }
+
+        // Función para realizar la edición de aula y recargar la página
+        function editAula() {
+            // Obtener el valor del campo de nombre y el ID
+            const aulaId = document.getElementById('editId').value;
+            const newAulaName = document.getElementById('editName').value;
+
+            // Realizar la edición de manera asíncrona (AJAX)
+            fetch(`/api/web/aula/${aulaId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name: newAulaName }), // Enviar el nuevo nombre como JSON
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Ocultar el formulario de edición
+                    document.getElementById('editForm').style.display = 'none';
+                    // Actualizar la página sin recargar
+                    location.reload();
+                    return false; // Evitar la recarga por defecto del formulario
+                })
+                .catch(error => console.error('Error al editar aula:', error));
+
+            return false; // Evitar el envío por defecto del formulario
+        }
+    </script>
+</body>
+
+</html>
