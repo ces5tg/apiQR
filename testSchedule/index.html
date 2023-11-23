@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horario</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th,
+        td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        td.occupied {
+            background-color: lightblue;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1 id="semana"></h1>
+
+    <table id="horario">
+    </table>
+
+    <button onclick="cargarDatos('par')">Cargar Semana Par</button>
+    <button onclick="cargarDatos('impar')">Cargar Semana Impar</button>
+
+    <script>
+        const cabeceraHTML = `
+            <tr>
+                <th></th>
+                <th>8:00 - 8:50</th>
+                <th>8:50 - 9:40</th>
+                <th>9:40 - 10:30</th>
+                <th>10:30 - 11:20</th>
+                <th>11:20 - 12:10</th>
+                <th>12:10 - 13:00</th>
+                <th>13:00 - 13:50</th>
+                <th>13:50 - 14:40</th>
+                <th>14:40 - 15:30</th>
+                <th>15:30 - 16:20</th>
+                <th>16:20 - 17:10</th>
+                <th>17:10 - 18:00</th>
+                <th>18:00 - 18:50</th>
+                <th>18:50 - 19:40</th>
+                <th>19:40 - 20:30</th>
+            </tr>
+        `;
+
+        const datosHorarioPar = {
+            Lunes: [
+                {}, {}, {}, {}, {}, {}, { text: "Marketing", colspan: 2 }, { text: "Tutoria", colspan: 1 }, { text: "Nubes TEO", colspan: 2 }, {}, {}, {}, {}
+            ],
+            Martes: [
+                {}, {}, {}, {}, {}, {}, { text: "Web LAB", colspan: 3 }, { text: "Moviles LAB", colspan: 3 }, {}, {}, {}
+            ],
+            Miércoles: [
+                {}, {}, { text: "Moviles TEO", colspan: 2 }, {}, {}, { text: "Empresariales", colspan: 3 }, {}, {}, {}, {}, {}, {}
+            ],
+            Jueves: [
+                {}, {}, {}, {}, {}, {}, { text: "Innovacion", colspan: 3 }, { text: "Web TEO", colspan: 2 }, {}, {}, {}, {}
+            ],
+            Viernes: [
+                {}, {}, {}, { text: "Multiplataforma", colspan: 2 }, {}, {}, { text: "Nubes LAB", colspan: 2 }, {}, {}, {}, {}, {}, {}
+            ],
+            Sábado: [
+                {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}
+            ],
+            Domingo: [
+                {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}
+            ]
+        };
+
+        const datosHorarioImpar = {
+            Lunes: [
+                {}, {}, {}, {}, {}, {}, { text: "Tutoria", colspan: 1 }, { text: "Nubes TEO", colspan: 2 }, { text: "Marketing", colspan: 2 }, {}, {}, {}, {}
+            ],
+            Martes: [
+                {}, {}, {}, {}, {}, {}, { text: "Moviles LAB", colspan: 3 }, { text: "Web LAB", colspan: 3 }, {}, {}, {}
+            ],
+            Miércoles: [
+                {}, {}, {}, { text: "Empresariales", colspan: 3 }, { text: "Moviles TEO", colspan: 2 }, {}, {}, {}, {}, {}, {}, {}
+            ],
+            Jueves: [
+                {}, {}, {}, { text: "Web TEO", colspan: 2 }, { text: "Innovacion", colspan: 3 }, {}, {}, {}, {}, {}, {}, {}
+            ],
+            Viernes: [
+                {}, {}, {}, { text: "Nubes LAB", colspan: 2 }, { text: "Multiplataforma", colspan: 2 }, {}, {}, {}, {}, {}, {}, {}, {}
+            ],
+            Sábado: [
+                {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}
+            ],
+            Domingo: [
+                {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}
+            ]
+        };
+
+        const tablaHorario = document.getElementById("horario");
+        var h1Semana = document.getElementById("semana");
+
+        function cargarDatos(semana) {
+            // Limpiar la tabla antes de cargar nuevos datos
+            tablaHorario.innerHTML = cabeceraHTML;
+
+            // Seleccionar los datos de la semana correspondiente
+            const datosHorario = semana === 'par' ? datosHorarioPar : datosHorarioImpar;
+            h1Semana.textContent = semana;
+            // Recorrer los días
+            for (const dia in datosHorario) {
+                if (datosHorario.hasOwnProperty(dia)) {
+                    const fila = document.createElement("tr");
+                    const celdaDia = document.createElement("td");
+                    celdaDia.textContent = dia;
+                    fila.appendChild(celdaDia);
+
+                    // Recorrer las clases del día
+                    for (const clase of datosHorario[dia]) {
+                        const celda = document.createElement("td");
+                        celda.textContent = clase.text || ""; // Si hay texto, úsalo; de lo contrario, usa una cadena vacía
+                        if (clase.colspan) {
+                            celda.colSpan = clase.colspan;
+                        }
+                        if (clase.text) {
+                            celda.classList.add("occupied");
+                        }
+                        fila.appendChild(celda);
+                    }
+                    tablaHorario.appendChild(fila);
+                }
+            }
+        }
+        cargarDatos('par');
+    </script>
+
+</body>
+
+</html>
