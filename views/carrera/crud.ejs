@@ -1,0 +1,159 @@
+<!-- Este es tu archivo CRUD para Carreras -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD de Carreras</title>
+</head>
+
+<body>
+    <h1>CRUD de Carreras</h1>
+
+    <!-- Formulario para Crear Carrera -->
+    <form id="createForm" action="/api/web/carrera" method="POST" onsubmit="return createCarrera()">
+        <label for="name">Nombre:</label>
+        <input type="text" name="name" id="carreraName" required>
+        <label for="descripcion">Descripción:</label>
+        <input type="text" name="descripcion" id="carreraDescripcion" required>
+        <label for="nro_ciclos">Número de Ciclos:</label>
+        <input type="text" name="nro_ciclos" id="carreraCiclos" required>
+        <button type="submit">Crear Carrera</button>
+    </form>
+
+    <!-- Tabla de Carreras -->
+    <table>
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Número de Ciclos</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% carreras.forEach(carrera => { %>
+                <tr>
+                    <!-- Detalles de Carrera -->
+                    <td><a href="/api/web/carrera/<%= carrera._id %>"><%= carrera.name %></a></td>
+                    <td><%= carrera.descripcion %></td>
+                    <td><%= carrera.nro_ciclos %></td>
+                    <!-- Enlace para Editar Carrera -->
+                    <td><a href="#" onclick="showEditForm('<%= carrera._id %>', '<%= carrera.name %>', '<%= carrera.descripcion %>', '<%= carrera.nro_ciclos %>'); event.preventDefault();">Editar</a></td>
+                    <!-- Botón para Eliminar Carrera -->
+                    <td>
+                        <button type="button" onclick="confirmDelete('<%= carrera._id %>')">Eliminar</button>
+                    </td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+
+    <!-- Formulario para Editar Carrera -->
+    <form id="editForm" style="display: none;" onsubmit="return editCarrera()">
+        <input type="hidden" id="editId" name="_id">
+        <label for="editName">Nuevo Nombre:</label>
+        <input type="text" id="editName" name="name" required>
+        <label for="editDescripcion">Nueva Descripción:</label>
+        <input type="text" id="editDescripcion" name="descripcion" required>
+        <label for="editCiclos">Nuevo Número de Ciclos:</label>
+        <input type="text" id="editCiclos" name="nro_ciclos" required>
+        <button type="submit">Guardar Cambios</button>
+    </form>
+
+    <script>
+        // Función para mostrar el formulario de edición
+        function showEditForm(id, name, descripcion, nro_ciclos) {
+            // Ocultar todos los formularios de edición antes de mostrar uno nuevo
+            hideAllEditForms();
+            document.getElementById('editId').value = id;
+            document.getElementById('editName').value = name;
+            document.getElementById('editDescripcion').value = descripcion;
+            document.getElementById('editCiclos').value = nro_ciclos;
+            document.getElementById('editForm').style.display = 'block';
+        }
+
+        // Función para ocultar todos los formularios de edición
+        function hideAllEditForms() {
+            const editForms = document.querySelectorAll('.edit-form');
+            editForms.forEach(form => {
+                form.style.display = 'none';
+            });
+        }
+
+        // Función para confirmar antes de eliminar
+        function confirmDelete(carreraId) {
+            if (confirm('¿Estás seguro de que deseas eliminar esta carrera?')) {
+                // Realizar eliminación de manera asíncrona (AJAX)
+                fetch(`/api/web/carrera/${carreraId}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Actualizar la página sin recargar
+                    location.reload();
+                })
+                .catch(error => console.error('Error al eliminar carrera:', error));
+            }
+        }
+
+        // Función para realizar la creación de carrera y recargar la página
+        function createCarrera() {
+            // Obtener los valores de los campos
+            const carreraName = document.getElementById('carreraName').value;
+            const carreraDescripcion = document.getElementById('carreraDescripcion').value;
+            const carreraCiclos = document.getElementById('carreraCiclos').value;
+
+            // Realizar la creación de manera asíncrona (AJAX)
+            fetch("/api/web/carrera", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ name: carreraName, descripcion: carreraDescripcion, nro_ciclos: carreraCiclos }), // Enviar los datos como JSON
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    // Actualizar la página sin recargar
+                    location.reload();
+                    return false; // Evitar la recarga por defecto del formulario
+                })
+                .catch((error) => console.error("Error al crear carrera:", error));
+
+            return false; // Evitar el envío por defecto del formulario
+        }
+
+        // Función para realizar la edición de carrera y recargar la página
+        function editCarrera() {
+            // Obtener los valores de los campos
+            const carreraId = document.getElementById('editId').value;
+            const newCarreraName = document.getElementById('editName').value;
+            const newCarreraDescripcion = document.getElementById('editDescripcion').value;
+            const newCarreraCiclos = document.getElementById('editCiclos').value;
+
+            // Realizar la edición de manera asíncrona (AJAX)
+            fetch(`/api/web/carrera/${carreraId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name: newCarreraName, descripcion: newCarreraDescripcion, nro_ciclos: newCarreraCiclos }), // Enviar los nuevos datos como JSON
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Ocultar el formulario de edición
+                    document.getElementById('editForm').style.display = 'none';
+                    // Actualizar la página sin recargar
+                    location.reload();
+                    return false; // Evitar la recarga por defecto del formulario
+                })
+                .catch(error => console.error('Error al editar carrera:', error));
+
+            return false; // Evitar el envío por defecto del formulario
+        }
+    </script>
+</body>
+
+</html>
