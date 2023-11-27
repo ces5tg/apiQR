@@ -1,0 +1,172 @@
+<!-- Este es tu archivo CRUD para Grupos -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD de Grupos</title>
+</head>
+
+<body>
+    
+    <%- include('../layouts/navBar.ejs') %>
+    
+    <h1>CRUD de Grupos</h1>
+
+    <!-- Formulario para Crear Grupo -->
+    <form id="createForm" action="/api/web/grupo" method="POST" onsubmit="return createGrupo()">
+        <label for="name">Nombre:</label>
+        <input type="text" name="name" id="grupoName" required>
+        <label for="nro_inscritos">Número de Inscritos:</label>
+        <input type="number" name="nro_inscritos" id="grupoInscritos" required>
+        <!-- Agregar un campo para seleccionar la carrera -->
+        <label for="id_carrera">Carrera:</label>
+        <select name="id_carrera" id="grupoCarrera" required>
+            <% carreras.forEach(carrera => { %>
+                <option value="<%= carrera._id %>"><%= carrera.name %></option>
+            <% }); %>
+        </select>
+        <button type="submit">Crear Grupo</button>
+    </form>
+
+    <!-- Tabla de Grupos -->
+    <table>
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Número de Inscritos</th>
+                <th>Carrera</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% grupos.forEach(grupo => { %>
+                <tr>
+                    <!-- Detalles de Grupo -->
+                    <td><a href="/api/web/grupo/<%= grupo._id %>"><%= grupo.name %></a></td>
+                    <td><%= grupo.nro_inscritos %></td>
+                    <td><%= grupo.id_carrera.name %></td>
+                    <!-- Enlace para Editar Grupo -->
+                    <td><a href="#" onclick="showEditForm('<%= grupo._id %>', '<%= grupo.name %>', '<%= grupo.nro_inscritos %>', '<%= grupo.id_carrera._id %>'); event.preventDefault();">Editar</a></td>
+                    <!-- Botón para Eliminar Grupo -->
+                    <td>
+                        <button type="button" onclick="confirmDelete('<%= grupo._id %>')">Eliminar</button>
+                    </td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+
+    <!-- Formulario para Editar Grupo -->
+    <form id="editForm" style="display: none;" onsubmit="return editGrupo()">
+        <input type="hidden" id="editId" name="_id">
+        <label for="editName">Nuevo Nombre:</label>
+        <input type="text" id="editName" name="name" required>
+        <label for="editInscritos">Nuevo Número de Inscritos:</label>
+        <input type="number" id="editInscritos" name="nro_inscritos" required>
+        <!-- Agregar un campo para seleccionar la carrera -->
+        <label for="editCarrera">Nueva Carrera:</label>
+        <select id="editCarrera" name="id_carrera" required>
+            <% carreras.forEach(carrera => { %>
+                <option value="<%= carrera._id %>"><%= carrera.name %></option>
+            <% }); %>
+        </select>
+        <button type="submit">Guardar Cambios</button>
+    </form>
+
+    <script>
+        // Función para mostrar el formulario de edición
+        function showEditForm(id, name, nro_inscritos, id_carrera) {
+            // Ocultar todos los formularios de edición antes de mostrar uno nuevo
+            hideAllEditForms();
+            document.getElementById('editId').value = id;
+            document.getElementById('editName').value = name;
+            document.getElementById('editInscritos').value = nro_inscritos;
+            document.getElementById('editCarrera').value = id_carrera;
+            document.getElementById('editForm').style.display = 'block';
+        }
+
+        // Función para ocultar todos los formularios de edición
+        function hideAllEditForms() {
+            const editForms = document.querySelectorAll('.edit-form');
+            editForms.forEach(form => {
+                form.style.display = 'none';
+            });
+        }
+
+        // Función para confirmar antes de eliminar
+        function confirmDelete(grupoId) {
+            if (confirm('¿Estás seguro de que deseas eliminar este grupo?')) {
+                // Realizar eliminación de manera asíncrona (AJAX)
+                fetch(`/api/web/grupo/${grupoId}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Actualizar la página sin recargar
+                    location.reload();
+                })
+                .catch(error => console.error('Error al eliminar grupo:', error));
+            }
+        }
+
+        // Función para realizar la creación de grupo y recargar la página
+        function createGrupo() {
+            // Obtener los valores de los campos
+            const grupoName = document.getElementById('grupoName').value;
+            const grupoInscritos = document.getElementById('grupoInscritos').value;
+            const grupoCarrera = document.getElementById('grupoCarrera').value;
+
+            // Realizar la creación de manera asíncrona (AJAX)
+            fetch("/api/web/grupo", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ name: grupoName, nro_inscritos: grupoInscritos, id_carrera: grupoCarrera }), // Enviar los datos como JSON
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    // Actualizar la página sin recargar
+                    location.reload();
+                    return false; // Evitar la recarga por defecto del formulario
+                })
+                .catch((error) => console.error("Error al crear grupo:", error));
+
+            return false; // Evitar el envío por defecto del formulario
+        }
+
+        // Función para realizar la edición de grupo y recargar la página
+        function editGrupo() {
+            // Obtener los valores de los campos
+            const grupoId = document.getElementById('editId').value;
+            const newGrupoName = document.getElementById('editName').value;
+            const newGrupoInscritos = document.getElementById('editInscritos').value;
+            const newGrupoCarrera = document.getElementById('editCarrera').value;
+
+            // Realizar la edición de manera asíncrona (AJAX)
+            fetch(`/api/web/grupo/${grupoId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name: newGrupoName, nro_inscritos: newGrupoInscritos, id_carrera: newGrupoCarrera }), // Enviar los nuevos datos como JSON
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Ocultar el formulario de edición
+                    document.getElementById('editForm').style.display = 'none';
+                    // Actualizar la página sin recargar
+                    location.reload();
+                    return false; // Evitar la recarga por defecto del formulario
+                })
+                .catch(error => console.error('Error al editar grupo:', error));
+
+            return false; // Evitar el envío por defecto del formulario
+        }
+    </script>
+</body>
+
+</html>
