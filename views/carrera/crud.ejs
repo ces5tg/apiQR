@@ -10,6 +10,9 @@
 </head>
 
 <body>
+    
+    <%- include('../layouts/navBar.ejs') %>
+    
     <h1>CRUD de Carreras</h1>
 
     <!-- Formulario para Crear Carrera -->
@@ -34,7 +37,7 @@
             </tr>
         </thead>
         <tbody>
-            <% carreras.forEach(carrera => { %>
+            <% carreras.forEach(carrera => { %> 
                 <tr>
                     <!-- Detalles de Carrera -->
                     <td><a href="/api/web/carrera/<%= carrera._id %>"><%= carrera.name %></a></td>

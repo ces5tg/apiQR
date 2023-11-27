@@ -79,14 +79,20 @@ router.get('/horarios', async (req, res) => {
 router.get('/horariosPersonas', async (req, res) => {
     try {
         const horariosPersonas = await HorarioPersona.find()
-            .populate('id_horario')
-            .populate('id_grupo')
-            .populate('id_curso');
+        .populate([
+            { path: 'id_horario' },
+            { path: 'id_grupo', select: ['name'] },
+            { path: 'id_curso', select: ['name'] },
+            { path: 'id_persona', select: ['name'] }
+        ]);
+
         const horarios = await Horario.find();
         const cursos = await Curso.find();
         const grupos = await Grupo.find();
-        res.render(path.join(__dirname, '..', '..', 'views', 'horarioPersona', 'crud.ejs'), { horariosPersonas, horarios, grupos, cursos });
+        const personas = await Persona.find();
+        res.render(path.join(__dirname, '..', '..', 'views', 'horarioPersona', 'crud.ejs'), { horariosPersonas, horarios, grupos, cursos, personas });
     } catch (error) {
+        console.error('Error al obtener horario persona:', error);
         res.status(500).json({ message: 'Error al obtener la lista de aulas' });
     }
 });

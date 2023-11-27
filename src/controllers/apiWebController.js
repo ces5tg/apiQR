@@ -339,16 +339,6 @@ router.delete('/horario/:id', async (req, res) => {
 });
 
 // CRUD para Horario-Persona
-router.get('/horarioPersona', async (req, res) => {
-    try {
-        const horariosPersonas = await HorarioPersona.find();
-        res.json(horariosPersonas);
-    } catch (error) {
-        console.error('Error al obtener horarios personas:', error);
-        res.status(500).json({ error: 'Error interno del servidor' });
-    }
-});
-
 router.get('/horarioPersona/:id', async (req, res) => {
     try {
         const horarioPersona = await HorarioPersona.findById(req.params.id);

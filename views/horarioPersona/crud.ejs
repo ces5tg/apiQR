@@ -10,6 +10,9 @@
 </head>
 
 <body>
+    
+    <%- include('../layouts/navBar.ejs') %>
+    
     <h1>CRUD de Horarios Personas</h1>
 
     <!-- Formulario para Crear Horario Persona -->
@@ -38,11 +41,19 @@
             <% }); %>
         </select>
 
+        <label for="id_persona">Persona:</label>
+        <select name="id_persona" id="id_persona" required>
+            <!-- Opciones de Cursos -->
+            <% personas.forEach(persona => { %>
+                <option value="<%= persona._id %>"><%= persona.name %></option>
+            <% }); %>
+        </select>
+
         <label for="asistencia">Asistencia:</label>
         <input type="checkbox" name="asistencia" id="asistencia">
 
         <label for="estado">Estado:</label>
-        <input type="text" name="estado" id="estado" required>
+        <input type="checkbox" name="estado" id="estado">
 
         <label for="contrasena">Contraseña:</label>
         <input type="password" name="contrasena" id="contrasena" required>
@@ -69,14 +80,14 @@
                 <tr>
                     <!-- Detalles de Horario Persona -->
                     <td><%= horarioPersona.id_horario.dia %></td>
-                    <td><%= horarioPersona.id_grupo %></td>
-                    <td><%= horarioPersona.id_curso %></td>
-                    <td><%= horarioPersona.id_persona %></td>
+                    <td><%= horarioPersona.id_grupo.name %></td>
+                    <td><%= horarioPersona.id_curso.name %></td>
+                    <td><%= horarioPersona.id_persona.name %></td>
                     <td><%= horarioPersona.asistencia ? 'Sí' : 'No' %></td>
                     <td><%= horarioPersona.estado %></td>
                     <td><%= horarioPersona.contrasena %></td>
                     <!-- Enlace para Editar Horario Persona -->
-                    <td><a href="#" onclick="showEditForm('<%= horarioPersona._id %>', '<%= horarioPersona.id_horario %>', '<%= horarioPersona.id_grupo %>', '<%= horarioPersona.id_curso %>', '<%= horarioPersona.id_persona %>', '<%= horarioPersona.asistencia %>', '<%= horarioPersona.estado %>', '<%= horarioPersona.contrasena %>');">Editar</a></td>
+                    <td><a href="#" onclick="showEditForm('<%= horarioPersona._id %>', '<%= horarioPersona.id_horario._id %>', '<%= horarioPersona.id_grupo._id %>', '<%= horarioPersona.id_curso._id %>', '<%= horarioPersona.id_persona._id %>', '<%= horarioPersona.asistencia %>', '<%= horarioPersona.estado %>', '<%= horarioPersona.contrasena %>');">Editar</a></td>
                     <!-- Botón para Eliminar Horario Persona -->
                     <td>
                         <button type="button" onclick="confirmDelete('<%= horarioPersona._id %>')">Eliminar</button>
@@ -87,39 +98,74 @@
     </table>
 
     <!-- Formulario para Editar Horario Persona -->
-    <form id="editForm" style="display: none;" onsubmit="return editHorarioPersona()">
+    <form id="editForm" class="edit-form" style="display: none;" onsubmit="return editHorarioPersona()">
         <input type="hidden" id="editId" name="_id">
         <label for="editHorario">Nuevo ID Horario:</label>
-        <input type="text" id="editHorario" name="id_horario" required>
+        <select name="id_horario" id="editHorario" required>
+            <!-- Opciones de Horarios -->
+            <% horarios.forEach(horario => { %>
+                <option value="<%= horario._id %>"><%= horario.dia %></option>
+            <% }); %>
+        </select>
         <label for="editGrupo">Nuevo ID Grupo:</label>
-        <input type="text" id="editGrupo" name="id_grupo" required>
+        <select name="id_grupo" id="editGrupo" required>
+            <!-- Opciones de Grupos -->
+            <% grupos.forEach(grupo => { %>
+                <option value="<%= grupo._id %>"><%= grupo.name %></option>
+            <% }); %>
+        </select>
         <label for="editCurso">Nuevo ID Curso:</label>
-        <input type="text" id="editCurso" name="id_curso" required>
+        <select name="id_curso" id="editCurso" required>
+            <!-- Opciones de Cursos -->
+            <% cursos.forEach(curso => { %>
+                <option value="<%= curso._id %>"><%= curso.name %></option>
+            <% }); %>
+        </select>
         <label for="editPersona">Nuevo ID Persona:</label>
-        <input type="text" id="editPersona" name="id_persona" required>
+        <select name="id_persona" id="editPersona" required>
+            <!-- Opciones de Cursos -->
+            <% personas.forEach(persona => { %>
+                <option value="<%= persona._id %>"><%= persona.name %></option>
+            <% }); %>
+        </select>
         <label for="editAsistencia">Nueva Asistencia:</label>
         <input type="checkbox" id="editAsistencia" name="asistencia">
         <label for="editEstado">Nuevo Estado:</label>
-        <input type="text" id="editEstado" name="estado" required>
+        <input type="checkbox" id="editEstado" name="estado">
         <label for="editContrasena">Nueva Contraseña:</label>
         <input type="password" id="editContrasena" name="contrasena" required>
         <button type="submit">Guardar Cambios</button>
     </form>
+
+
 
     <script>
         // Función para mostrar el formulario de edición
         function showEditForm(id, id_horario, id_grupo, id_curso, id_persona, asistencia, estado, contrasena) {
             // Ocultar todos los formularios de edición antes de mostrar uno nuevo
             hideAllEditForms();
+            console.log(id, id_horario, id_grupo, id_curso, id_persona, asistencia, estado, contrasena);
+            // Asignar valores a los campos del formulario de edición
             document.getElementById('editId').value = id;
-            document.getElementById('editHorario').value = id_horario;
-            document.getElementById('editGrupo').value = id_grupo;
-            document.getElementById('editCurso').value = id_curso;
-            document.getElementById('editPersona').value = id_persona;
+
+            // Seleccionar el valor correcto en los elementos 'select'
+            setSelectedValue('editHorario', id_horario);
+            setSelectedValue('editGrupo', id_grupo);
+            setSelectedValue('editCurso', id_curso);
+            setSelectedValue('editPersona', id_persona);
+
             document.getElementById('editAsistencia').checked = asistencia;
-            document.getElementById('editEstado').value = estado;
+            document.getElementById('editEstado').checked = estado;
             document.getElementById('editContrasena').value = contrasena;
+
+            // Mostrar el formulario de edición
             document.getElementById('editForm').style.display = 'block';
+        }
+
+        // Función para seleccionar el valor correcto en un 'select'
+        function setSelectedValue(selectId, value) {
+            let select = document.getElementById(selectId);
+            select.value = value;
         }
 
         // Función para ocultar todos los formularios de edición
@@ -154,7 +200,7 @@
             const idCurso = document.getElementById('id_curso').value;
             const idPersona = document.getElementById('id_persona').value;
             const asistencia = document.getElementById('asistencia').checked;
-            const estado = document.getElementById('estado').value;
+            const estado = document.getElementById('estado').checked;
             const contrasena = document.getElementById('contrasena').value;
 
             // Realizar la creación de manera asíncrona (AJAX)
@@ -163,7 +209,7 @@
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ id_horario: idHorario, id_grupo: idGrupo, id_curso: idCurso, id_persona: idPersona, asistencia, estado, contrasena }), // Enviar los datos como JSON
+                body: JSON.stringify({ id_horario: idHorario, id_grupo: idGrupo, id_curso: idCurso,id_persona: idPersona, asistencia, estado, contrasena }), // Enviar los datos como JSON
             })
                 .then((response) => response.json())
                 .then((data) => {
@@ -185,7 +231,10 @@
             const newIdCurso = document.getElementById('editCurso').value;
             const newIdPersona = document.getElementById('editPersona').value;
             const newAsistencia = document.getElementById('editAsistencia').checked;
-            const newEstado = document.getElementById('editEstado').value;
+            
+            // Convertir el valor del campo estado de "on" a booleano
+            const newEstado = document.getElementById('editEstado').checked;
+            
             const newContrasena = document.getElementById('editContrasena').value;
 
             // Realizar la edición de manera asíncrona (AJAX)
