@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horario</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th,
+        td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        td.occupied {
+            background-color: lightblue;
+        }
+    </style>
+</head>
+
+<body>
+
+    <label for="aulaSelect">Seleccione un aula: </label>
+    <select id="aulaSelect" onchange="cargarAulas()">
+        <!-- Las opciones se llenarán dinámicamente desde la API -->
+    </select>
+
+    <!-- Agrega otro elemento select para que el usuario elija la persona -->
+    <label for="personaSelect">Seleccione una persona: </label>
+    <select id="personaSelect" onchange="cargarDatos()">
+        <!-- Las opciones se llenarán dinámicamente desde la API -->
+    </select>
+
+    <h1 id="semana"></h1>
+
+    <table id="horario">
+    </table>
+
+    <button onclick="cargarDatos('par')">Cargar Semana Par</button>
+    <button onclick="cargarDatos('impar')">Cargar Semana Impar</button>
+
+    <script>
+        const cabeceraHTML = `
+            <tr>
+                <th></th>
+                <th>8:00 - 8:50</th>
+                <th>8:50 - 9:40</th>
+                <th>9:40 - 10:30</th>
+                <th>10:30 - 11:20</th>
+                <th>11:20 - 12:10</th>
+                <th>12:10 - 13:00</th>
+                <th>13:00 - 13:50</th>
+                <th>13:50 - 14:40</th>
+                <th>14:40 - 15:30</th>
+                <th>15:30 - 16:20</th>
+                <th>16:20 - 17:10</th>
+                <th>17:10 - 18:00</th>
+                <th>18:00 - 18:50</th>
+                <th>18:50 - 19:40</th>
+                <th>19:40 - 20:30</th>
+            </tr>
+        `;
+
+        const datosHorarioPar = {
+            Lunes: [
+                {}, {}, {}, {}, {}, {}, { text: "Marketing", colspan: 2 }, { text: "Tutoria", colspan: 1 }, { text: "Nubes TEO", colspan: 2 }, {}, {}, {}, {}
+            ],
+            Martes: [
+                {}, {}, {}, {}, {}, {}, { text: "Web LAB", colspan: 3 }, { text: "Moviles LAB", colspan: 3 }, {}, {}, {}
+            ],
+            Miércoles: [
+                {}, {}, { text: "Moviles TEO", colspan: 2 }, {}, {}, { text: "Empresariales", colspan: 3 }, {}, {}, {}, {}, {}, {}
+            ],
+            Jueves: [
+                {}, {}, {}, {}, {}, {}, { text: "Innovacion", colspan: 3 }, { text: "Web TEO", colspan: 2 }, {}, {}, {}, {}
+            ],
+            Viernes: [
+                {}, {}, {}, { text: "Multiplataforma", colspan: 2 }, {}, {}, { text: "Nubes LAB", colspan: 2 }, {}, {}, {}, {}, {}, {}
+            ],
+            Sábado: [
+                {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}
+            ],
+            Domingo: [
+                {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}
+            ]
+        };
+
+        const datosHorarioImpar = {
+            Lunes: [
+                {}, {}, {}, {}, {}, {}, { text: "Tutoria", colspan: 1 }, { text: "Nubes TEO", colspan: 2 }, { text: "Marketing", colspan: 2 }, {}, {}, {}, {}
+            ],
+            Martes: [
+                {}, {}, {}, {}, {}, {}, { text: "Moviles LAB", colspan: 3 }, { text: "Web LAB", colspan: 3 }, {}, {}, {}
+            ],
+            Miércoles: [
+                {}, {}, {}, { text: "Empresariales", colspan: 3 }, { text: "Moviles TEO", colspan: 2 }, {}, {}, {}, {}, {}, {}, {}
+            ],
+            Jueves: [
+                {}, {}, {}, { text: "Web TEO", colspan: 2 }, { text: "Innovacion", colspan: 3 }, {}, {}, {}, {}, {}, {}, {}
+            ],
+            Viernes: [
+                {}, {}, {}, { text: "Nubes LAB", colspan: 2 }, { text: "Multiplataforma", colspan: 2 }, {}, {}, {}, {}, {}, {}, {}, {}
+            ],
+            Sábado: [
+                {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}
+            ],
+            Domingo: [
+                {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}
+            ]
+        };
+
+        const tablaHorario = document.getElementById("horario");
+        var h1Semana = document.getElementById("semana");
+
+        function cargarDatos(semana) {
+            // Limpiar la tabla antes de cargar nuevos datos
+            tablaHorario.innerHTML = cabeceraHTML;
+
+            // Seleccionar los datos de la semana correspondiente
+            const datosHorario = semana === 'par' ? datosHorarioPar : datosHorarioImpar;
+            h1Semana.textContent = semana;
+            // Recorrer los días
+            for (const dia in datosHorario) {
+                if (datosHorario.hasOwnProperty(dia)) {
+                    const fila = document.createElement("tr");
+                    const celdaDia = document.createElement("td");
+                    celdaDia.textContent = dia;
+                    fila.appendChild(celdaDia);
+
+                    // Recorrer las clases del día
+                    for (const clase of datosHorario[dia]) {
+                        const celda = document.createElement("td");
+                        celda.textContent = clase.text || ""; // Si hay texto, úsalo; de lo contrario, usa una cadena vacía
+                        if (clase.colspan) {
+                            celda.colSpan = clase.colspan;
+                        }
+                        if (clase.text) {
+                            celda.classList.add("occupied");
+                        }
+                        fila.appendChild(celda);
+                    }
+                    tablaHorario.appendChild(fila);
+                }
+            }
+        }
+        function cargarAulas() {
+            // Limpia las opciones existentes
+            aulaSelect.innerHTML = '';
+
+            // Realiza una solicitud AJAX para obtener la lista de aulas desde la API
+            fetch('http://localhost:3000/api/web/aula')
+                .then(response => response.json())
+                .then(data => {
+                    // Agrega cada aula como una opción en el elemento select
+                    data.forEach(aula => {
+                        const option = document.createElement('option');
+                        option.value = aula._id;
+                        option.textContent = aula.name;
+                        aulaSelect.appendChild(option);
+                    });
+
+                    // Carga automáticamente los datos al inicio
+                    cargarDatos();
+                })
+                .catch(error => console.error('Error al cargar aulas:', error));
+        }
+
+        function cargarDocentes() {
+            // Limpia las opciones existentes
+            personaSelect.innerHTML = '';
+
+            // Realiza una solicitud AJAX para obtener la lista de personas desde la API
+            fetch('http://localhost:3000/api/web/persona')
+                .then(response => response.json())
+                .then(data => {
+                    // Agrega cada persona como una opción en el elemento select
+                    data.forEach(persona => {
+                        const option = document.createElement('option');
+                        option.value = persona._id;
+                        option.textContent = persona.name;
+                        personaSelect.appendChild(option);
+                    });
+
+                    // Carga automáticamente los datos al inicio
+                    cargarDatos();
+                })
+                .catch(error => console.error('Error al cargar docentes:', error));
+        }
+
+
+        cargarAulas();
+        cargarDocentes();
+        cargarDatos('par');
+    </script>
+
+</body>
+
+</html>

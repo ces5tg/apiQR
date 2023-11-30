@@ -1,0 +1,186 @@
+<!-- Este es tu archivo CRUD para Horarios -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<%- include('../layouts/head.ejs') %>
+
+<body>
+    
+    <%- include('../layouts/navBar.ejs') %>
+    
+    <h1>CRUD de Horarios</h1>
+
+    <!-- Formulario para Crear Horario -->
+    <form id="createForm" action="/api/web/horario" method="POST" onsubmit="return createHorario()">
+        <label for="dia">Día:</label>
+        <input type="date" name="dia" id="horarioDia" required>
+        <label for="hora_inicio">Hora de Inicio:</label>
+        <input type="time" name="hora_inicio" id="horarioInicio" required>
+        <label for="hora_fin">Hora de Fin:</label>
+        <input type="time" name="hora_fin" id="horarioFin" required>
+        <label for="estado">Estado:</label>
+        <input type="text" name="estado" id="horarioEstado" required>
+        <!-- Agregar un campo para seleccionar el aula -->
+        <label for="aula">Aula:</label>
+        <select name="aula" id="horarioAula" required>
+            <% aulas.forEach(aula => { %>
+                <option value="<%= aula._id %>"><%= aula.name %></option>
+            <% }); %>
+        </select>
+        <button type="submit">Crear Horario</button>
+    </form>
+
+    <!-- Tabla de Horarios -->
+    <table>
+        <thead>
+            <tr>
+                <th>Día</th>
+                <th>Hora de Inicio</th>
+                <th>Hora de Fin</th>
+                <th>Estado</th>
+                <th>Aula</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% horarios.forEach(horario => { %>
+                <tr>
+                    <!-- Detalles de Horario -->
+                    <td><%= horario.dia.toLocaleString() %></td>
+                    <td><%= horario.hora_inicio.toLocaleString() %></td>
+                    <td><%= horario.hora_fin.toLocaleString() %></td>
+                    <td><%= horario.estado %></td>
+                    <td><%= horario.aula.name %></td>
+                    <!-- Enlace para Editar Horario -->
+                    <td><a href="#" onclick="showEditForm('<%= horario._id %>', '<%= horario.dia %>', '<%= horario.hora_inicio %>', '<%= horario.hora_fin %>', '<%= horario.estado %>', '<%= horario.aula._id %>'); event.preventDefault();">Editar</a></td>
+                    <!-- Botón para Eliminar Horario -->
+                    <td>
+                        <button type="button" onclick="confirmDelete('<%= horario._id %>')">Eliminar</button>
+                    </td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+
+    <!-- Formulario para Editar Horario -->
+    <form id="editForm" style="display: none;" onsubmit="return editHorario()">
+        <input type="hidden" id="editId" name="_id">
+        <label for="editDia">Nuevo Día:</label>
+        <input type="date" id="editDia" name="dia" required>
+        <label for="editInicio">Nueva Hora de Inicio:</label>
+        <input type="time" id="editInicio" name="hora_inicio" required>
+        <label for="editFin">Nueva Hora de Fin:</label>
+        <input type="time" id="editFin" name="hora_fin" required>
+        <label for="editEstado">Nuevo Estado:</label>
+        <input type="text" id="editEstado" name="estado" required>
+        <!-- Agregar un campo para seleccionar el aula -->
+        <label for="editAula">Nueva Aula:</label>
+        <select id="editAula" name="aula" required>
+            <% aulas.forEach(aula => { %>
+                <option value="<%= aula._id %>"><%= aula.name %></option>
+            <% }); %>
+        </select>
+        <button type="submit">Guardar Cambios</button>
+    </form>
+
+    <script>
+        // Función para mostrar el formulario de edición
+        function showEditForm(id, dia, hora_inicio, hora_fin, estado, aula) {
+            // Ocultar todos los formularios de edición antes de mostrar uno nuevo
+            hideAllEditForms();
+            document.getElementById('editId').value = id;
+            document.getElementById('editDia').value = dia;
+            document.getElementById('editInicio').value = hora_inicio;
+            document.getElementById('editFin').value = hora_fin;
+            document.getElementById('editEstado').value = estado;
+            document.getElementById('editAula').value = aula;
+            document.getElementById('editForm').style.display = 'block';
+        }
+
+        // Función para ocultar todos los formularios de edición
+        function hideAllEditForms() {
+            const editForms = document.querySelectorAll('.edit-form');
+            editForms.forEach(form => {
+                form.style.display = 'none';
+            });
+        }
+
+        // Función para confirmar antes de eliminar
+        function confirmDelete(horarioId) {
+            if (confirm('¿Estás seguro de que deseas eliminar este horario?')) {
+                // Realizar eliminación de manera asíncrona (AJAX)
+                fetch(`/api/web/horario/${horarioId}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Actualizar la página sin recargar
+                    location.reload();
+                })
+                .catch(error => console.error('Error al eliminar horario:', error));
+            }
+        }
+
+        // Función para realizar la creación de horario y recargar la página
+        function createHorario() {
+            // Obtener los valores de los campos
+            const horarioDia = document.getElementById('horarioDia').value;
+            const horarioInicio = document.getElementById('horarioInicio').value;
+            const horarioFin = document.getElementById('horarioFin').value;
+            const horarioEstado = document.getElementById('horarioEstado').value;
+            const horarioAula = document.getElementById('horarioAula').value;
+
+            // Realizar la creación de manera asíncrona (AJAX)
+            fetch("/api/web/horario", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ dia: horarioDia, hora_inicio: horarioInicio, hora_fin: horarioFin, estado: horarioEstado, aula: horarioAula }), // Enviar los datos como JSON
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    // Actualizar la página sin recargar
+                    location.reload();
+                    return false; // Evitar la recarga por defecto del formulario
+                })
+                .catch((error) => console.error("Error al crear horario:", error));
+
+            return false; // Evitar el envío por defecto del formulario
+        }
+
+        // Función para realizar la edición de horario y recargar la página
+        function editHorario() {
+            // Obtener los valores de los campos
+            const horarioId = document.getElementById('editId').value;
+            const newHorarioDia = document.getElementById('editDia').value;
+            const newHorarioInicio = document.getElementById('editInicio').value;
+            const newHorarioFin = document.getElementById('editFin').value;
+            const newHorarioEstado = document.getElementById('editEstado').value;
+            const newHorarioAula = document.getElementById('editAula').value;
+
+            // Realizar la edición de manera asíncrona (AJAX)
+            fetch(`/api/web/horario/${horarioId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ dia: newHorarioDia, hora_inicio: newHorarioInicio, hora_fin: newHorarioFin, estado: newHorarioEstado, aula: newHorarioAula }), // Enviar los nuevos datos como JSON
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Ocultar el formulario de edición
+                    document.getElementById('editForm').style.display = 'none';
+                    // Actualizar la página sin recargar
+                    location.reload();
+                    return false; // Evitar la recarga por defecto del formulario
+                })
+                .catch(error => console.error('Error al editar horario:', error));
+
+            return false; // Evitar el envío por defecto del formulario
+        }
+    </script>
+</body>
+
+</html>

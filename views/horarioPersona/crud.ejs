@@ -1,0 +1,266 @@
+<!-- Este es tu archivo CRUD para Horarios Personas -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<%- include('../layouts/head.ejs') %>
+
+<body>
+    
+    <%- include('../layouts/navBar.ejs') %>
+    
+    <h1>CRUD de Horarios Personas</h1>
+
+    <!-- Formulario para Crear Horario Persona -->
+    <form id="createForm" action="/api/web/horarioPersona" method="POST" onsubmit="return createHorarioPersona()">
+        <label for="id_horario">ID Horario:</label>
+        <select name="id_horario" id="id_horario" required>
+            <!-- Opciones de Horarios -->
+            <% horarios.forEach(horario => { %>
+                <option value="<%= horario._id %>"><%= horario.dia %></option>
+            <% }); %>
+        </select>
+
+        <label for="id_grupo">ID Grupo:</label>
+        <select name="id_grupo" id="id_grupo" required>
+            <!-- Opciones de Grupos -->
+            <% grupos.forEach(grupo => { %>
+                <option value="<%= grupo._id %>"><%= grupo.name %></option>
+            <% }); %>
+        </select>
+
+        <label for="id_curso">ID Curso:</label>
+        <select name="id_curso" id="id_curso" required>
+            <!-- Opciones de Cursos -->
+            <% cursos.forEach(curso => { %>
+                <option value="<%= curso._id %>"><%= curso.name %></option>
+            <% }); %>
+        </select>
+
+        <label for="id_persona">Persona:</label>
+        <select name="id_persona" id="id_persona" required>
+            <!-- Opciones de Cursos -->
+            <% personas.forEach(persona => { %>
+                <option value="<%= persona._id %>"><%= persona.name %></option>
+            <% }); %>
+        </select>
+
+        <label for="asistencia">Asistencia:</label>
+        <input type="checkbox" name="asistencia" id="asistencia">
+
+        <label for="estado">Estado:</label>
+        <input type="checkbox" name="estado" id="estado">
+
+        <label for="contrasena">Contraseña:</label>
+        <input type="password" name="contrasena" id="contrasena" required>
+
+        <button type="submit">Crear Horario Persona</button>
+    </form>
+
+    <!-- Tabla de Horarios Personas -->
+    <table>
+        <thead>
+            <tr>
+                <th>ID Horario</th>
+                <th>ID Grupo</th>
+                <th>ID Curso</th>
+                <th>ID Persona</th>
+                <th>Asistencia</th>
+                <th>Estado</th>
+                <th>Contraseña</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% horariosPersonas.forEach(horarioPersona => { %>
+                <tr>
+                    <!-- Detalles de Horario Persona -->
+                    <td><%= horarioPersona.id_horario.dia.toLocaleString() %></td>
+                    <td><%= horarioPersona.id_grupo.name %></td>
+                    <td><%= horarioPersona.id_curso.name %></td>
+                    <td><%= horarioPersona.id_persona.name %></td>
+                    <td><%= horarioPersona.asistencia ? 'Sí' : 'No' %></td>
+                    <td><%= horarioPersona.estado %></td>
+                    <td><%= horarioPersona.contrasena %></td>
+                    <!-- Enlace para Editar Horario Persona -->
+                    <td><a href="#" onclick="showEditForm('<%= horarioPersona._id %>', '<%= horarioPersona.id_horario._id %>', '<%= horarioPersona.id_grupo._id %>', '<%= horarioPersona.id_curso._id %>', '<%= horarioPersona.id_persona._id %>', '<%= horarioPersona.asistencia %>', '<%= horarioPersona.estado %>', '<%= horarioPersona.contrasena %>');">Editar</a></td>
+                    <!-- Botón para Eliminar Horario Persona -->
+                    <td>
+                        <button type="button" onclick="confirmDelete('<%= horarioPersona._id %>')">Eliminar</button>
+                    </td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+
+    <!-- Formulario para Editar Horario Persona -->
+    <form id="editForm" class="edit-form" style="display: none;" onsubmit="return editHorarioPersona()">
+        <input type="hidden" id="editId" name="_id">
+        <label for="editHorario">Nuevo ID Horario:</label>
+        <select name="id_horario" id="editHorario" required>
+            <!-- Opciones de Horarios -->
+            <% horarios.forEach(horario => { %>
+                <option value="<%= horario._id %>"><%= horario.dia %></option>
+            <% }); %>
+        </select>
+        <label for="editGrupo">Nuevo ID Grupo:</label>
+        <select name="id_grupo" id="editGrupo" required>
+            <!-- Opciones de Grupos -->
+            <% grupos.forEach(grupo => { %>
+                <option value="<%= grupo._id %>"><%= grupo.name %></option>
+            <% }); %>
+        </select>
+        <label for="editCurso">Nuevo ID Curso:</label>
+        <select name="id_curso" id="editCurso" required>
+            <!-- Opciones de Cursos -->
+            <% cursos.forEach(curso => { %>
+                <option value="<%= curso._id %>"><%= curso.name %></option>
+            <% }); %>
+        </select>
+        <label for="editPersona">Nuevo ID Persona:</label>
+        <select name="id_persona" id="editPersona" required>
+            <!-- Opciones de Cursos -->
+            <% personas.forEach(persona => { %>
+                <option value="<%= persona._id %>"><%= persona.name %></option>
+            <% }); %>
+        </select>
+        <label for="editAsistencia">Nueva Asistencia:</label>
+        <input type="checkbox" id="editAsistencia" name="asistencia">
+        <label for="editEstado">Nuevo Estado:</label>
+        <input type="checkbox" id="editEstado" name="estado">
+        <label for="editContrasena">Nueva Contraseña:</label>
+        <input type="password" id="editContrasena" name="contrasena" required>
+        <button type="submit">Guardar Cambios</button>
+    </form>
+
+
+
+    <script>
+        // Función para mostrar el formulario de edición
+        function showEditForm(id, id_horario, id_grupo, id_curso, id_persona, asistencia, estado, contrasena) {
+            // Ocultar todos los formularios de edición antes de mostrar uno nuevo
+            hideAllEditForms();
+            console.log(id, id_horario, id_grupo, id_curso, id_persona, asistencia, estado, contrasena);
+            // Asignar valores a los campos del formulario de edición
+            document.getElementById('editId').value = id;
+
+            // Seleccionar el valor correcto en los elementos 'select'
+            setSelectedValue('editHorario', id_horario);
+            setSelectedValue('editGrupo', id_grupo);
+            setSelectedValue('editCurso', id_curso);
+            setSelectedValue('editPersona', id_persona);
+
+            document.getElementById('editAsistencia').checked = asistencia;
+            document.getElementById('editEstado').checked = estado;
+            document.getElementById('editContrasena').value = contrasena;
+
+            // Mostrar el formulario de edición
+            document.getElementById('editForm').style.display = 'block';
+        }
+
+        // Función para seleccionar el valor correcto en un 'select'
+        function setSelectedValue(selectId, value) {
+            let select = document.getElementById(selectId);
+            select.value = value;
+        }
+
+        // Función para ocultar todos los formularios de edición
+        function hideAllEditForms() {
+            const editForms = document.querySelectorAll('.edit-form');
+            editForms.forEach(form => {
+                form.style.display = 'none';
+            });
+        }
+
+        // Función para confirmar antes de eliminar
+        function confirmDelete(horarioPersonaId) {
+            if (confirm('¿Estás seguro de que deseas eliminar este horario persona?')) {
+                // Realizar eliminación de manera asíncrona (AJAX)
+                fetch(`/api/web/horarioPersona/${horarioPersonaId}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Actualizar la página sin recargar
+                    location.reload();
+                })
+                .catch(error => console.error('Error al eliminar horario persona:', error));
+            }
+        }
+
+        // Función para realizar la creación de horario persona y recargar la página
+        function createHorarioPersona() {
+            // Obtener los valores de los campos
+            const idHorario = document.getElementById('id_horario').value;
+            const idGrupo = document.getElementById('id_grupo').value;
+            const idCurso = document.getElementById('id_curso').value;
+            const idPersona = document.getElementById('id_persona').value;
+            const asistencia = document.getElementById('asistencia').checked;
+            const estado = document.getElementById('estado').checked;
+            const contrasena = document.getElementById('contrasena').value;
+
+            // Realizar la creación de manera asíncrona (AJAX)
+            fetch("/api/web/horarioPersona", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ id_horario: idHorario, id_grupo: idGrupo, id_curso: idCurso,id_persona: idPersona, asistencia, estado, contrasena }), // Enviar los datos como JSON
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    // Actualizar la página sin recargar
+                    location.reload();
+                    return false; // Evitar la recarga por defecto del formulario
+                })
+                .catch((error) => console.error("Error al crear horario persona:", error));
+
+            return false; // Evitar el envío por defecto del formulario
+        }
+
+        // Función para realizar la edición de horario persona y recargar la página
+        function editHorarioPersona() {
+            // Obtener los valores de los campos
+            const horarioPersonaId = document.getElementById('editId').value;
+            const newIdHorario = document.getElementById('editHorario').value;
+            const newIdGrupo = document.getElementById('editGrupo').value;
+            const newIdCurso = document.getElementById('editCurso').value;
+            const newIdPersona = document.getElementById('editPersona').value;
+            const newAsistencia = document.getElementById('editAsistencia').checked;
+            
+            // Convertir el valor del campo estado de "on" a booleano
+            const newEstado = document.getElementById('editEstado').checked;
+            
+            const newContrasena = document.getElementById('editContrasena').value;
+
+            // Realizar la edición de manera asíncrona (AJAX)
+            fetch(`/api/web/horarioPersona/${horarioPersonaId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ id_horario: newIdHorario, id_grupo: newIdGrupo, id_curso: newIdCurso, id_persona: newIdPersona, asistencia: newAsistencia, estado: newEstado, contrasena: newContrasena }), // Enviar los nuevos datos como JSON
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Ocultar el formulario de edición
+                    document.getElementById('editForm').style.display = 'none';
+                    // Actualizar la página sin recargar
+                    location.reload();
+                    return false; // Evitar la recarga por defecto del formulario
+                })
+                .catch(error => console.error('Error al editar horario persona:', error));
+
+            return false; // Evitar el envío por defecto del formulario
+        }
+
+        // Función para formatear la fecha
+        function formatFecha(fecha) {
+            const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', timeZoneName: 'short' };
+            const formattedFecha = new Date(fecha).toLocaleDateString('en-US', options);
+            return formattedFecha;
+        }
+    </script>
+</body>
+
+</html>
