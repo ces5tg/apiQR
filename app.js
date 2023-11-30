@@ -27,7 +27,7 @@ app.use('/web/', crudWeb);
 
 
 app.get( '/', ( req, res ) => {//Por defecto la ruta de inicio es esta /api
-  res.render( 'home' );
+  res.redirect( '/web/' );
 } );
 
 module.exports ={

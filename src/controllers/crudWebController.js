@@ -11,11 +11,22 @@ const Grupo = require('../models/grupo');
 const Horario = require('../models/horario');
 const HorarioPersona = require('../models/horarioPersona');
 
+// Rutas para Pagina de inicio
+router.get('/', async (req, res) => {
+    try {
+        const personas = await Persona.find();
+        res.render(path.join(__dirname, '..', '..', 'views', 'layouts', 'navBar.ejs'), { titulo: "Pagina de Inicio" });
+    } catch (error) {
+        res.status(500).json({ message: 'Error al obtener la lista de personas' });
+    }
+});
+
+
 // Rutas para CRUD de Persona
 router.get('/personas', async (req, res) => {
     try {
         const personas = await Persona.find();
-        res.render(path.join(__dirname, '..', '..', 'views', 'persona', 'crud.ejs'), { personas });
+        res.render(path.join(__dirname, '..', '..', 'views', 'persona', 'crud.ejs'), { personas, titulo: "Personas" });
     } catch (error) {
         res.status(500).json({ message: 'Error al obtener la lista de personas' });
     }
@@ -26,7 +37,7 @@ router.get('/personas', async (req, res) => {
 router.get('/aulas', async (req, res) => {
     try {
         const aulas = await Aula.find();
-        res.render(path.join(__dirname, '..', '..', 'views', 'aula', 'crud.ejs'), { aulas });
+        res.render(path.join(__dirname, '..', '..', 'views', 'aula', 'crud.ejs'), { aulas, titulo: "Aulas" });
     } catch (error) {
         res.status(500).json({ message: 'Error al obtener la lista de aulas' });
     }
@@ -36,7 +47,7 @@ router.get('/aulas', async (req, res) => {
 router.get('/carreras', async (req, res) => {
     try {
         const carreras = await Carrera.find();
-        res.render(path.join(__dirname, '..', '..', 'views', 'carrera', 'crud.ejs'), { carreras });
+        res.render(path.join(__dirname, '..', '..', 'views', 'carrera', 'crud.ejs'), { carreras, titulo: "Carreras" });
     } catch (error) {
         res.status(500).json({ message: 'Error al obtener la lista de carreras' });
     }
@@ -47,7 +58,7 @@ router.get('/cursos', async (req, res) => {
     try {
         const cursos = await Curso.find().populate('id_carrera');
         const carreras = await Carrera.find();
-        res.render(path.join(__dirname, '..', '..', 'views', 'curso', 'crud.ejs'), { cursos, carreras });
+        res.render(path.join(__dirname, '..', '..', 'views', 'curso', 'crud.ejs'), { cursos, carreras, titulo: "Cursos" });
     } catch (error) {
         res.status(500).json({ message: 'Error al obtener la lista de cursos' });
     }
@@ -58,7 +69,7 @@ router.get('/grupos', async (req, res) => {
     try {
         const grupos = await Grupo.find().populate('id_carrera');
         const carreras = await Carrera.find();
-        res.render(path.join(__dirname, '..', '..', 'views', 'grupo', 'crud.ejs'), { grupos, carreras });
+        res.render(path.join(__dirname, '..', '..', 'views', 'grupo', 'crud.ejs'), { grupos, carreras, titulo: "Grupos" });
     } catch (error) {
         res.status(500).json({ message: 'Error al obtener la lista de grupos' });
     }
@@ -69,7 +80,7 @@ router.get('/horarios', async (req, res) => {
     try {
         const horarios = await Horario.find().populate('aula');
         const aulas = await Aula.find();
-        res.render(path.join(__dirname, '..', '..', 'views', 'horario', 'crud.ejs'), { horarios, aulas });
+        res.render(path.join(__dirname, '..', '..', 'views', 'horario', 'crud.ejs'), { horarios, aulas, titulo: "Horarios" });
     } catch (error) {
         res.status(500).json({ message: 'Error al obtener la lista de aulas' });
     }
@@ -90,7 +101,7 @@ router.get('/horariosPersonas', async (req, res) => {
         const cursos = await Curso.find();
         const grupos = await Grupo.find();
         const personas = await Persona.find();
-        res.render(path.join(__dirname, '..', '..', 'views', 'horarioPersona', 'crud.ejs'), { horariosPersonas, horarios, grupos, cursos, personas });
+        res.render(path.join(__dirname, '..', '..', 'views', 'horarioPersona', 'crud.ejs'), { horariosPersonas, horarios, grupos, cursos, personas, titulo: "Horarios Persona" });
     } catch (error) {
         console.error('Error al obtener horario persona:', error);
         res.status(500).json({ message: 'Error al obtener la lista de aulas' });

@@ -3,11 +3,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRUD de Grupos</title>
-</head>
+<%- include('../layouts/head.ejs') %>
 
 <body>
     
@@ -31,6 +27,10 @@
         <button type="submit">Crear Grupo</button>
     </form>
 
+    <!-- Detalles de grupo -->
+    <div id="grupoDetails"></div>
+
+
     <!-- Tabla de Grupos -->
     <table>
         <thead>
@@ -45,7 +45,7 @@
             <% grupos.forEach(grupo => { %>
                 <tr>
                     <!-- Detalles de Grupo -->
-                    <td><a href="/api/web/grupo/<%= grupo._id %>"><%= grupo.name %></a></td>
+                    <td><a href="#" onclick="showGrupoDetails('<%= grupo._id %>')"><%= grupo.name %></a></td>
                     <td><%= grupo.nro_inscritos %></td>
                     <td><%= grupo.id_carrera.name %></td>
                     <!-- Enlace para Editar Grupo -->
@@ -166,6 +166,23 @@
 
             return false; // Evitar el envío por defecto del formulario
         }
+        function showGrupoDetails(grupoId) {
+        // Realizar solicitud AJAX para obtener detalles del grupo
+        fetch(`/api/web/grupo/${grupoId}`)
+            .then(response => response.json())
+            .then(data => {
+                // Mostrar los detalles en el div correspondiente
+                const grupoDetailsDiv = document.getElementById('grupoDetails');
+                grupoDetailsDiv.innerHTML = `
+                    <h2>Detalles del Grupo</h2>
+                    <p><strong>Nombre:</strong> ${data.name}</p>
+                    <p><strong>Número de Inscritos:</strong> ${data.nro_inscritos}</p>
+                    <p><strong>Carrera:</strong> ${data.id_carrera.name}</p>
+                    <!-- Puedes agregar más detalles según tu modelo de datos -->
+                `;
+            })
+            .catch(error => console.error('Error al obtener detalles del grupo:', error));
+    }
     </script>
 </body>
 
