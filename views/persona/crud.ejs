@@ -3,11 +3,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRUD de Personas</title>
-</head>
+<%- include('../layouts/head.ejs') %>
 
 <body>
     
@@ -35,7 +31,7 @@
             <% personas.forEach(persona => { %>
                 <tr>
                     <!-- Detalles de Persona -->
-                    <td><a href="/api/web/persona/<%= persona._id %>"><%= persona.name %></a></td>
+                    <td><a href="#" onclick="showPersonaDetails('<%= persona._id %>')"><%= persona.name %></a></td>
                     <!-- Enlace para Editar Persona -->
                     <td><a href="#" onclick="showEditForm('<%= persona._id %>', '<%= persona.name %>'); event.preventDefault();">Editar</a></td>
                     <!-- Botón para Eliminar Persona -->
@@ -46,6 +42,10 @@
             <% }); %>
         </tbody>
     </table>
+
+    <div id="personaDetails">
+        <!-- Aquí se cargarán dinámicamente los detalles de la persona -->
+    </div>
 
     <!-- Formulario para Editar Persona -->
     <form id="editForm" style="display: none;" onsubmit="return editPersona()">
@@ -138,6 +138,20 @@
                 .catch(error => console.error('Error al editar persona:', error));
 
             return false; // Evitar el envío por defecto del formulario
+        }
+        function showPersonaDetails(personaId) {
+            // Realiza una solicitud AJAX para obtener detalles de la persona según el ID
+            fetch(`/api/web/persona/${personaId}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Actualiza la sección de detalles con la información obtenida
+                    document.getElementById('personaDetails').innerHTML = `
+                        <h2>Detalles de ${data.name}</h2>
+                        <p>DATA USUARIO</p>
+                        <!-- Agrega más detalles según tu modelo de datos -->
+                    `;
+                })
+                .catch(error => console.error('Error al obtener detalles de persona:', error));
         }
     </script>
 </body>

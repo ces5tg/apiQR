@@ -3,11 +3,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRUD de Horarios Personas</title>
-</head>
+<%- include('../layouts/head.ejs') %>
 
 <body>
     
@@ -79,7 +75,7 @@
             <% horariosPersonas.forEach(horarioPersona => { %>
                 <tr>
                     <!-- Detalles de Horario Persona -->
-                    <td><%= horarioPersona.id_horario.dia %></td>
+                    <td><%= horarioPersona.id_horario.dia.toLocaleString() %></td>
                     <td><%= horarioPersona.id_grupo.name %></td>
                     <td><%= horarioPersona.id_curso.name %></td>
                     <td><%= horarioPersona.id_persona.name %></td>
@@ -256,6 +252,13 @@
                 .catch(error => console.error('Error al editar horario persona:', error));
 
             return false; // Evitar el envío por defecto del formulario
+        }
+
+        // Función para formatear la fecha
+        function formatFecha(fecha) {
+            const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', timeZoneName: 'short' };
+            const formattedFecha = new Date(fecha).toLocaleDateString('en-US', options);
+            return formattedFecha;
         }
     </script>
 </body>

@@ -10,6 +10,9 @@ const Curso = require('../models/curso');
 const Grupo = require('../models/grupo');
 const Horario = require('../models/horario');
 const HorarioPersona = require('../models/horarioPersona');
+const dotenv = require('dotenv');
+const qrcode = require('qrcode');
+dotenv.config();
 
 router.use(express.json());
 
@@ -69,9 +72,21 @@ router.delete('/persona/:id', async (req, res) => {
 // CRUD para Aula
 router.post('/aula', async (req, res) => {
     try {
+        console.log("ingreso a aula post")
         const { name, descripcion, zona, codigo } = req.body;
-        const nuevaAula = new Aula({ name, descripcion, zona, codigo });
+        console.log("antes")
+        const url = `http://${process.env.IP_LOCALHOST}/api/movil/validarCodigo/${name}`
+        console.log(url)
+        
+        const codigoq =await qrcode.toDataURL(url)
+        console.log(codigoq)
+
+        const nuevaAula = new Aula({ name, descripcion, zona, codigo:codigoq });
         const aulaGuardada = await nuevaAula.save();
+
+
+
+        console.log(aulaGuardada)
         res.json(aulaGuardada);
     } catch (error) {
         res.status(500).json({ message: 'Error al guardar el aula' });

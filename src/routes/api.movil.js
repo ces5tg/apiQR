@@ -5,14 +5,14 @@ const moment=require( 'moment-timezone' );
 const router=express.Router();
 router.use( bodyParser.json() );
 
-const {Aula , Persona , Horario , HorarioPersona} = require('../models/collections.schema')
+const Aula  = require('../models/aula')
 // listar los horarios del profesor
 
 router.get( '/inicioSesion', async ( req, res ) => {
     const {email , password}  = req.body
 
     try {
-        const busquedaAula=await Persona.findOne( { descripcion: new RegExp( req.params.nameAula, 'i' ) } );
+        const busquedaAula=await Persona.findOne( { name: new RegExp( req.params.nameAula, 'i' ) } );
         res.json(busquedaAula);
     } catch ( error ) {
         res.status( 500 ).json( { error: 'error , codigo QR , aula no existe' } );
@@ -20,7 +20,7 @@ router.get( '/inicioSesion', async ( req, res ) => {
 } );
 router.get( '/validarCodigo/:nameAula', async ( req, res ) => {
     try {
-        const busquedaAula=await Aula.findOne( { descripcion: new RegExp( req.params.nameAula, 'i' ) } );
+        const busquedaAula=await Aula.findOne( { name: new RegExp( req.params.nameAula, 'i' ) } );
         res.json(busquedaAula);
     } catch ( error ) {
         res.status( 500 ).json( { error: 'error , codigo QR , aula no existe' } );

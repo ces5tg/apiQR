@@ -3,11 +3,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRUD de Aulas</title>
-</head>
+<%- include('../layouts/head.ejs') %>
 
 <body>
     
@@ -34,7 +30,9 @@
             <% aulas.forEach(aula => { %>
                 <tr>
                     <!-- Detalles de Aula -->
-                    <td><a href="/api/web/aula/<%= aula._id %>"><%= aula.name %></a></td>
+                    <td>
+                        <a href="#" onclick="loadAulaDetails('<%= aula._id %>')"><%= aula.name %></a>
+                    </td>
                     <!-- Enlace para Editar Aula -->
                     <td><a href="#" onclick="showEditForm('<%= aula._id %>', '<%= aula.name %>'); event.preventDefault();">Editar</a></td>
                     <!-- Botón para Eliminar Aula -->
@@ -53,6 +51,10 @@
         <input type="text" id="editName" name="name" required>
         <button type="submit">Guardar Cambios</button>
     </form>
+
+    <div id="aulaDetails">
+        <!-- Aquí se cargarán dinámicamente los detalles del aula -->
+    </div>
 
     <script>
         // Función para mostrar el formulario de edición
@@ -137,6 +139,36 @@
                 .catch(error => console.error('Error al editar aula:', error));
 
             return false; // Evitar el envío por defecto del formulario
+        }
+
+        // Función para cargar dinámicamente los detalles del aula mediante AJAX
+        function loadAulaDetails(aulaId) {
+            // Realiza una solicitud AJAX para obtener los detalles del aula
+            fetch(`/api/web/aula/${aulaId}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+
+                    // Inicializa renderedContent como una cadena vacía
+                    let renderedContent = '';
+
+                    // Actualiza el contenido solo si hay datos disponibles
+                    if (data) {
+                        // Renderiza el contenido de detalles directamente en la variable
+                        renderedContent = `
+                            <h2>Detalles del Aula</h2>
+                            <p><strong>ID:</strong> ${data._id}</p>
+                            <p><strong>Nombre:</strong> ${data.name}</p>
+                            <p><strong>Descripcion:</strong> ${data.descripcion}</p>
+                            <img src="${data.Codigo}" alt="Imagen del Aula">
+
+                        `;
+                    }
+
+                    // Actualiza la sección de detalles con el contenido renderizado
+                    document.getElementById('aulaDetails').innerHTML = renderedContent;
+                })
+                .catch(error => console.error('Error al cargar detalles de aula:', error));
         }
     </script>
 </body>

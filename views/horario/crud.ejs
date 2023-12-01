@@ -3,11 +3,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRUD de Horarios</title>
-</head>
+<%- include('../layouts/head.ejs') %>
 
 <body>
     
@@ -51,9 +47,9 @@
             <% horarios.forEach(horario => { %>
                 <tr>
                     <!-- Detalles de Horario -->
-                    <td><%= horario.dia %></td>
-                    <td><%= horario.hora_inicio %></td>
-                    <td><%= horario.hora_fin %></td>
+                    <td><%= horario.dia.toLocaleString() %></td>
+                    <td><%= horario.hora_inicio.toLocaleString() %></td>
+                    <td><%= horario.hora_fin.toLocaleString() %></td>
                     <td><%= horario.estado %></td>
                     <td><%= horario.aula.name %></td>
                     <!-- Enlace para Editar Horario -->

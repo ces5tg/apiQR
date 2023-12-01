@@ -30,6 +30,17 @@
 
 <body>
 
+    <label for="aulaSelect">Seleccione un aula: </label>
+    <select id="aulaSelect" onchange="cargarAulas()">
+        <!-- Las opciones se llenarán dinámicamente desde la API -->
+    </select>
+
+    <!-- Agrega otro elemento select para que el usuario elija la persona -->
+    <label for="personaSelect">Seleccione una persona: </label>
+    <select id="personaSelect" onchange="cargarDatos()">
+        <!-- Las opciones se llenarán dinámicamente desde la API -->
+    </select>
+
     <h1 id="semana"></h1>
 
     <table id="horario">
@@ -142,6 +153,53 @@
                 }
             }
         }
+        function cargarAulas() {
+            // Limpia las opciones existentes
+            aulaSelect.innerHTML = '';
+
+            // Realiza una solicitud AJAX para obtener la lista de aulas desde la API
+            fetch('http://localhost:3000/api/web/aula')
+                .then(response => response.json())
+                .then(data => {
+                    // Agrega cada aula como una opción en el elemento select
+                    data.forEach(aula => {
+                        const option = document.createElement('option');
+                        option.value = aula._id;
+                        option.textContent = aula.name;
+                        aulaSelect.appendChild(option);
+                    });
+
+                    // Carga automáticamente los datos al inicio
+                    cargarDatos();
+                })
+                .catch(error => console.error('Error al cargar aulas:', error));
+        }
+
+        function cargarDocentes() {
+            // Limpia las opciones existentes
+            personaSelect.innerHTML = '';
+
+            // Realiza una solicitud AJAX para obtener la lista de personas desde la API
+            fetch('http://localhost:3000/api/web/persona')
+                .then(response => response.json())
+                .then(data => {
+                    // Agrega cada persona como una opción en el elemento select
+                    data.forEach(persona => {
+                        const option = document.createElement('option');
+                        option.value = persona._id;
+                        option.textContent = persona.name;
+                        personaSelect.appendChild(option);
+                    });
+
+                    // Carga automáticamente los datos al inicio
+                    cargarDatos();
+                })
+                .catch(error => console.error('Error al cargar docentes:', error));
+        }
+
+
+        cargarAulas();
+        cargarDocentes();
         cargarDatos('par');
     </script>
 
