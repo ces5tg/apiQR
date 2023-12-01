@@ -84,8 +84,6 @@ router.post('/aula', async (req, res) => {
         const nuevaAula = new Aula({ name, descripcion, zona, codigo:codigoq });
         const aulaGuardada = await nuevaAula.save();
 
-
-
         console.log(aulaGuardada)
         res.json(aulaGuardada);
     } catch (error) {
@@ -400,5 +398,28 @@ router.delete('/horarioPersona/:id', async (req, res) => {
         res.status(500).json({ error: 'Error interno del servidor' });
     }
 });
+
+router.get('/horarioAsistencia', async (req, res) => {
+    try {
+        const horariosPersonas = await HorarioPersona.find()
+        .populate([
+            { path: 'id_horario' },
+            { path: 'id_grupo', select: ['name'] },
+            { path: 'id_curso', select: ['name'] },
+            { path: 'id_persona', select: ['name'] }
+        ]);
+ 
+        res.json(horariosPersonas)
+        
+    } catch (error) {
+        console.error('Error al obtener horario persona:', error);
+        res.status(500).json({ message: 'Error al obtener la lista de aulas' });
+    }
+});
+
+
+
+
+
 
 module.exports = router;

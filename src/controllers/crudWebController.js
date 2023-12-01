@@ -107,4 +107,23 @@ router.get('/horariosPersonas', async (req, res) => {
     }
 });
 
+// Rutas para CRUD de Horarios-Persona
+router.get('/horarioAsistencia', async (req, res) => {
+    try {
+        const horariosPersonas = await HorarioPersona.find()
+        .populate([
+            { path: 'id_horario' },
+            { path: 'id_grupo', select: ['name'] },
+            { path: 'id_curso', select: ['name'] },
+            { path: 'id_persona', select: ['name'] }
+        ]);
+ 
+        res.render(path.join(__dirname, '..', '..', 'views', 'admin', 'horarioAsistencia.ejs'), { horariosPersonas});
+    } catch (error) {
+        console.error('Error al obtener horario persona:', error);
+        res.status(500).json({ message: 'Error al obtener la lista de aulas' });
+    }
+});
+
+
 module.exports = router;

@@ -1,0 +1,85 @@
+<!-- Este es tu archivo CRUD para Aulas -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <body>
+    <% if (horariosPersonas.length > 0) { %>
+    <table id="miTabla">
+      <thead>
+        <tr>
+          <th>ID Horario</th>
+          <th>ID Grupo</th>
+          <th>ID Curso</th>
+          <th>ID Persona</th>
+          <th>Asistencia</th>
+          <th>Estado</th>
+          <th>Contraseña</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% horariosPersonas.forEach(horarioPersona => { %>
+        <tr>
+          <!-- Detalles de Horario Persona -->
+          <td><%= horarioPersona.id_horario.dia.toLocaleString() %></td>
+          <td><%= horarioPersona.id_grupo.name %></td>
+          <td><%= horarioPersona.id_curso.name %></td>
+          <td><%= horarioPersona.id_persona.name %></td>
+          <td><%= horarioPersona.asistencia ? 'Sí' : 'No' %></td>
+          <td><%= horarioPersona.estado %></td>
+          <td><%= horarioPersona.contrasena %></td>
+          <!-- Enlace para Editar Horario Persona -->
+          <td>
+            <a
+              href="#"
+              onclick="showEditForm('<%= horarioPersona._id %>', '<%= horarioPersona.id_horario._id %>', '<%= horarioPersona.id_grupo._id %>', '<%= horarioPersona.id_curso._id %>', '<%= horarioPersona.id_persona._id %>', '<%= horarioPersona.asistencia %>', '<%= horarioPersona.estado %>', '<%= horarioPersona.contrasena %>');"
+              >Editar</a
+            >
+          </td>
+          <!-- Botón para Eliminar Horario Persona -->
+          <td>
+            <button
+              type="button"
+              onclick="confirmDelete('<%= horarioPersona._id %>')"
+            >
+              Eliminar
+            </button>
+          </td>
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
+
+    <% } else { %>
+    <p>No hay horarios de personas disponibles.</p>
+    <% } %>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io.connect();
+
+      let tiempoRestante = 60;
+      function actualizarTabla() {
+        console.log("w");
+        // Simula la actualización de la tabla (reemplaza con tu lógica real)
+        const tabla = document.getElementById("miTabla");
+        const tbody = tabla.querySelector("tbody");
+        tbody.innerHTML = `<tr><td>Contenido actualizado (próxima actualización en ${tiempoRestante} segundos)</td></tr>`;
+        tiempoRestante--;
+
+        // Si el contador llega a cero, reinícialo y realiza la actualización
+        if (tiempoRestante === 0) {
+          tiempoRestante = 60; // Reinicia el contador a 60 segundos
+          actualizarCampoAsistencia();
+        }
+      }
+
+      function actualizarCampoAsistencia() {
+        console.log("Campo de asistencia actualizado");
+        socket.emit("campoAsistenciaActualizado", "asf");
+      }
+      // Configura un intervalo para actualizar la tabla cada 50 minutos (50 * 60 * 1000 milisegundos)
+      setInterval(actualizarTabla, 1000);
+    </script>
+  </body>
+</html>

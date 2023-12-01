@@ -1,18 +1,15 @@
 const {app} = require('./app');
-const port = 3001;
+const http = require("http") ;
+const { Server } = require('socket.io'); // Corregir aquí
+const sockets = require('./sockets')
+
+
 require('./database')
 
-// Para que se ejecute el servidor
-app.listen(port, () => {
-  console.log(`Servidor corriendo en http://localhost:${port}/`);
-});
+const se = http.createServer(app)
 
-
-
-
-
-
-
-app.listen( 3000, () => {
+const httpServer = se.listen( 3000, () => {
     console.log( `Server started on port3000` );
 });
+const io = new Server(httpServer)
+sockets(io)

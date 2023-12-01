@@ -9,6 +9,8 @@
     "moment": "^2.29.4",
     "moment-timezone": "^0.5.43",
     "mongoose": "^7.6.3",
-    "qrcode": "^1.5.3"
+    "qrcode": "^1.5.3",
+    "socker.io": "^0.0.0-alpha-beta",
+    "socket.io": "^4.7.2"
   }
 }
