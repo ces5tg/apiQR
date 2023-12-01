@@ -399,6 +399,7 @@ router.delete('/horarioPersona/:id', async (req, res) => {
     }
 });
 
+//=====================================================SOCKET.IO , LISTA DE HORARIOSPERSONAS
 router.get('/horarioAsistencia', async (req, res) => {
     try {
         const horariosPersonas = await HorarioPersona.find()
