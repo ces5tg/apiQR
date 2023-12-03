@@ -2,7 +2,7 @@ const socket=io.connect();
 
 let tiempoRestante = 60;
 function actualizarTabla() {
-    console.log("w")
+    console.log("wee")
     // Simula la actualización de la tabla (reemplaza con tu lógica real)
     const tabla=document.getElementById( 'miTabla' );
     const tbody=tabla.querySelector( 'tbody' );
@@ -21,4 +21,4 @@ function actualizarCampoAsistencia() {
     socket.emit('campoAsistenciaActualizado', "asf");
   }
 // Configura un intervalo para actualizar la tabla cada 50 minutos (50 * 60 * 1000 milisegundos)
-setInterval( actualizarTabla,1000 );
+//setInterval( actualizarTabla, 1000 *60 * 5 );

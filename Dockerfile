@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 3000
 
 # Define el comando por defecto para ejecutar la aplicación
-CMD ["node", "app.js"]
+CMD ["node", "index.js"]
