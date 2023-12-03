@@ -116,7 +116,7 @@ router.get( '/horarioAsistencia', async ( req, res ) => {
         const horaActual2=moment().utcOffset( '-05:00' );
 /*         const horaDespues=moment().utcOffset( '-05:00' ).add(50, 'minutes'); */
         const intervalo = 50; // Intervalo en minutos
-        const minutosRedondeados = Math.floor((horaActual2.minutes() - 20) / intervalo) *intervalo + 20;
+        const minutosRedondeados = Math.floor((horaActual2.minutes() ) / intervalo) *intervalo ;
         const horaActual = horaActual2.clone().minutes(minutosRedondeados);
 
         const  horaDespues = horaActual.clone().add(50 , 'minutes')
@@ -138,17 +138,15 @@ router.get( '/horarioAsistencia', async ( req, res ) => {
         console.log({h2})
         const horariosPersonas = h2.filter(horarioPersona => {
             const horaHorario_db = moment(horarioPersona.id_horario.hora_inicio, 'HH:mm');
-            // Extrae solo las horas y minutos de la hora actual y del horario
-            const horaForm_db = horaHorario_db.format('HH:mm');
-            //console.log("hora Horario5 formato" + horaForm_db)
 
-/*             
-            const horaActualFormatted = horaActual.format('HH:mm');
-            console.log("hora actual formato" + horaActualFormatted) */
-        
-            // Comprueba si las horas y minutos del horarioPersona están dentro del rango
-            console.log(horaActual.format('HH:mm') + ' -- '+ horaForm_db + ' -- '+horaDespues.format('HH:mm'))
-            return horaForm_db >= horaActual.format('HH:mm') && horaForm_db < horaDespues.format('HH:mm');
+            // Aumenta 5 horas
+            const horaAumentada = horaHorario_db.add(5, 'hours');
+
+            // Formatea la nueva hora
+            const horaForm_db_aumentada = horaAumentada.format('HH:mm');
+
+            console.log(horaActual.format('HH:mm') + ' -- '+ horaForm_db_aumentada+ ' -- '+horaDespues.format('HH:mm'))
+            return horaForm_db_aumentada >= horaActual.format('HH:mm') && horaForm_db_aumentada < horaDespues.format('HH:mm');
         });
 
         res.render( path.join( __dirname, '..', '..', 'views', 'admin', 'horarioAsistencia.ejs' ), { horariosPersonas } );

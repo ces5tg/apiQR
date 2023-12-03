@@ -8,7 +8,7 @@ router.use( bodyParser.json() );
 const Aula  = require('../models/aula')
 const Horario  = require('../models/horario')
 const HorarioPersona  = require('../models/horarioPersona')
-const io = require('../../sockets')
+const {io} = require('../../sockets');
 // listar los horarios del profesor
 
 router.get( '/inicioSesion', async ( req, res ) => {
@@ -62,11 +62,9 @@ router.post( '/validarHorario', async ( req, res ) => {
                 nuevaAsistencia: searchHorarioPersona.asistencia,
             });
 
+            io.emit('asistenciaCambiada', "hola , error");
             // Emitir un evento a través de Socket.IO después de cambiar la asistencia a true
-           /*  io.emit('asistenciaCambiada', {
-                idHorarioPersona: searchHorarioPersona._id,
-                nuevaAsistencia: searchHorarioPersona.asistencia,
-            }); */
+           
         }
 
 
