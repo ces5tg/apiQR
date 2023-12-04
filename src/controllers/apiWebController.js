@@ -295,21 +295,29 @@ router.delete( '/grupo/:id', async ( req, res ) => {
 } );
 
 // CRUD para Horario
-router.post( '/horario', async ( req, res ) => {
+router.post('/horario', async (req, res) => {
     const zonaHorariaPeru = 'America/Lima';
     try {
-        const { dia, hora_inicio_formt, hora_fin_formt, estado, aula }=req.body;
-        const hora_inicio=moment.tz( hora_inicio_formt, zonaHorariaPeru ).format( 'YYYY-MM-DDTHH:mm:ss.SSSZ' );
-        const hora_fin=moment.tz( hora_fin_formt, zonaHorariaPeru ).format( 'YYYY-MM-DDTHH:mm:ss.SSSZ' );
+        const { dia, hora_inicio_formt, hora_fin_formt, estado, aula } = req.body;
 
-        const nuevoHorario=new Horario( { dia, hora_inicio, hora_fin, estado, aula } );
-        const horarioGuardado=await nuevoHorario.save();
-        res.json( horarioGuardado );
-    } catch ( error ) {
-        console.error( 'Error en la creación de horario:', error );
-        res.status( 500 ).json( { message: 'Error al guardar el horario' } );
+
+        const diaIncreased = moment.tz(dia, zonaHorariaPeru).format('YYYY-MM-DDTHH:mm:ss.SSSZ');
+
+        let var_hora_ini = `${dia}T${hora_inicio_formt}:00.000-05:00`
+        let var_hora_fin = `${dia}T${hora_fin_formt}:00.000-05:00`
+
+        const hora_inicio = moment.tz(var_hora_ini, zonaHorariaPeru).format('YYYY-MM-DDTHH:mm:ss.SSSZ');
+        const hora_fin = moment.tz(var_hora_fin, zonaHorariaPeru).format('YYYY-MM-DDTHH:mm:ss.SSSZ');
+        
+        const nuevoHorario = new Horario({ dia: diaIncreased, hora_inicio, hora_fin, estado, aula });
+        const horarioGuardado = await nuevoHorario.save();
+        
+        res.json(horarioGuardado);
+    } catch (error) {
+        console.error('Error en la creación de horario:', error);
+        res.status(500).json({ message: 'Error al guardar el horario' });
     }
-} );
+});
 
 router.get( '/horario', async ( req, res ) => {
     try {
