@@ -75,7 +75,7 @@
             <% horariosPersonas.forEach(horarioPersona => { %>
                 <tr>
                     <!-- Detalles de Horario Persona -->
-                    <td><%= horarioPersona.id_horario.dia.toLocaleString() %></td>
+                    <td><%= horarioPersona.id_horario.dia.toLocaleDateString() %></td>
                     <td><%= horarioPersona.id_grupo.name %></td>
                     <td><%= horarioPersona.id_curso.name %></td>
                     <td><%= horarioPersona.id_persona.name %></td>
@@ -129,7 +129,7 @@
         <label for="editEstado">Nuevo Estado:</label>
         <input type="checkbox" id="editEstado" name="estado">
         <label for="editContrasena">Nueva Contraseña:</label>
-        <input type="password" id="editContrasena" name="contrasena" required>
+        <input type="text" id="editContrasena" name="contrasena" required>
         <button type="submit">Guardar Cambios</button>
     </form>
 
