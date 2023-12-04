@@ -111,6 +111,7 @@ router.get( '/horariosPersonas', async ( req, res ) => {
 
 // Rutas para CRUD de Horarios-Persona
 router.get( '/horarioAsistencia', async ( req, res ) => {
+    // estableciendo un rango de horario  , 
     try {
         // Obtén la hora actual y la hora actual más una hora
         const horaActual2=moment().utcOffset( '-05:00' );
@@ -140,13 +141,14 @@ router.get( '/horarioAsistencia', async ( req, res ) => {
             const horaHorario_db = moment(horarioPersona.id_horario.hora_inicio, 'HH:mm');
 
             // Aumenta 5 horas
-            const horaAumentada = horaHorario_db.add(5, 'hours');
+            console.log(horaHorario_db.format('HH:mm') + " zzzzzz ")
+            //const horaAumentada = horaHorario_db.add(5, 'hours');
 
             // Formatea la nueva hora
-            const horaForm_db_aumentada = horaAumentada.format('HH:mm');
+            //const horaForm_db_aumentada = horaAumentada.format('HH:mm');
 
-            console.log(horaActual.format('HH:mm') + ' -- '+ horaForm_db_aumentada+ ' -- '+horaDespues.format('HH:mm'))
-            return horaForm_db_aumentada >= horaActual.format('HH:mm') && horaForm_db_aumentada < horaDespues.format('HH:mm');
+            console.log(horaActual.format('HH:mm') + ' -- '+ horaHorario_db.format('HH:mm') + ' -- '+horaDespues.format('HH:mm'))
+            return horaHorario_db.format('HH:mm') >= horaActual.format('HH:mm') && horaHorario_db.format('HH:mm') < horaDespues.format('HH:mm');
         });
 
         res.render( path.join( __dirname, '..', '..', 'views', 'admin', 'horarioAsistencia.ejs' ), { horariosPersonas } );
