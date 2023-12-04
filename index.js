@@ -8,6 +8,7 @@ require('./database')
 
 const se = http.createServer(app)
 
+
 const httpServer = se.listen( 3000, () => {
     console.log( `Server started on port3000` );
 });
