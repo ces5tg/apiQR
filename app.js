@@ -23,7 +23,7 @@ app.use( bodyParser.urlencoded( { extended: false } ) );
 
 //IMPORTANTE -> NO TOQUEN NADA DE API/ARDUINO Y MOVIL
 app.use( '/api/arduino', apiArduino);
-app.use( '/api/movil', apiMovil);
+/* app.use( '/api/movil', apiMovil); */
 
 // Rutas para Api - Equipo Web
 app.use('/api/web/', apiWeb);

@@ -115,6 +115,7 @@ router.get( '/horarioAsistencia', async ( req, res ) => {
     try {
         // Obtén la hora actual y la hora actual más una hora
         const horaActual2=moment().utcOffset( '-05:00' );
+        console.log(horaActual2.format('HH:mm') + "la hora actual de PERU ")
 /*         const horaDespues=moment().utcOffset( '-05:00' ).add(50, 'minutes'); */
         const intervalo = 50; // Intervalo en minutos
         const minutosRedondeados = Math.floor((horaActual2.minutes() ) / intervalo) *intervalo ;
@@ -139,6 +140,7 @@ router.get( '/horarioAsistencia', async ( req, res ) => {
         console.log({h2})
         const horariosPersonas = h2.filter(horarioPersona => {
             const horaHorario_db = moment(horarioPersona.id_horario.hora_inicio, 'HH:mm');
+            console.log("----------------------"+horarioPersona.id_horario.hora_inicio)
 
             // Aumenta 5 horas
             console.log(horaHorario_db.format('HH:mm') + " zzzzzz ")
