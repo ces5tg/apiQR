@@ -29,12 +29,12 @@ router.get( '/persona', async ( req, res ) => {
 
 router.post( '/persona', async ( req, res ) => {
     try {
-        const { name }=req.body;
-        const nuevaPersona=new Persona( { name } );
-        const personaGuardada=await nuevaPersona.save();
-        res.json( personaGuardada );
-    } catch ( error ) {
-        res.status( 500 ).json( { message: 'Error al guardar la persona' } );
+        const { name, firstName, lastName, dni, estado, rol, user } = req.body;
+        const nuevaPersona = new Persona({ name, firstName, lastName, dni, estado, rol, user });
+        const personaGuardada = await nuevaPersona.save();
+        res.json(personaGuardada);
+    } catch (error) {
+        res.status(500).json({ message: 'Error al guardar la persona' });
     }
 } );
 
@@ -49,15 +49,15 @@ router.get( '/persona/:id', async ( req, res ) => {
 
 router.put( '/persona/:id', async ( req, res ) => {
     try {
-        const { name }=req.body;
-        const personaActualizada=await Persona.findByIdAndUpdate(
+        const { name, firstName, lastName, dni, estado, rol, user } = req.body;
+        const personaActualizada = await Persona.findByIdAndUpdate(
             req.params.id,
-            { name },
+            { name, firstName, lastName, dni, estado, rol, user },
             { new: true }
         );
-        res.json( personaActualizada );
-    } catch ( error ) {
-        res.status( 500 ).json( { message: 'Error al actualizar la persona' } );
+        res.json(personaActualizada);
+    } catch (error) {
+        res.status(500).json({ message: 'Error al actualizar la persona' });
     }
 } );
 
@@ -329,21 +329,31 @@ router.get( '/horario/:id', async ( req, res ) => {
     }
 } );
 
-router.put( '/horario/:id', async ( req, res ) => {
+router.put('/horario/:id', async (req, res) => {
+    const zonaHorariaPeru = 'America/Lima';
     try {
-        const { dia, hora_inicio_formt, hora_fin_formt, estado, aula }=req.body;
-        const hora_inicio=moment( hora_inicio_formt ).format( 'YYYY-MM-DDTHH:mm:ss.SSSZ' );
-        const hora_fin=moment( hora_fin_formt ).format( 'YYYY-MM-DDTHH:mm:ss.SSSZ' );
-        const horarioActualizado=await Horario.findByIdAndUpdate(
+        const { dia, hora_inicio_formt_edit, hora_fin_formt_edit, estado, aula } = req.body;
+
+        const diaIncreased = moment.tz(dia, zonaHorariaPeru).format('YYYY-MM-DDTHH:mm:ss.SSSZ');
+        let var_hora_ini = `${dia}T${hora_inicio_formt_edit}:00.000-05:00`;
+        let var_hora_fin = `${dia}T${hora_fin_formt_edit}:00.000-05:00`;
+
+        const hora_inicio = moment.tz(var_hora_ini, zonaHorariaPeru).format('YYYY-MM-DDTHH:mm:ss.SSSZ');
+        const hora_fin = moment.tz(var_hora_fin, zonaHorariaPeru).format('YYYY-MM-DDTHH:mm:ss.SSSZ');
+
+        const horarioActualizado = await Horario.findByIdAndUpdate(
             req.params.id,
-            { dia, hora_inicio, hora_fin, estado, aula },
+            { dia: diaIncreased, hora_inicio, hora_fin, estado, aula },
             { new: true }
-        ).populate( 'aula' );
-        res.json( horarioActualizado );
-    } catch ( error ) {
-        res.status( 500 ).json( { message: 'Error al actualizar el horario' } );
+        ).populate('aula');
+
+        res.json(horarioActualizado);
+    } catch (error) {
+        console.error('Error al actualizar el horario:', error);
+        res.status(500).json({ message: 'Error al actualizar el horario' });
     }
-} );
+});
+
 
 router.delete( '/horario/:id', async ( req, res ) => {
     try {

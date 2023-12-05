@@ -47,9 +47,10 @@
             <% horarios.forEach(horario => { %>
                 <tr>
                     <!-- Detalles de Horario -->
-                    <td><%= horario.dia.toLocaleString() %></td>
-                    <td><%= horario.hora_inicio.toLocaleString() %></td>
-                    <td><%= horario.hora_fin.toLocaleString() %></td>
+                    <td><%= horario.dia.toLocaleDateString() %></td>
+                    <td><%= ('0' + horario.hora_inicio.getHours()).slice(-2) %>:<%= ('0' + horario.hora_inicio.getMinutes()).slice(-2) %></td>
+                    <td><%= ('0' + horario.hora_fin.getHours()).slice(-2) %>:<%= ('0' + horario.hora_fin.getMinutes()).slice(-2) %></td>
+
                     <td><%= horario.estado %></td>
                     <td><%= horario.aula.name %></td>
                     <!-- Enlace para Editar Horario -->
@@ -88,11 +89,27 @@
         // Función para mostrar el formulario de edición
         function showEditForm(id, dia, hora_inicio, hora_fin, estado, aula) {
             // Ocultar todos los formularios de edición antes de mostrar uno nuevo
+            console.log(id, dia, hora_inicio, hora_fin, estado, aula);
             hideAllEditForms();
+            
             document.getElementById('editId').value = id;
-            document.getElementById('editDia').value = dia;
-            document.getElementById('editInicio').value = hora_inicio;
-            document.getElementById('editFin').value = hora_fin;
+
+            // Convertir las cadenas de fecha y hora en objetos de fecha
+            const fechaInicio = new Date(hora_inicio);
+            const fechaFin = new Date(hora_fin);
+
+            // Ajustar las fechas y horas a la zona horaria deseada (en este caso, GMT-5)
+            fechaInicio.setHours(fechaInicio.getHours() - 5);
+            fechaFin.setHours(fechaFin.getHours() - 5);
+
+            // Formatear las fechas y horas para los campos de entrada
+            const formatoDia = fechaInicio.toISOString().split('T')[0];
+            const formatoInicio = fechaInicio.toISOString().split('T')[1].substring(0, 5);
+            const formatoFin = fechaFin.toISOString().split('T')[1].substring(0, 5);
+
+            document.getElementById('editDia').value = formatoDia;
+            document.getElementById('editInicio').value = formatoInicio;
+            document.getElementById('editFin').value = formatoFin;
             document.getElementById('editEstado').value = estado;
             document.getElementById('editAula').value = aula;
             document.getElementById('editForm').style.display = 'block';
@@ -166,7 +183,7 @@
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ dia: newHorarioDia, hora_inicio: newHorarioInicio, hora_fin: newHorarioFin, estado: newHorarioEstado, aula: newHorarioAula }), // Enviar los nuevos datos como JSON
+                body: JSON.stringify({ dia: newHorarioDia, hora_inicio_formt_edit: newHorarioInicio, hora_fin_formt_edit: newHorarioFin, estado: newHorarioEstado, aula: newHorarioAula }), // Enviar los nuevos datos como JSON
             })
                 .then(response => response.json())
                 .then(data => {

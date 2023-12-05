@@ -1,5 +1,3 @@
-<!-- Este es tu archivo CRUD para Personas -->
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -15,6 +13,38 @@
     <form id="createForm" action="/api/web/persona" method="POST" onsubmit="return createPersona()">
         <label for="name">Nombre:</label>
         <input type="text" name="name" id="personaName" required>
+
+        <label for="firstName">Primer Nombre:</label>
+        <input type="text" name="firstName" id="personaFirstName" required>
+
+        <label for="lastName">Apellido:</label>
+        <input type="text" name="lastName" id="personaLastName" required>
+
+        <label for="dni">DNI:</label>
+        <input type="text" name="dni" id="personaDNI" required>
+
+        <label for="estado">Estado:</label>
+        <input type="text" name="estado" id="personaEstado" required>
+
+        <label for="rol">Rol:</label>
+        <select name="rol" id="personaRol" required>
+            <option value="admin">Admin</option>
+            <option value="profesor">Profesor</option>
+            <option value="otro">Otro</option>
+        </select>
+
+        <label for="username">Nombre de usuario:</label>
+        <input type="text" name="user.username" id="personaUsername" required>
+
+        <label for="email">Correo electrónico:</label>
+        <input type="email" name="user.email" id="personaEmail" required>
+
+        <label for="password">Contraseña:</label>
+        <input type="password" name="user.password" id="personaPassword" required>
+
+        <label for="profileImage">Imagen de perfil:</label>
+        <input type="text" name="user.profileImage" id="personaProfileImage">
+
         <button type="submit">Crear Persona</button>
     </form>
 
@@ -23,7 +53,15 @@
         <thead>
             <tr>
                 <th>Nombre</th>
-                <th>Edad</th>
+                <th>Primer Nombre</th>
+                <th>Apellido</th>
+                <th>DNI</th>
+                <th>Estado</th>
+                <th>Rol</th>
+                <th>Usuario</th>
+                <th>Email</th>
+                <th>Contraseña</th>
+                <th>Imagen de Perfil</th>
                 <th>Acciones</th>
             </tr>
         </thead>
@@ -32,8 +70,17 @@
                 <tr>
                     <!-- Detalles de Persona -->
                     <td><a href="#" onclick="showPersonaDetails('<%= persona._id %>')"><%= persona.name %></a></td>
+                    <td><%= persona.firstName %></td>
+                    <td><%= persona.lastName %></td>
+                    <td><%= persona.dni %></td>
+                    <td><%= persona.estado %></td>
+                    <td><%= persona.rol %></td>
+                    <td><%= persona.user.username %></td>
+                    <td><%= persona.user.email %></td>
+                    <td><%= persona.user.password %></td>
+                    <td><%= persona.user.profileImage %></td>
                     <!-- Enlace para Editar Persona -->
-                    <td><a href="#" onclick="showEditForm('<%= persona._id %>', '<%= persona.name %>'); event.preventDefault();">Editar</a></td>
+                    <td><a href="#" onclick="showEditForm('<%= persona._id %>', '<%= persona.name %>', '<%= persona.firstName %>', '<%= persona.lastName %>', '<%= persona.dni %>', '<%= persona.estado %>', '<%= persona.rol %>', '<%= persona.user.username %>', '<%= persona.user.email %>', '<%= persona.user.password %>', '<%= persona.user.profileImage %>'); event.preventDefault();">Editar</a></td>
                     <!-- Botón para Eliminar Persona -->
                     <td>
                         <button type="button" onclick="confirmDelete('<%= persona._id %>')">Eliminar</button>
@@ -41,7 +88,7 @@
                 </tr>
             <% }); %>
         </tbody>
-    </table>
+    </table>    
 
     <div id="personaDetails">
         <!-- Aquí se cargarán dinámicamente los detalles de la persona -->
@@ -50,23 +97,68 @@
     <!-- Formulario para Editar Persona -->
     <form id="editForm" style="display: none;" onsubmit="return editPersona()">
         <input type="hidden" id="editId" name="_id">
+        
         <label for="editName">Nuevo Nombre:</label>
         <input type="text" id="editName" name="name" required>
+
+        <label for="editFirstName">Nuevo Primer Nombre:</label>
+        <input type="text" id="editFirstName" name="firstName" required>
+
+        <label for="editLastName">Nuevo Apellido:</label>
+        <input type="text" id="editLastName" name="lastName" required>
+
+        <label for="editDNI">Nuevo DNI:</label>
+        <input type="text" id="editDNI" name="dni" required>
+
+        <label for="editEstado">Nuevo Estado:</label>
+        <input type="text" id="editEstado" name="estado" required>
+
+        <label for="editRol">Nuevo Rol:</label>
+        <select id="editRol" name="rol" required>
+            <option value="admin">Admin</option>
+            <option value="profesor">Profesor</option>
+            <option value="otro">Otro</option>
+        </select>
+
+        <label for="editUsername">Nuevo Nombre de usuario:</label>
+        <input type="text" id="editUsername" name="user.username" required>
+
+        <label for="editEmail">Nuevo Correo electrónico:</label>
+        <input type="email" id="editEmail" name="user.email" required>
+
+        <label for="editPassword">Nueva Contraseña:</label>
+        <input type="password" id="editPassword" name="user.password" required>
+
+        <label for="editProfileImage">Nueva Imagen de perfil:</label>
+        <input type="text" id="editProfileImage" name="user.profileImage">
+
         <button type="submit">Guardar Cambios</button>
     </form>
 
     <script>
+        // Resto del código permanece igual
+    
         // Función para mostrar el formulario de edición
-        function showEditForm(id, name) {
+        function showEditForm(id, name, firstName, lastName, dni, estado, rol, username, email, password, profileImage) {
             // Ocultar todos los formularios de edición antes de mostrar uno nuevo
             hideAllEditForms();
+            console.log(id, name, firstName, lastName, dni, estado, rol, username, email, password, profileImage);
             document.getElementById('editId').value = id;
             document.getElementById('editName').value = name;
+            document.getElementById('editFirstName').value = firstName;
+            document.getElementById('editLastName').value = lastName;
+            document.getElementById('editDNI').value = dni;
+            document.getElementById('editEstado').value = estado;
+            document.getElementById('editRol').value = rol;
+            document.getElementById('editUsername').value = username;
+            document.getElementById('editEmail').value = email;
+            document.getElementById('editPassword').value = password;
+            document.getElementById('editProfileImage').value = profileImage;
             document.getElementById('editForm').style.display = 'block';
         }
-
-        // Función para ocultar todos los formularios de edición
-        function hideAllEditForms() {
+    
+         // Función para ocultar todos los formularios de edición
+         function hideAllEditForms() {
             const editForms = document.querySelectorAll('.edit-form');
             editForms.forEach(form => {
                 form.style.display = 'none';
@@ -88,11 +180,22 @@
                 .catch(error => console.error('Error al eliminar persona:', error));
             }
         }
-
+    
         // Función para realizar la creación de persona y recargar la página
         function createPersona() {
             // Obtener los valores del formulario
             const personaName = document.getElementById('personaName').value;
+            const personaFirstName = document.getElementById('personaFirstName').value;
+            const personaLastName = document.getElementById('personaLastName').value;
+            const personaDNI = document.getElementById('personaDNI').value;
+            const personaEstado = document.getElementById('personaEstado').value;
+            const personaRol = document.getElementById('personaRol').value;
+            const personaUsername = document.getElementById('personaUsername').value;
+            const personaEmail = document.getElementById('personaEmail').value;
+            const personaPassword = document.getElementById('personaPassword').value;
+            const personaProfileImage = document.getElementById('personaProfileImage').value;
+            
+            console.log(personaName,personaFirstName.personaLastName,personaDNI,personaEstado,personaRol,personaUsername,personaEmail,personaPassword,personaProfileImage);
 
             // Realizar la creación de manera asíncrona (AJAX)
             fetch("/api/web/persona", {
@@ -100,7 +203,20 @@
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ name: personaName}), // Enviar datos como JSON
+                body: JSON.stringify({
+                    name: personaName,
+                    firstName: personaFirstName,
+                    lastName: personaLastName,
+                    dni: personaDNI,
+                    estado: personaEstado,
+                    rol: personaRol,
+                    user: {
+                        username: personaUsername,
+                        email: personaEmail,
+                        password: personaPassword,
+                        profileImage: personaProfileImage,
+                    }
+                }),
             })
                 .then((response) => response.json())
                 .then((data) => {
@@ -109,23 +225,45 @@
                     return false; // Evitar la recarga por defecto del formulario
                 })
                 .catch((error) => console.error("Error al crear persona:", error));
-
+    
             return false; // Evitar el envío por defecto del formulario
         }
-
+    
         // Función para realizar la edición de persona y recargar la página
         function editPersona() {
             // Obtener los valores del formulario
             const personaId = document.getElementById('editId').value;
             const newPersonaName = document.getElementById('editName').value;
-
+            const newPersonaFirstName = document.getElementById('editFirstName').value;
+            const newPersonaLastName = document.getElementById('editLastName').value;
+            const newPersonaDNI = document.getElementById('editDNI').value;
+            const newPersonaEstado = document.getElementById('editEstado').value;
+            const newPersonaRol = document.getElementById('editRol').value;
+            const newPersonaUsername = document.getElementById('editUsername').value;
+            const newPersonaEmail = document.getElementById('editEmail').value;
+            const newPersonaPassword = document.getElementById('editPassword').value;
+            const newPersonaProfileImage = document.getElementById('editProfileImage').value;
+    
             // Realizar la edición de manera asíncrona (AJAX)
             fetch(`/api/web/persona/${personaId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ name: newPersonaName}), // Enviar nuevos datos como JSON
+                body: JSON.stringify({
+                    name: newPersonaName,
+                    firstName: newPersonaFirstName,
+                    lastName: newPersonaLastName,
+                    dni: newPersonaDNI,
+                    estado: newPersonaEstado,
+                    rol: newPersonaRol,
+                    user: {
+                        username: newPersonaUsername,
+                        email: newPersonaEmail,
+                        password: newPersonaPassword,
+                        profileImage: newPersonaProfileImage,
+                    }
+                }),
             })
                 .then(response => response.json())
                 .then(data => {
@@ -136,24 +274,13 @@
                     return false; // Evitar la recarga por defecto del formulario
                 })
                 .catch(error => console.error('Error al editar persona:', error));
-
+    
             return false; // Evitar el envío por defecto del formulario
         }
-        function showPersonaDetails(personaId) {
-            // Realiza una solicitud AJAX para obtener detalles de la persona según el ID
-            fetch(`/api/web/persona/${personaId}`)
-                .then(response => response.json())
-                .then(data => {
-                    // Actualiza la sección de detalles con la información obtenida
-                    document.getElementById('personaDetails').innerHTML = `
-                        <h2>Detalles de ${data.name}</h2>
-                        <p>DATA USUARIO</p>
-                        <!-- Agrega más detalles según tu modelo de datos -->
-                    `;
-                })
-                .catch(error => console.error('Error al obtener detalles de persona:', error));
-        }
+    
+        // Resto del código permanece igual
     </script>
+    
 </body>
 
 </html>
