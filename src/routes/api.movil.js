@@ -84,7 +84,7 @@ function RouterApiMovil( io ) {
             console.log( "ssssssssss"+searchHorarioPersona )
 
             if ( searchHorarioPersona ) {
-                searchHorarioPersona.asistencia=true;
+                searchHorarioPersona.asistencia="A";
                 await searchHorarioPersona.save();
 
                 console.log( 'Enviando evento asistenciaCambiada:', {
