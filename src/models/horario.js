@@ -4,7 +4,10 @@ const HorarioSchema = new mongoose.Schema({
     dia: Date,
     hora_inicio: Date,
     hora_fin: Date,
-    estado: String,
+    estado: {
+        type: Boolean,
+        default : false,
+    },
     aula: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Aula',

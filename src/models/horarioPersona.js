@@ -17,9 +17,15 @@ const HorarioPersonaSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Persona',
     },
-    asistencia: Boolean,
-    estado: Boolean,
-    contrasena: String,
+    asistencia: {
+        type: String,
+        enum: ['A', 'T', 'F'],
+        default: 'A',
+    },    
+    estado: {
+        type: Boolean,
+        default : false,
+    },
 });
 
 module.exports = mongoose.model('HorarioPersona', HorarioPersonaSchema);

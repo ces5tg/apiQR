@@ -190,11 +190,14 @@ router.delete( '/carrera/:id', async ( req, res ) => {
 // CRUD para Curso
 router.post( '/curso', async ( req, res ) => {
     try {
-        const { name, horas_lab, horas_teo, horas_total, id_carrera }=req.body;
+        const { name, horas_lab, horas_teo, id_carrera }=req.body;
+
+        let horas_total = (horas_lab * 1) + (horas_teo * 1);
         const nuevoCurso=new Curso( { name, horas_lab, horas_teo, horas_total, id_carrera } );
         const cursoGuardado=await nuevoCurso.save();
         res.json( cursoGuardado );
     } catch ( error ) {
+        console.log(error);
         res.status( 500 ).json( { message: 'Error al guardar el curso' } );
     }
 } );
@@ -219,7 +222,9 @@ router.get( '/curso/:id', async ( req, res ) => {
 
 router.put( '/curso/:id', async ( req, res ) => {
     try {
-        const { name, horas_lab, horas_teo, horas_total, id_carrera }=req.body;
+        const { name, horas_lab, horas_teo, id_carrera }=req.body;
+
+        let horas_total = parsInt(horas_lab,10) + parsInt(horas_teo,10);
         const cursoActualizado=await Curso.findByIdAndUpdate(
             req.params.id,
             { name, horas_lab, horas_teo, horas_total, id_carrera },
