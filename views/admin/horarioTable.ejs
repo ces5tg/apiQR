@@ -23,10 +23,11 @@
         </thead>
         <tbody>
           <% horarios.forEach( horario => { %>
+
           <tr>
             <td class="bg-warning"><%= horario.dia %></td>
             <% horario.horarios.forEach( hora => { %>
-              <td class="<%= hora.id_horario ? 'bg-primary' : 'bg-success'  %>"> <%= hora.nameAula %>-<%= hora.nameAula %>-<%= hora.nameCurso %>-<%= hora.namePersona %>-<%= hora.nameGrupo %> </td>
+              <td class="<%= hora.id_horario ? 'bg-primary' : 'bg-success'  %>"> <%= hora.hora_inicio %>-<%= hora.hora_final %>-<%= hora.nameAula %>-<%= hora.nameCurso %>-<%= hora.namePersona %>-<%= hora.nameGrupo %> </td>
   
             <% }); %>
           </tr>
