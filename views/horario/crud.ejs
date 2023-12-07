@@ -56,11 +56,21 @@
                                                     <%= horario.dia ? horario.dia.toLocaleDateString() : 'N/A' %>
                                                 </td>
                                                 <td>
+                                                    <%=
+                                                    horario.hora_inicio.toLocaleTimeString('es-PE', {
+                                                    hour: '2-digit', minute: '2-digit' }) %>
+                                                  </td>
+                                                  <td>
+                                                    <%=
+                                                    horario.hora_fin.toLocaleTimeString('es-PE', {
+                                                    hour: '2-digit', minute: '2-digit' }) %>
+                                                  </td>
+                                                <!-- <td>
                                                     <%= horario.hora_inicio ? ('0' + horario.hora_inicio.getHours()).slice(-2) : 'N/A' %>:<%= horario.hora_inicio ? ('0' + horario.hora_inicio.getMinutes()).slice(-2) : 'N/A' %>
                                                 </td>
                                                 <td>
                                                     <%= horario.hora_fin ? ('0' + horario.hora_fin.getHours()).slice(-2) : 'N/A' %>:<%= horario.hora_fin ? ('0' + horario.hora_fin.getMinutes()).slice(-2) : 'N/A' %>
-                                                </td>
+                                                </td> -->
                                                 <td>
                                                     <%= horario.estado %>
                                                 </td>                                               

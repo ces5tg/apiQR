@@ -11,15 +11,14 @@ const Grupo=require( '../models/grupo' );
 const Horario=require( '../models/horario' );
 const HorarioPersona=require( '../models/horarioPersona' );
 const moment=require( 'moment' );
-const { app }=require( '../../app' );
 
-const momentTime = require('moment-timezone');
-const horario=require( '../models/horario' );
+const momentTime=require( 'moment-timezone' );
+
 // Rutas para Pagina de inicio
 router.get( '/', async ( req, res ) => {
     try {
-        const aulas = await Aula.find();
-        res.render( path.join( __dirname, '..', '..', 'views', 'aula', 'crud.ejs' ), { titulo: "Pagina de Inicio", aulas : aulas } );
+        const aulas=await Aula.find();
+        res.render( path.join( __dirname, '..', '..', 'views', 'aula', 'crud.ejs' ), { titulo: "Pagina de Inicio", aulas: aulas } );
     } catch ( error ) {
         res.status( 500 ).json( { message: 'Error al obtener la lista de personas' } );
     }
@@ -30,7 +29,7 @@ router.get( '/', async ( req, res ) => {
 router.get( '/personas', async ( req, res ) => {
     try {
         const personas=await Persona.find();
-        res.render( path.join( __dirname, '..', '..', 'views', 'persona', 'crud.ejs' ), { personas, titulo: "Personas",  } );
+        res.render( path.join( __dirname, '..', '..', 'views', 'persona', 'crud.ejs' ), { personas, titulo: "Personas", } );
     } catch ( error ) {
         res.status( 500 ).json( { message: 'Error al obtener la lista de personas' } );
     }
@@ -59,7 +58,7 @@ router.get( '/carreras', async ( req, res ) => {
 // Rutas para CRUD de Curso
 router.get( '/cursos', async ( req, res ) => {
     try {
-        const cursos=await Curso.find().populate( 'id_carrera');
+        const cursos=await Curso.find().populate( 'id_carrera' );
         const carreras=await Carrera.find();
         res.render( path.join( __dirname, '..', '..', 'views', 'curso', 'crud.ejs' ), { cursos, carreras, titulo: "Cursos" } );
     } catch ( error ) {
@@ -176,16 +175,17 @@ router.get( '/horarioAsistencia', async ( req, res ) => {
 } );
 
 router.get( '/horarioTable', async ( req, res ) => {
+
     try {
-        
+
         const listaHorarios=[
             { dia: "Lunes", horarios: [] },
-             {dia: "Martes", horarios: []},
-             {dia: "Miercoles", horarios: []},
-             {dia: "Jueves", horarios: []},
-             {dia: "Viernes", horarios: []},
-             {dia: "Sabado", horarios: []},
-             {dia: "Domingo", horarios: []},
+            { dia: "Martes", horarios: [] },
+            { dia: "Miercoles", horarios: [] },
+            { dia: "Jueves", horarios: [] },
+            { dia: "Viernes", horarios: [] },
+            { dia: "Sabado", horarios: [] },
+            { dia: "Domingo", horarios: [] },
             // Add more entries as needed
         ];
 
@@ -221,18 +221,24 @@ router.get( '/horarioTable', async ( req, res ) => {
                 var nuevoHorario={
                     hora_inicio: formattedTimeInicio,
                     hora_fin: formattedTimeFin,
-                    id_horario: "0",
+                    id_horario: "",
+                    nameAula:"",
+                    nameCurso:"",
+                    namePersona:"",
+                    nameGrupo:""
+
+
                 };
 
                 listaHorarios[ countItem ].horarios.push( nuevoHorario );
 
-                /* console.log(
+                console.log(
                     listaHorarios[ countItem ].horarios[ count ].hora_inicio+
                     " - "+
                     listaHorarios[ countItem ].horarios[ count ].hora_fin+
                     " - "+
                     listaHorarios[ countItem ].horarios[ count ].id_horario
-                ); */
+                );
 
                 count++;
             }
@@ -241,34 +247,71 @@ router.get( '/horarioTable', async ( req, res ) => {
             countItem++
             console.log( "----------------------" )
         }
-        console.log("#######################")
-        const horarios=await Horario.find();
-
+        console.log( "#######################" )
+        /* const horarios=await Horario.find().populate( [
+            { path: 'aula', select: [ 'name' ] }
+        ] );; */
+        const horarios=await HorarioPersona.find()
+        .populate( [
+            { path: 'id_horario', populate: { path: 'aula' } },
+            { path: 'id_grupo'},
+            { path: 'id_curso'  },
+            { path: 'id_persona' }
+        ] );
+  
         // Convertir la cadena a un objeto Date
-        console.log({horarios})
-        console.log("¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿")
-        
+        console.log( { horarios } )
+        console.log( "¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿" )
 
-        const fecha=new Date( horarios[ 0 ].dia );
 
-        // Obtener el día de la semana en formato numérico (0 para Domingo, 1 para Lunes, ..., 6 para Sábado)
-        const diaSemanaNumero=fecha.getDay();
+        for ( const horario of horarios ) {// horarios de la BASE DE DATOS
 
-        // Crear un array con los nombres de los días de la semana
-        const nombresDias=[ "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo" ];
+            console.log( horario.id_horario.dia )
+            var count=0
+            const diasSemana=[ 'Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado' ];
+            const diaSemana=diasSemana[ moment( horario.id_horario.dia ).tz( 'America/Lima' ).day() ];
+            console.log( diaSemana+" --  dia de la semana" )
 
-        // Obtener el nombre del día de la semana
-        const diaSemana=nombresDias[ diaSemanaNumero ];
+            const horaInicioPeru=momentTime( horario.id_horario.hora_inicio ).tz( 'America/Lima' ).format( 'HH:mm' );
+            console.log( horaInicioPeru+" esta es hora inicio PERU" )
+            for ( const j of listaHorarios ) { // FORMATO HORARIOS / DIAS - HORAS
+                console.log( j.dia )//Dia de la semana
+                /* i -> listaHorario -> dia
+                       i -> listaHorario -> horario[]
+                    */
+  
+                for ( const i of j.horarios ) {
+                    /* 
+                        i -> HORARIO_INICIO - HORARIO_FIN
+                    */
+                   /* console.log(horaInicioPeru +" === "+ i.hora_inicio) */
+                    if ( j.dia==diaSemana && ( i.hora_inicio === horaInicioPeru ) ) {
+ 
+                        console.log( i.hora_inicio+" -- "+i.hora_fin )
+                        console.log("1")
+                        i.id_horario = horario.id_horario._id
+                        console.log("2")
+    
+                        i.nameAula=horario.id_horario.aula.name,
+                        console.log("3")
 
-        console.log( "Día de la semana:", diaSemana );
-        for (const horario of horarios ) {// horarios de la BASE DE DATOS
-           console.log("hola")
+                        i.nameCurso=horario.id_curso.name,
+                        i.namePersona=horario.id_persona.name,
+                        i.nameGrupo=horario.id_grupo.name
+                    
+                    }
+
+                }
+                
             }
-        
+            count++
+        }
 
-            console.log("final de la peticion")
+        console.log(listaHorarios[3].horarios[8])
 
-        res.render( path.join( __dirname, '..', '..', 'views', 'admin', 'horarioTable.ejs' ), { horarios:listaHorarios } );
+        console.log( "final de la peticion" )
+
+        res.render( path.join( __dirname, '..', '..', 'views', 'admin', 'horarioTable.ejs' ), { horarios: listaHorarios } );
     } catch ( error ) {
         res.status( 500 ).json( { message: 'Error al obtener los horarios existentes' } );
     }
