@@ -1,7 +1,5 @@
 // Función para mostrar el formulario de edición
-function showEditForm(id, dia, hora_inicio, hora_fin, estado, aula) {
-    // Ocultar todos los formularios de edición antes de mostrar uno nuevo
-    console.log(id, dia, hora_inicio, hora_fin, estado, aula);
+function showEditForm(id, dia, hora_inicio, hora_fin, aula) {
     hideAllEditForms();
 
     document.getElementById('editId').value = id;
@@ -22,7 +20,6 @@ function showEditForm(id, dia, hora_inicio, hora_fin, estado, aula) {
     document.getElementById('editDia').value = formatoDia;
     document.getElementById('editInicio').value = formatoInicio;
     document.getElementById('editFin').value = formatoFin;
-    document.getElementById('editEstado').value = estado;
     document.getElementById('editAula').value = aula;
     document.getElementById('editForm').style.display = 'block';
 }
@@ -57,16 +54,15 @@ function createHorario() {
     const horarioDia = document.getElementById('horarioDia').value;
     const horarioInicio = document.getElementById('horarioInicio').value;
     const horarioFin = document.getElementById('horarioFin').value;
-    const horarioEstado = document.getElementById('horarioEstado').value;
     const horarioAula = document.getElementById('horarioAula').value;
-
+    console.log(horarioDia,horarioInicio,horarioFin,horarioAula);
     // Realizar la creación de manera asíncrona (AJAX)
     fetch("/api/web/horario", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({ dia: horarioDia, hora_inicio_formt: horarioInicio, hora_fin_formt: horarioFin, estado: horarioEstado, aula: horarioAula }),
+        body: JSON.stringify({ dia: horarioDia, hora_inicio_formt: horarioInicio, hora_fin_formt: horarioFin, aula: horarioAula }),
     })
         .then((response) => response.json())
         .then((data) => {
@@ -86,7 +82,6 @@ function editHorario() {
     const newHorarioDia = document.getElementById('editDia').value;
     const newHorarioInicio = document.getElementById('editInicio').value;
     const newHorarioFin = document.getElementById('editFin').value;
-    const newHorarioEstado = document.getElementById('editEstado').value;
     const newHorarioAula = document.getElementById('editAula').value;
 
     // Realizar la edición de manera asíncrona (AJAX)
@@ -95,7 +90,7 @@ function editHorario() {
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ dia: newHorarioDia, hora_inicio_formt_edit: newHorarioInicio, hora_fin_formt_edit: newHorarioFin, estado: newHorarioEstado, aula: newHorarioAula }), // Enviar los nuevos datos como JSON
+        body: JSON.stringify({ dia: newHorarioDia, hora_inicio_formt_edit: newHorarioInicio, hora_fin_formt_edit: newHorarioFin, aula: newHorarioAula }), // Enviar los nuevos datos como JSON
     })
         .then(response => response.json())
         .then(data => {

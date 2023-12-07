@@ -1,8 +1,3 @@
-<!-- Este es tu archivo CRUD para Horarios -->
-
-<!DOCTYPE html>
-<html lang="en">
-
 <%- include('../layouts/head.ejs') %>
 
 <body>
@@ -31,8 +26,6 @@
                                     <input type="time" name="hora_inicio" id="horarioInicio" required>
                                     <label for="hora_fin">Hora de Fin:</label>
                                     <input type="time" name="hora_fin" id="horarioFin" required>
-                                    <label for="estado">Estado:</label>
-                                    <input type="text" name="estado" id="horarioEstado" required>
                                     <!-- Agregar un campo para seleccionar el aula -->
                                     <label for="aula">Aula:</label>
                                     <select name="aula" id="horarioAula" required>
@@ -59,14 +52,21 @@
                                         <% horarios.forEach(horario => { %>
                                             <tr>
                                                 <!-- Detalles de Horario -->
-                                                <td><%= horario.dia.toLocaleDateString() %></td>
-                                                <td><%= ('0' + horario.hora_inicio.getHours()).slice(-2) %>:<%= ('0' + horario.hora_inicio.getMinutes()).slice(-2) %></td>
-                                                <td><%= ('0' + horario.hora_fin.getHours()).slice(-2) %>:<%= ('0' + horario.hora_fin.getMinutes()).slice(-2) %></td>
-                            
-                                                <td><%= horario.estado %></td>
+                                                <<td>
+                                                    <%= horario.dia ? horario.dia.toLocaleDateString() : 'N/A' %>
+                                                </td>
+                                                <td>
+                                                    <%= horario.hora_inicio ? ('0' + horario.hora_inicio.getHours()).slice(-2) : 'N/A' %>:<%= horario.hora_inicio ? ('0' + horario.hora_inicio.getMinutes()).slice(-2) : 'N/A' %>
+                                                </td>
+                                                <td>
+                                                    <%= horario.hora_fin ? ('0' + horario.hora_fin.getHours()).slice(-2) : 'N/A' %>:<%= horario.hora_fin ? ('0' + horario.hora_fin.getMinutes()).slice(-2) : 'N/A' %>
+                                                </td>
+                                                <td>
+                                                    <%= horario.estado %>
+                                                </td>                                               
                                                 <td><%= horario.aula.name %></td>
                                                 <!-- Enlace para Editar Horario -->
-                                                <td><a href="#" onclick="showEditForm('<%= horario._id %>', '<%= horario.dia %>', '<%= horario.hora_inicio %>', '<%= horario.hora_fin %>', '<%= horario.estado %>', '<%= horario.aula._id %>'); event.preventDefault();">Editar</a></td>
+                                                <td><a href="#" onclick="showEditForm('<%= horario._id %>', '<%= horario.dia %>', '<%= horario.hora_inicio %>', '<%= horario.hora_fin %>', '<%= horario.aula._id %>'); event.preventDefault();">Editar</a></td>
                                                 <!-- Botón para Eliminar Horario -->
                                                 <td>
                                                     <button type="button" onclick="confirmDelete('<%= horario._id %>')">Eliminar</button>
@@ -85,8 +85,6 @@
                                     <input type="time" id="editInicio" name="hora_inicio" required>
                                     <label for="editFin">Nueva Hora de Fin:</label>
                                     <input type="time" id="editFin" name="hora_fin" required>
-                                    <label for="editEstado">Nuevo Estado:</label>
-                                    <input type="text" id="editEstado" name="estado" required>
                                     <!-- Agregar un campo para seleccionar el aula -->
                                     <label for="editAula">Nueva Aula:</label>
                                     <select id="editAula" name="aula" required>

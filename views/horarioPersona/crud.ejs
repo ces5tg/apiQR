@@ -66,15 +66,6 @@
                                                 <% }); %>
                                         </select>
 
-                                        <label for="asistencia">Asistencia:</label>
-                                        <input type="checkbox" name="asistencia" id="asistencia">
-
-                                        <label for="estado">Estado:</label>
-                                        <input type="checkbox" name="estado" id="estado">
-
-                                        <label for="contrasena">Contraseña:</label>
-                                        <input type="password" name="contrasena" id="contrasena" required>
-
                                         <button type="submit">Crear Horario Persona</button>
                                     </form>
 
@@ -88,7 +79,6 @@
                                                 <th>ID Persona</th>
                                                 <th>Asistencia</th>
                                                 <th>Estado</th>
-                                                <th>Contraseña</th>
                                                 <th>Acciones</th>
                                             </tr>
                                         </thead>
@@ -97,8 +87,8 @@
                                                 <tr>
                                                     <!-- Detalles de Horario Persona -->
                                                     <td>
-                                                        <%= horarioPersona.id_horario.dia.toLocaleDateString() %>
-                                                    </td>
+                                                        <%= horarioPersona.id_horario ? horarioPersona.id_horario.dia.toLocaleDateString() : 'N/A' %>
+                                                    </td>                                                    
                                                     <td>
                                                         <%= horarioPersona.id_grupo.name %>
                                                     </td>
@@ -114,12 +104,9 @@
                                                     <td>
                                                         <%= horarioPersona.estado %>
                                                     </td>
-                                                    <td>
-                                                        <%= horarioPersona.contrasena %>
-                                                    </td>
                                                     <!-- Enlace para Editar Horario Persona -->
                                                     <td><a href="#"
-                                                            onclick="showEditForm('<%= horarioPersona._id %>', '<%= horarioPersona.id_horario._id %>', '<%= horarioPersona.id_grupo._id %>', '<%= horarioPersona.id_curso._id %>', '<%= horarioPersona.id_persona._id %>', '<%= horarioPersona.asistencia %>', '<%= horarioPersona.estado %>', '<%= horarioPersona.contrasena %>');">Editar</a>
+                                                            onclick="showEditForm('<%= horarioPersona._id %>', '<%= horarioPersona.id_horario._id %>', '<%= horarioPersona.id_grupo._id %>', '<%= horarioPersona.id_curso._id %>', '<%= horarioPersona.id_persona._id %>');">Editar</a>
                                                     </td>
                                                     <!-- Botón para Eliminar Horario Persona -->
                                                     <td>
@@ -171,12 +158,6 @@
                                                 </option>
                                                 <% }); %>
                                         </select>
-                                        <label for="editAsistencia">Nueva Asistencia:</label>
-                                        <input type="checkbox" id="editAsistencia" name="asistencia">
-                                        <label for="editEstado">Nuevo Estado:</label>
-                                        <input type="checkbox" id="editEstado" name="estado">
-                                        <label for="editContrasena">Nueva Contraseña:</label>
-                                        <input type="text" id="editContrasena" name="contrasena" required>
                                         <button type="submit">Guardar Cambios</button>
                                     </form>
                                 </div>
