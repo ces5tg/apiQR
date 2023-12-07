@@ -190,11 +190,14 @@ router.delete( '/carrera/:id', async ( req, res ) => {
 // CRUD para Curso
 router.post( '/curso', async ( req, res ) => {
     try {
-        const { name, horas_lab, horas_teo, horas_total, id_carrera }=req.body;
+        const { name, horas_lab, horas_teo, id_carrera }=req.body;
+
+        let horas_total = (horas_lab * 1) + (horas_teo * 1);
         const nuevoCurso=new Curso( { name, horas_lab, horas_teo, horas_total, id_carrera } );
         const cursoGuardado=await nuevoCurso.save();
         res.json( cursoGuardado );
     } catch ( error ) {
+        console.log(error);
         res.status( 500 ).json( { message: 'Error al guardar el curso' } );
     }
 } );
@@ -219,7 +222,9 @@ router.get( '/curso/:id', async ( req, res ) => {
 
 router.put( '/curso/:id', async ( req, res ) => {
     try {
-        const { name, horas_lab, horas_teo, horas_total, id_carrera }=req.body;
+        const { name, horas_lab, horas_teo, id_carrera }=req.body;
+
+        let horas_total = parsInt(horas_lab,10) + parsInt(horas_teo,10);
         const cursoActualizado=await Curso.findByIdAndUpdate(
             req.params.id,
             { name, horas_lab, horas_teo, horas_total, id_carrera },
@@ -298,11 +303,17 @@ router.delete( '/grupo/:id', async ( req, res ) => {
 router.post( '/horario', async ( req, res ) => {
     const zonaHorariaPeru = 'America/Lima';
     try {
-        const { dia, hora_inicio_formt, hora_fin_formt, estado, aula }=req.body;
-        const hora_inicio=moment.tz( hora_inicio_formt, zonaHorariaPeru ).format( 'YYYY-MM-DDTHH:mm:ss.SSSZ' );
-        const hora_fin=moment.tz( hora_fin_formt, zonaHorariaPeru ).format( 'YYYY-MM-DDTHH:mm:ss.SSSZ' );
+        const { dia, hora_inicio_formt, hora_fin_formt, aula }=req.body;
 
-        const nuevoHorario=new Horario( { dia, hora_inicio, hora_fin, estado, aula } );
+        const diaIncreased = moment.tz(dia, zonaHorariaPeru).format('YYYY-MM-DDTHH:mm:ss.SSSZ');
+        var var_hora_ini = `${dia}T${hora_inicio_formt}:00.000-05:00`;
+        var var_hora_fin = `${dia}T${hora_fin_formt}:00.000-05:00`;
+
+        const nuevoHorario=new Horario( {
+            dia: diaIncreased,
+            hora_inicio: var_hora_ini,
+            hora_fin: var_hora_fin,
+            aula: aula } );
         const horarioGuardado=await nuevoHorario.save();
         res.json( horarioGuardado );
     } catch ( error ) {
@@ -377,8 +388,8 @@ router.get( '/horarioPersona/:id', async ( req, res ) => {
 
 router.post( '/horarioPersona', async ( req, res ) => {
     try {
-        const { id_horario, id_grupo, id_curso, id_persona, asistencia, estado, contrasena }=req.body;
-        const horarioPersona=new HorarioPersona( { id_horario, id_grupo, id_curso, id_persona, asistencia, estado, contrasena } );
+        const { id_horario, id_grupo, id_curso, id_persona}=req.body;
+        const horarioPersona=new HorarioPersona( { id_horario, id_grupo, id_curso, id_persona } );
         const horarioPersonaGuardado=await horarioPersona.save();
         res.json( horarioPersonaGuardado );
     } catch ( error ) {
@@ -389,10 +400,10 @@ router.post( '/horarioPersona', async ( req, res ) => {
 
 router.put( '/horarioPersona/:id', async ( req, res ) => {
     try {
-        const { id_horario, id_grupo, id_curso, id_persona, asistencia, estado, contrasena }=req.body;
+        const { id_horario, id_grupo, id_curso, id_persona}=req.body;
         const horarioPersonaActualizado=await HorarioPersona.findByIdAndUpdate(
             req.params.id,
-            { id_horario, id_grupo, id_curso, id_persona, asistencia, estado, contrasena },
+            { id_horario, id_grupo, id_curso, id_persona },
             { new: true }
         );
         res.json( horarioPersonaActualizado );

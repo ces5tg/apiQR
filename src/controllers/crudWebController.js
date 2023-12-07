@@ -18,8 +18,8 @@ const horario=require( '../models/horario' );
 // Rutas para Pagina de inicio
 router.get( '/', async ( req, res ) => {
     try {
-        const personas=await Persona.find();
-        res.render( path.join( __dirname, '..', '..', 'views', 'layouts', 'navBar.ejs' ), { titulo: "Pagina de Inicio" } );
+        const aulas = await Aula.find();
+        res.render( path.join( __dirname, '..', '..', 'views', 'aula', 'crud.ejs' ), { titulo: "Pagina de Inicio", aulas : aulas } );
     } catch ( error ) {
         res.status( 500 ).json( { message: 'Error al obtener la lista de personas' } );
     }
@@ -30,7 +30,7 @@ router.get( '/', async ( req, res ) => {
 router.get( '/personas', async ( req, res ) => {
     try {
         const personas=await Persona.find();
-        res.render( path.join( __dirname, '..', '..', 'views', 'persona', 'crud.ejs' ), { personas, titulo: "Personas" } );
+        res.render( path.join( __dirname, '..', '..', 'views', 'persona', 'crud.ejs' ), { personas, titulo: "Personas",  } );
     } catch ( error ) {
         res.status( 500 ).json( { message: 'Error al obtener la lista de personas' } );
     }
@@ -59,7 +59,7 @@ router.get( '/carreras', async ( req, res ) => {
 // Rutas para CRUD de Curso
 router.get( '/cursos', async ( req, res ) => {
     try {
-        const cursos=await Curso.find().populate( 'id_carrera' );
+        const cursos=await Curso.find().populate( 'id_carrera');
         const carreras=await Carrera.find();
         res.render( path.join( __dirname, '..', '..', 'views', 'curso', 'crud.ejs' ), { cursos, carreras, titulo: "Cursos" } );
     } catch ( error ) {

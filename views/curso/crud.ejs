@@ -1,187 +1,99 @@
-<!-- Este es tu archivo CRUD para Cursos -->
-
-<!DOCTYPE html>
-<html lang="en">
-
 <%- include('../layouts/head.ejs') %>
 
 <body>
-
-    <%- include('../layouts/navBar.ejs') %>
-
-
-    <h1>CRUD de Cursos</h1>
-
-    <!-- Formulario para Crear Curso -->
-    <form id="createForm" action="/api/web/curso" method="POST" onsubmit="return createCurso()">
-        <label for="name">Nombre:</label>
-        <input type="text" name="name" id="cursoName" required>
-        <label for="horas_lab">Horas de Laboratorio:</label>
-        <input type="number" name="horas_lab" id="cursoHorasLab" required>
-        <label for="horas_teo">Horas Teóricas:</label>
-        <input type="number" name="horas_teo" id="cursoHorasTeo" required>
-        <label for="horas_total">Horas Totales:</label>
-        <input type="number" name="horas_total" id="cursoHorasTotal" required>
-        <!-- Agregar un campo para seleccionar la carrera -->
-        <label for="id_carrera">Carrera:</label>
-        <select name="id_carrera" id="cursoCarrera" required>
-            <% carreras.forEach(carrera => { %>
-                <option value="<%= carrera._id %>"><%= carrera.name %></option>
-            <% }); %>
-        </select>
-        <button type="submit">Crear Curso</button>
-    </form>
-
-    <!-- Tabla de Cursos -->
-    <table>
-        <thead>
-            <tr>
-                <th>Nombre</th>
-                <th>Horas de Laboratorio</th>
-                <th>Horas Teóricas</th>
-                <th>Horas Totales</th>
-                <th>Carrera</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            <% cursos.forEach(curso => { %>
-                <tr>
-                    <!-- Detalles de Curso -->
-                    <td><a href="/api/web/curso/<%= curso._id %>"><%= curso.name %></a></td>
-                    <td><%= curso.horas_lab %></td>
-                    <td><%= curso.horas_teo %></td>
-                    <td><%= curso.horas_total %></td>
-                    <td><%= curso.id_carrera.name %></td>
-                    <!-- Enlace para Editar Curso -->
-                    <td><a href="#" onclick="showEditForm('<%= curso._id %>', '<%= curso.name %>', '<%= curso.horas_lab %>', '<%= curso.horas_teo %>', '<%= curso.horas_total %>', '<%= curso.id_carrera._id %>'); event.preventDefault();">Editar</a></td>
-                    <!-- Botón para Eliminar Curso -->
-                    <td>
-                        <button type="button" onclick="confirmDelete('<%= curso._id %>')">Eliminar</button>
-                    </td>
-                </tr>
-            <% }); %>
-        </tbody>
-    </table>
-
-    <!-- Formulario para Editar Curso -->
-    <form id="editForm" style="display: none;" onsubmit="return editCurso()">
-        <input type="hidden" id="editId" name="_id">
-        <label for="editName">Nuevo Nombre:</label>
-        <input type="text" id="editName" name="name" required>
-        <label for="editHorasLab">Nuevas Horas de Laboratorio:</label>
-        <input type="number" id="editHorasLab" name="horas_lab" required>
-        <label for="editHorasTeo">Nuevas Horas Teóricas:</label>
-        <input type="number" id="editHorasTeo" name="horas_teo" required>
-        <label for="editHorasTotal">Nuevas Horas Totales:</label>
-        <input type="number" id="editHorasTotal" name="horas_total" required>
-        <!-- Agregar un campo para seleccionar la carrera -->
-        <label for="editCarrera">Nueva Carrera:</label>
-        <select id="editCarrera" name="id_carrera" required>
-            <% carreras.forEach(carrera => { %>
-                <option value="<%= carrera._id %>"><%= carrera.name %></option>
-            <% }); %>
-        </select>
-        <button type="submit">Guardar Cambios</button>
-    </form>
-
-    <script>
-        // Función para mostrar el formulario de edición
-        function showEditForm(id, name, horas_lab, horas_teo, horas_total, id_carrera) {
-            // Ocultar todos los formularios de edición antes de mostrar uno nuevo
-            hideAllEditForms();
-            document.getElementById('editId').value = id;
-            document.getElementById('editName').value = name;
-            document.getElementById('editHorasLab').value = horas_lab;
-            document.getElementById('editHorasTeo').value = horas_teo;
-            document.getElementById('editHorasTotal').value = horas_total;
-            document.getElementById('editCarrera').value = id_carrera;
-            document.getElementById('editForm').style.display = 'block';
-        }
-
-        // Función para ocultar todos los formularios de edición
-        function hideAllEditForms() {
-            const editForms = document.querySelectorAll('.edit-form');
-            editForms.forEach(form => {
-                form.style.display = 'none';
-            });
-        }
-
-        // Función para confirmar antes de eliminar
-        function confirmDelete(cursoId) {
-            if (confirm('¿Estás seguro de que deseas eliminar este curso?')) {
-                // Realizar eliminación de manera asíncrona (AJAX)
-                fetch(`/api/web/curso/${cursoId}`, {
-                    method: 'DELETE'
-                })
-                .then(response => response.json())
-                .then(data => {
-                    // Actualizar la página sin recargar
-                    location.reload();
-                })
-                .catch(error => console.error('Error al eliminar curso:', error));
-            }
-        }
-
-        // Función para realizar la creación de curso y recargar la página
-        function createCurso() {
-            // Obtener los valores de los campos
-            const cursoName = document.getElementById('cursoName').value;
-            const cursoHorasLab = document.getElementById('cursoHorasLab').value;
-            const cursoHorasTeo = document.getElementById('cursoHorasTeo').value;
-            const cursoHorasTotal = document.getElementById('cursoHorasTotal').value;
-            const cursoCarrera = document.getElementById('cursoCarrera').value;
-
-            // Realizar la creación de manera asíncrona (AJAX)
-            fetch("/api/web/curso", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ name: cursoName, horas_lab: cursoHorasLab, horas_teo: cursoHorasTeo, horas_total: cursoHorasTotal, id_carrera: cursoCarrera }), // Enviar los datos como JSON
-            })
-                .then((response) => response.json())
-                .then((data) => {
-                    // Actualizar la página sin recargar
-                    location.reload();
-                    return false; // Evitar la recarga por defecto del formulario
-                })
-                .catch((error) => console.error("Error al crear curso:", error));
-
-            return false; // Evitar el envío por defecto del formulario
-        }
-
-        // Función para realizar la edición de curso y recargar la página
-        function editCurso() {
-            // Obtener los valores de los campos
-            const cursoId = document.getElementById('editId').value;
-            const newCursoName = document.getElementById('editName').value;
-            const newCursoHorasLab = document.getElementById('editHorasLab').value;
-            const newCursoHorasTeo = document.getElementById('editHorasTeo').value;
-            const newCursoHorasTotal = document.getElementById('editHorasTotal').value;
-            const newCursoCarrera = document.getElementById('editCarrera').value;
-
-            // Realizar la edición de manera asíncrona (AJAX)
-            fetch(`/api/web/curso/${cursoId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ name: newCursoName, horas_lab: newCursoHorasLab, horas_teo: newCursoHorasTeo, horas_total: newCursoHorasTotal, id_carrera: newCursoCarrera }), // Enviar los nuevos datos como JSON
-            })
-                .then(response => response.json())
-                .then(data => {
-                    // Ocultar el formulario de edición
-                    document.getElementById('editForm').style.display = 'none';
-                    // Actualizar la página sin recargar
-                    location.reload();
-                    return false; // Evitar la recarga por defecto del formulario
-                })
-                .catch(error => console.error('Error al editar curso:', error));
-
-            return false; // Evitar el envío por defecto del formulario
-        }
-    </script>
+    
+    <div class="wrapped">
+        
+        <div class="sidebar">
+            <%- include('../layouts/sideBar.ejs') %>
+        </div>
+        <div class="main-panel ps ps--active-y">
+            <div class="navbar navbar-expand-lg navbar-absolute navbar-transparent">
+                <%- include('../layouts/navBar.ejs') %>
+            </div>
+            
+        <div class="content">
+            <div class="main-panel">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card card-chart">
+                                <h1>CRUD de Cursos</h1>
+    
+                                <!-- Formulario para Crear Curso -->
+                                <form id="createForm" action="/api/web/curso" method="POST" onsubmit="return createCurso()">
+                                    <label for="name">Nombre:</label>
+                                    <input type="text" name="name" id="cursoName" required>
+                                    <label for="horas_lab">Horas de Laboratorio:</label>
+                                    <input type="number" name="horas_lab" id="cursoHorasLab" required>
+                                    <label for="horas_teo">Horas Teóricas:</label>
+                                    <input type="number" name="horas_teo" id="cursoHorasTeo" required>
+                                    <!-- Agregar un campo para seleccionar la carrera -->
+                                    <label for="id_carrera">Carrera:</label>
+                                    <select name="id_carrera" id="cursoCarrera" required>
+                                        <% carreras.forEach(carrera => { %>
+                                            <option value="<%= carrera._id %>"><%= carrera.name %></option>
+                                        <% }); %>
+                                    </select>
+                                    <button type="submit">Crear Curso</button>
+                                </form>
+                            
+                                <!-- Tabla de Cursos -->
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Nombre</th>
+                                            <th>Horas de Laboratorio</th>
+                                            <th>Horas Teóricas</th>
+                                            <th>Horas Totales</th>
+                                            <th>Carrera</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% cursos.forEach(curso => { %>
+                                            <tr>
+                                                <!-- Detalles de Curso -->
+                                                <td><a href="/api/web/curso/<%= curso._id %>"><%= curso.name %></a></td>
+                                                <td><%= curso.horas_lab %></td>
+                                                <td><%= curso.horas_teo %></td>
+                                                <td><%= curso.horas_total %></td>
+                                                <td><%= curso.id_carrera.name %></td>
+                                                <!-- Enlace para Editar Curso -->
+                                                <td><a href="#" onclick="showEditForm('<%= curso._id %>', '<%= curso.name %>', '<%= curso.horas_lab %>', '<%= curso.horas_teo %>','<%= curso.id_carrera._id %>'); event.preventDefault();">Editar</a></td>
+                                                <!-- Botón para Eliminar Curso -->
+                                                <td>
+                                                    <button type="button" onclick="confirmDelete('<%= curso._id %>')">Eliminar</button>
+                                                </td>
+                                            </tr>
+                                        <% }); %>
+                                    </tbody>
+                                </table>
+                            
+                                <!-- Formulario para Editar Curso -->
+                                <form id="editForm" style="display: none;" onsubmit="return editCurso()">
+                                    <input type="hidden" id="editId" name="_id">
+                                    <label for="editName">Nuevo Nombre:</label>
+                                    <input type="text" id="editName" name="name" required>
+                                    <label for="editHorasLab">Nuevas Horas de Laboratorio:</label>
+                                    <input type="number" id="editHorasLab" name="horas_lab" required>
+                                    <label for="editHorasTeo">Nuevas Horas Teóricas:</label>
+                                    <input type="number" id="editHorasTeo" name="horas_teo" required>
+                                    <!-- Agregar un campo para seleccionar la carrera -->
+                                    <label for="editCarrera">Nueva Carrera:</label>
+                                    <select id="editCarrera" name="id_carrera" required>
+                                        <% carreras.forEach(carrera => { %>
+                                            <option value="<%= carrera._id %>"><%= carrera.name %></option>
+                                        <% }); %>
+                                    </select>
+                                    <button type="submit">Guardar Cambios</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+        </div>    
+        </div>
+    </div>
+    <script src="/js/web/cursos.js"></script>
+    <%- include('../layouts/footer.ejs') %>
 </body>
-
-</html>
