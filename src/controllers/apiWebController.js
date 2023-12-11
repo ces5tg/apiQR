@@ -389,8 +389,15 @@ router.get( '/horarioPersona/:id', async ( req, res ) => {
 router.post( '/horarioPersona', async ( req, res ) => {
     try {
         const { id_horario, id_grupo, id_curso, id_persona}=req.body;
-        const horarioPersona=new HorarioPersona( { id_horario, id_grupo, id_curso, id_persona } );
+        const horarioPersona=new HorarioPersona( { id_horario, id_grupo, id_curso, id_persona , asistencia:'F' } );
         const horarioPersonaGuardado=await horarioPersona.save();
+        
+        const result = await Horario.updateOne(
+            { _id: id_horario },
+            { $set: { estado: true } }
+          );
+
+          
         res.json( horarioPersonaGuardado );
     } catch ( error ) {
         console.error( 'Error al crear horario persona:', error );
@@ -415,7 +422,14 @@ router.put( '/horarioPersona/:id', async ( req, res ) => {
 
 router.delete( '/horarioPersona/:id', async ( req, res ) => {
     try {
-        await HorarioPersona.findByIdAndDelete( req.params.id );
+        const deleteHorarioPersona = await HorarioPersona.findByIdAndDelete( req.params.id );
+        console.log(deleteHorarioPersona)
+        const result = await Horario.updateOne(
+            { _id: deleteHorarioPersona.id_horario },
+            { $set: { estado: false } }
+          );
+
+
         res.json( { message: 'Horario Persona eliminado correctamente' } );
     } catch ( error ) {
         console.error( 'Error al eliminar horario persona por ID:', error );

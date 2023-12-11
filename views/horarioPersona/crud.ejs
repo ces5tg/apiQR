@@ -2,173 +2,178 @@
 
 <!DOCTYPE html>
 <html lang="en">
+  <%- include('../layouts/head.ejs') %>
 
-<%- include('../layouts/head.ejs') %>
-
-    <body>
-        <div class="wrapped">
-
-            <div class="sidebar">
-                <%- include('../layouts/sideBar.ejs') %>
-            </div>
-            <div class="main-panel ps ps--active-y">
-                <div class="navbar navbar-expand-lg navbar-absolute navbar-transparent">
-                    <%- include('../layouts/navBar.ejs') %>
-                </div>
-
-                <div class="content">
-                    <div class="main-panel">
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="card card-chart">
-                                    <h1>CRUD de Horarios Personas</h1>
-
-                                    <!-- Formulario para Crear Horario Persona -->
-                                    <form id="createForm" action="/api/web/horarioPersona" method="POST"
-                                        onsubmit="return createHorarioPersona()">
-                                        <label for="id_horario">ID Horario:</label>
-                                        <select name="id_horario" id="id_horario" required>
-                                            <!-- Opciones de Horarios -->
-                                            <% horarios.forEach(horario=> { %>
-                                                <option value="<%= horario._id %>">
-                                                    <%= horario.dia %>
-                                                </option>
-                                                <% }); %>
-                                        </select>
-
-                                        <label for="id_grupo">ID Grupo:</label>
-                                        <select name="id_grupo" id="id_grupo" required>
-                                            <!-- Opciones de Grupos -->
-                                            <% grupos.forEach(grupo=> { %>
-                                                <option value="<%= grupo._id %>">
-                                                    <%= grupo.name %>
-                                                </option>
-                                                <% }); %>
-                                        </select>
-
-                                        <label for="id_curso">ID Curso:</label>
-                                        <select name="id_curso" id="id_curso" required>
-                                            <!-- Opciones de Cursos -->
-                                            <% cursos.forEach(curso=> { %>
-                                                <option value="<%= curso._id %>">
-                                                    <%= curso.name %>
-                                                </option>
-                                                <% }); %>
-                                        </select>
-
-                                        <label for="id_persona">Persona:</label>
-                                        <select name="id_persona" id="id_persona" required>
-                                            <!-- Opciones de Cursos -->
-                                            <% personas.forEach(persona=> { %>
-                                                <option value="<%= persona._id %>">
-                                                    <%= persona.name %>
-                                                </option>
-                                                <% }); %>
-                                        </select>
-
-                                        <button type="submit">Crear Horario Persona</button>
-                                    </form>
-
-                                    <!-- Tabla de Horarios Personas -->
-                                    <table>
-                                        <thead>
-                                            <tr>
-                                                <th>ID Horario</th>
-                                                <th>ID Grupo</th>
-                                                <th>ID Curso</th>
-                                                <th>ID Persona</th>
-                                                <th>Asistencia</th>
-                                                <th>Estado</th>
-                                                <th>Acciones</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <% horariosPersonas.forEach(horarioPersona=> { %>
-                                                <tr>
-                                                    <!-- Detalles de Horario Persona -->
-                                                    <td>
-                                                        <%= horarioPersona.id_horario ? horarioPersona.id_horario.dia.toLocaleDateString() : 'N/A' %>
-                                                    </td>                                                    
-                                                    <td>
-                                                        <%= horarioPersona.id_grupo.name %>
-                                                    </td>
-                                                    <td>
-                                                        <%= horarioPersona.id_curso.name %>
-                                                    </td>
-                                                    <td>
-                                                        <%= horarioPersona.id_persona.name %>
-                                                    </td>
-                                                    <td>
-                                                        <%= horarioPersona.asistencia ? 'Sí' : 'No' %>
-                                                    </td>
-                                                    <td>
-                                                        <%= horarioPersona.estado %>
-                                                    </td>
-                                                    <!-- Enlace para Editar Horario Persona -->
-                                                    <td><a href="#"
-                                                            onclick="showEditForm('<%= horarioPersona._id %>', '<%= horarioPersona.id_horario._id %>', '<%= horarioPersona.id_grupo._id %>', '<%= horarioPersona.id_curso._id %>', '<%= horarioPersona.id_persona._id %>');">Editar</a>
-                                                    </td>
-                                                    <!-- Botón para Eliminar Horario Persona -->
-                                                    <td>
-                                                        <button type="button"
-                                                            onclick="confirmDelete('<%= horarioPersona._id %>')">Eliminar</button>
-                                                    </td>
-                                                </tr>
-                                                <% }); %>
-                                        </tbody>
-                                    </table>
-
-                                    <!-- Formulario para Editar Horario Persona -->
-                                    <form id="editForm" class="edit-form" style="display: none;"
-                                        onsubmit="return editHorarioPersona()">
-                                        <input type="hidden" id="editId" name="_id">
-                                        <label for="editHorario">Nuevo ID Horario:</label>
-                                        <select name="id_horario" id="editHorario" required>
-                                            <!-- Opciones de Horarios -->
-                                            <% horarios.forEach(horario=> { %>
-                                                <option value="<%= horario._id %>">
-                                                    <%= horario.dia %>
-                                                </option>
-                                                <% }); %>
-                                        </select>
-                                        <label for="editGrupo">Nuevo ID Grupo:</label>
-                                        <select name="id_grupo" id="editGrupo" required>
-                                            <!-- Opciones de Grupos -->
-                                            <% grupos.forEach(grupo=> { %>
-                                                <option value="<%= grupo._id %>">
-                                                    <%= grupo.name %>
-                                                </option>
-                                                <% }); %>
-                                        </select>
-                                        <label for="editCurso">Nuevo ID Curso:</label>
-                                        <select name="id_curso" id="editCurso" required>
-                                            <!-- Opciones de Cursos -->
-                                            <% cursos.forEach(curso=> { %>
-                                                <option value="<%= curso._id %>">
-                                                    <%= curso.name %>
-                                                </option>
-                                                <% }); %>
-                                        </select>
-                                        <label for="editPersona">Nuevo ID Persona:</label>
-                                        <select name="id_persona" id="editPersona" required>
-                                            <!-- Opciones de Cursos -->
-                                            <% personas.forEach(persona=> { %>
-                                                <option value="<%= persona._id %>">
-                                                    <%= persona.name %>
-                                                </option>
-                                                <% }); %>
-                                        </select>
-                                        <button type="submit">Guardar Cambios</button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+  <body>
+    <div class="wrapped">
+      <div class="sidebar"><%- include('../layouts/sideBar.ejs') %></div>
+      <div class="main-panel ps ps--active-y">
+        <div class="navbar navbar-expand-lg navbar-absolute navbar-transparent">
+          <%- include('../layouts/navBar.ejs') %>
         </div>
-        <script src="/js/web/horariosPersonas.js"></script>
-        <%- include('../layouts/footer.ejs') %>
-    </body>
 
+        <div class="content">
+          <div class="main-panel">
+            <div class="row">
+              <div class="col-12">
+                <div class="card card-chart">
+                  <h1>CRUD de Horarios Personas</h1>
+
+                  <!-- Formulario para Crear Horario Persona -->
+                  <form
+                    id="createForm"
+                    action="/api/web/horarioPersona"
+                    method="POST"
+                    onsubmit="return createHorarioPersona()"
+                  >
+                    <label for="id_horario">ID Horario:</label>
+                    <select name="id_horario" id="id_horario" required>
+                      <option value="" selected>Seleccione un horario</option>
+                      <!-- Opciones de Horarios -->
+                      <% horarios.forEach(horario=> { %>
+
+                      <option value="<%= horario._id %>">
+                        <%= horario.dia %>
+                      </option>
+                      <% }); %>
+                    </select>
+
+                    <label for="id_grupo">ID Grupo:</label>
+                    <select name="id_grupo" id="id_grupo" required>
+                      <!-- Opciones de Grupos -->
+                      <% grupos.forEach(grupo=> { %>
+                      <option value="<%= grupo._id %>">
+                        <%= grupo.name %>
+                      </option>
+                      <% }); %>
+                    </select>
+
+                    <label for="id_curso">ID Curso:</label>
+                    <select name="id_curso" id="id_curso" required>
+                      <!-- Opciones de Cursos -->
+                      <% cursos.forEach(curso=> { %>
+                      <option value="<%= curso._id %>">
+                        <%= curso.name %>
+                      </option>
+                      <% }); %>
+                    </select>
+
+                    <label for="id_persona">Persona:</label>
+                    <select name="id_persona" id="id_persona" required>
+                      <!-- Opciones de Cursos -->
+                      <% personas.forEach(persona=> { %>
+                      <option value="<%= persona._id %>">
+                        <%= persona.name %>
+                      </option>
+                      <% }); %>
+                    </select>
+
+                    <button type="submit">Crear Horario Persona</button>
+                  </form>
+
+                  <!-- Tabla de Horarios Personas -->
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>ID Horario</th>
+                        <th>ID Grupo</th>
+                        <th>ID Curso</th>
+                        <th>ID Persona</th>
+                        <th>Asistencia</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% horariosPersonas.forEach(horarioPersona=> { %>
+                      <tr>
+                        <!-- Detalles de Horario Persona -->
+                        <td>
+                          <%= horarioPersona.id_horario ?
+                          horarioPersona.id_horario.dia.toLocaleDateString() :
+                          'N/A' %>
+                        </td>
+                        <td><%= horarioPersona.id_grupo.name %></td>
+                        <td><%= horarioPersona.id_curso.name %></td>
+                        <td><%= horarioPersona.id_persona.name %></td>
+                        <td><%= horarioPersona.asistencia %></td>
+                        <td><%= horarioPersona.estado %></td>
+                        <!-- Enlace para Editar Horario Persona -->
+                        <td>
+                          <a
+                            href="#"
+                            onclick="showEditForm('<%= horarioPersona._id %>', '<%= horarioPersona.id_horario._id %>', '<%= horarioPersona.id_grupo._id %>', '<%= horarioPersona.id_curso._id %>', '<%= horarioPersona.id_persona._id %>');"
+                            >Editar</a
+                          >
+                        </td>
+                        <!-- Botón para Eliminar Horario Persona -->
+                        <td>
+                          <button
+                            type="button"
+                            onclick="confirmDelete('<%= horarioPersona._id %>')"
+                          >
+                            Eliminar
+                          </button>
+                        </td>
+                      </tr>
+                      <% }); %>
+                    </tbody>
+                  </table>
+
+                  <!-- Formulario para Editar Horario Persona -->
+                  <form
+                    id="editForm"
+                    class="edit-form"
+                    style="display: none"
+                    onsubmit="return editHorarioPersona()"
+                  >
+                    <input type="hidden" id="editId" name="_id" />
+                    <label for="editHorario">Nuevo ID Horario:</label>
+                    <select name="id_horario" id="editHorario" required>
+                      <!-- Opciones de Horarios -->
+                      <% horarios.forEach(horario=> { %>
+                      <option value="<%= horario._id %>">
+                        <%= horario.dia %>
+                      </option>
+                      <% }); %>
+                    </select>
+                    <label for="editGrupo">Nuevo ID Grupo:</label>
+                    <select name="id_grupo" id="editGrupo" required>
+                      <!-- Opciones de Grupos -->
+                      <% grupos.forEach(grupo=> { %>
+                      <option value="<%= grupo._id %>">
+                        <%= grupo.name %>
+                      </option>
+                      <% }); %>
+                    </select>
+                    <label for="editCurso">Nuevo ID Curso:</label>
+                    <select name="id_curso" id="editCurso" required>
+                      <!-- Opciones de Cursos -->
+                      <% cursos.forEach(curso=> { %>
+                      <option value="<%= curso._id %>">
+                        <%= curso.name %>
+                      </option>
+                      <% }); %>
+                    </select>
+                    <label for="editPersona">Nuevo ID Persona:</label>
+                    <select name="id_persona" id="editPersona" required>
+                      <!-- Opciones de Cursos -->
+                      <% personas.forEach(persona=> { %>
+                      <option value="<%= persona._id %>">
+                        <%= persona.name %>
+                      </option>
+                      <% }); %>
+                    </select>
+                    <button type="submit">Guardar Cambios</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="/js/web/horariosPersonas.js"></script>
+    <%- include('../layouts/footer.ejs') %>
+  </body>
 </html>

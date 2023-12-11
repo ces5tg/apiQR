@@ -99,7 +99,7 @@ router.get( '/horariosPersonas', async ( req, res ) => {
                 { path: 'id_persona', select: [ 'name' ] }
             ] );
 
-        const horarios=await Horario.find();
+        const horarios=await Horario.find({estado:false});
         const cursos=await Curso.find();
         const grupos=await Grupo.find();
         const personas=await Persona.find();

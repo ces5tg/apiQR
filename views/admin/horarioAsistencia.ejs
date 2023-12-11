@@ -1,51 +1,80 @@
 <!-- Este es tu archivo CRUD para Aulas -->
 
-<!DOCTYPE html>
-<html lang="en">
-  <body>
-    <% if (horariosPersonas.length > 0) { %>
-    <table id="miTabla" >
-      <thead>
-        <tr>
-          <th>Aula</th>
-          <th>Profesor</th>
-          <th>Grupo</th>
-          <th colspan="2">Horario</th>
-          <th>Estado-Asistencia</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% horariosPersonas.forEach(horarioPersona => { %>
-        <tr>
-          <!-- Detalles de Horario Persona -->
-          <td><%= horarioPersona.id_horario.aula._id %></td>
-          <td>| - |<%= horarioPersona.id_persona._id %></td>
-          <td><%= horarioPersona.id_grupo.name %></td>
-          <td>
-            <%=
-            horarioPersona.id_horario.hora_inicio.toLocaleTimeString('es-PE', {
-            hour: '2-digit', minute: '2-digit' }) %>
-          </td>
-          <!-- cols -->
-          <td>
-            <%= horarioPersona.id_horario.hora_fin.toLocaleTimeString('es-PE', {
-            hour: '2-digit', minute: '2-digit' }) %>
-          </td>
-          <!-- cols -->
+<%- include('../layouts/head.ejs') %>
 
-          <td data-id="<%= horarioPersona._id %>"><%= horarioPersona.asistencia %></td>
+<body>
+  <div class="wrapped">
+    <div class="sidebar"><%- include('../layouts/sideBar.ejs') %></div>
+    <div class="main-panel ps ps--active-y">
+      <div class="navbar navbar-expand-lg navbar-absolute navbar-transparent">
+        <%- include('../layouts/navBar.ejs') %>
+      </div>
 
-          <!-- Enlace para Editar Horario Persona -->
-        </tr>
-        <% }); %>
-      </tbody>
-    </table>
+      <div class="content">
+        <div class="main-panel">
+          <div class="row">
+            <div class="col-12">
+              <div class="card card-chart">
+                <h1>CRUD de Aulas</h1>
+                <% if (horariosPersonas.length > 0) { %>
+                <table id="miTabla" class="table">
+                  <thead>
+                    <tr>
+                      <th>Aula</th>
+                      <th>Profesor</th>
+                      <th>Grupo</th>
+                      <th colspan="2">Horario</th>
+                      <th>Estado-Asistencia</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% horariosPersonas.forEach(horarioPersona => { %>
+                    <tr>
+                      <!-- Detalles de Horario Persona -->
+                      <td><%= horarioPersona.id_horario.aula._id %></td>
+                      <td>| - |<%= horarioPersona.id_persona._id %></td>
+                      <td><%= horarioPersona.id_grupo.name %></td>
+                      <td>
+                        <%=
+                        horarioPersona.id_horario.hora_inicio.toLocaleTimeString('es-PE',
+                        { hour: '2-digit', minute: '2-digit' }) %>
+                      </td>
+                      <!-- cols -->
+                      <td>
+                        <%=
+                        horarioPersona.id_horario.hora_fin.toLocaleTimeString('es-PE',
+                        { hour: '2-digit', minute: '2-digit' }) %>
+                      </td>
+                      <!-- cols -->
+                      <% let color; switch (horarioPersona.asistencia) { case
+                      'A': color = 'bg-info'; break; case 'T': color =
+                      'bg-warning'; break; case 'F': color = 'bg-danger'; break;
+                      default: color = 'bg-gray'; } %>
+                      <td
+                        data-id="<%= horarioPersona._id %>"
+                        class="<%= color %>"
+                      >
+                        <%= horarioPersona.asistencia %>
+                      </td>
 
-    <% } else { %>
-    <p>No hay horarios de personas disponibles.</p>
-    <% } %>
+                      <!-- Enlace para Editar Horario Persona -->
+                    </tr>
+                    <% }); %>
+                  </tbody>
+                </table>
 
-    <script src="/socket.io/socket.io.js"></script><!--  -->
+                <% } else { %>
+                <p>No hay horarios de personas disponibles.</p>
+                <% } %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="/js/web/aulas.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <!--  -->
     <script>
       const socket = io.connect();
       socket.on("asistenciaCambiada", (data) => {
@@ -73,17 +102,36 @@
             tbody.innerHTML = "";
             data.forEach((horarioPersona) => {
               const row = document.createElement("tr");
+              let color;
+
+              switch (horarioPersona.asistencia) {
+                case "A":
+                  color = "bg-info";
+                  break;
+                case "T":
+                  color = "bg-warning";
+                  break;
+                case "F":
+                  color = "bg-danger";
+                  break;
+                default:
+                  color = "bg-gray";
+              }
+
               row.innerHTML = `
-                <td>${horarioPersona.id_horario.dia.toLocaleString()}</td>
-                <td>${horarioPersona.id_grupo.name}</td>
-                <td>${horarioPersona.id_curso.name}</td>
-                <td>${horarioPersona.id_persona.name}</td>
-                <td data-id="${horarioPersona._id}">${
-                horarioPersona.asistencia ? "Sí" : "No"
-              }</td>
-                <td>${horarioPersona.estado}</td>
-                <td>${horarioPersona.contrasena}</td>
-            `;
+                              <td>${horarioPersona.id_horario.dia.toLocaleString()}</td>
+                              <td>${horarioPersona.id_grupo.name}</td>
+                              <td>${horarioPersona.id_curso.name}</td>
+                              <td>${horarioPersona.id_persona.name}</td>
+                              <td data-id="${
+                                horarioPersona._id
+                              }" class="${color}">
+                                ${horarioPersona.asistencia}
+                              </td>
+                              <td>${horarioPersona.estado}</td>
+                              <td>${horarioPersona.contrasena}</td>
+                          `;
+
               tbody.appendChild(row);
             });
           })
@@ -94,12 +142,29 @@
       function actualizarCampoDeAsistencia(idHorarioPersona, nuevaAsistencia) {
         // Encuentra la celda en la tabla con el data-id correspondiente
         const celdaAsistencia = document.querySelector(
-          `td[data-id="${idHorarioPersona}"]`
+          `td[data-id="${idHorarioPersona}"] `
         );
 
         if (celdaAsistencia) {
           // Actualiza el contenido de la celda de asistencia
-          celdaAsistencia.textContent = nuevaAsistencia ? "Sí" : "No";
+          celdaAsistencia.textContent = nuevaAsistencia;
+          let nuevoColor;
+          switch (nuevaAsistencia) {
+            case "A":
+              nuevoColor = "bg-info";
+              break;
+            case "T":
+              nuevoColor = "bg-warning";
+              break;
+            case "F":
+              nuevoColor = "bg-danger";
+              break;
+            default:
+              nuevoColor = "bg-gray";
+          }
+
+          // Remueve todas las clases existentes y establece la nueva clase
+          celdaAsistencia.className = nuevoColor;
         }
       }
       function actualizarCampoAsistencia() {
@@ -109,5 +174,6 @@
       // Configura un intervalo para actualizar la tabla cada 50 minutos (50 * 60 * 1000 milisegundos)
       setInterval(actualizarTabla, 1000 * 60 * 5);
     </script>
-  </body>
-</html>
+    <%- include('../layouts/footer.ejs') %>
+  </div>
+</body>

@@ -91,16 +91,12 @@ function RouterApiMovil( io ) {
                     idHorarioPersona: searchHorarioPersona._id,
                     nuevaAsistencia: searchHorarioPersona.asistencia,
                 } );
-
+                
                  io.emit('asistenciaCambiada', {
                         idHorarioPersona: searchHorarioPersona._id,
                         nuevaAsistencia: searchHorarioPersona.asistencia,
                     });
-                // Emitir un evento a través de Socket.IO después de cambiar la asistencia a true
-
             }
-
-
             res.json( searchHorarioPersona );
         }  catch (error) {
             console.error(error);
