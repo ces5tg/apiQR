@@ -22,8 +22,12 @@ function RouterApiMovil( io ) {
         console.log(email + '  --  '+ password)
 
         try {
-            const busquedaPersona=await Persona.findOne( { 'user.email':email , 'user.password':password } );
+           /*  const busquedaPersona=await Persona.findOne( { 'user.email':email , 'user.password':password } ); */
+           const busquedaPersona = await Persona.findOne({ 'user.email': email });
+           if (busquedaPersona && bcrypt.compareSync(password, busquedaPersona.user.password)) {
             res.json( busquedaPersona );
+           }
+            
         } catch ( error ) {
             res.status( 500 ).json( { error: 'error , no exite el usuario' } );
         }
@@ -101,6 +105,8 @@ function RouterApiMovil( io ) {
             const formatoFecha='YYYY-MM-DDTHH:mm:ss.SSSZ';
             const horaInicioFormateada=horaInicioMoment.format( formatoFecha ).replace( /(\d{2}:\d{2}:\d{2}\.\d{3})[-+]\d{2}:\d{2}/, '$1+00:00' );;
             console.log( horaInicioFormateada+" ññññññññññññññ" )
+
+            
             const searchHorario=await Horario.findOne( {
                 aula: idAula,
                 hora_inicio: { $lte: horaInicioFormateada },
