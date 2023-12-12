@@ -10,32 +10,168 @@
     />
   </head>
   <body>
+    <div>
+      <select name="" id="seleccionaPersona">
+        <% personas.forEach( persona => { %>
+        <option value="<%= persona._id %>"><%= persona.name %></option>
+
+        <% }); %>
+      </select>
+      <select name="" id="seleccionaGrupo">
+        <% grupos.forEach( grupo => { %>
+        <option value="<%= grupo._id %>"><%= grupo.name %></option>
+
+        <% }); %>
+      </select>
+    </div>
     <div class="container mt-5">
       <table class="table table-bordered border-primary">
-     
         <thead>
-          <tr>
+          <tr class="small">
             <th>Día</th>
-            <% for (let i = 1; i <= 20; i++) { %>
-            <th>Valor <%= i %></th>
-            <% } %>
+            <th>
+              <p>6:20</p>
+              <p>7:10</p>
+            </th>
+            <th>
+              <p>7:10</p>
+              <p>8:00</p>
+            </th>
+            <th>
+              <p>8:00</p>
+              <p>8:50</p>
+            </th>
+            <th>
+              <p>8:50</p>
+              <p>9:40</p>
+            </th>
+            <th>
+              <p>9:40</p>
+              <p>10:30</p>
+            </th>
+            <th>
+              <p>10:30</p>
+              <p>11:20</p>
+            </th>
+            <th>
+              <p>11:20</p>
+              <p>12:10</p>
+            </th>
+            <th>
+              <p>12:10</p>
+              <p>13:00</p>
+            </th>
+            <th>
+              <p>13:00</p>
+              <p>13:50</p>
+            </th>
+            <th>
+              <p>13:50</p>
+              <p>14:40</p>
+            </th>
+            <th>
+              <p>14:40</p>
+              <p>15:30</p>
+            </th>
+            <th>
+              <p>15:30</p>
+              <p>16:20</p>
+            </th>
+            <th>
+              <p>16:20</p>
+              <p>17:10</p>
+            </th>
+            <th>
+              <p>17:10</p>
+              <p>18:00</p>
+            </th>
+            <th>
+              <p>18:00</p>
+              <p>18:50</p>
+            </th>
+            <th>
+              <p>18:50</p>
+              <p>19:40</p>
+            </th>
+            <th>
+              <p>19:40</p>
+              <p>20:30</p>
+            </th>
+            <th>
+              <p>20:30</p>
+              <p>21:20</p>
+            </th>
+            <th>
+              <p>21:20</p>
+              <p>22:10</p>
+            </th>
+            <th>
+              <p>22:10</p>
+              <p>23:00</p>
+            </th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="tablaHorario">
           <% horarios.forEach( horario => { %>
 
           <tr>
             <td class="bg-warning"><%= horario.dia %></td>
             <% horario.horarios.forEach( hora => { %>
-              <td class="<%= hora.id_horario ? 'bg-primary' : 'bg-success'  %>"> <%= hora.hora_inicio %>-<%= hora.hora_final %>-<%= hora.nameAula %>-<%= hora.nameCurso %>-<%= hora.namePersona %>-<%= hora.nameGrupo %> </td>
-  
+              <% if (hora.id_horario) { %>
+                <td class="<%= hora.id_horario ? 'bg-primary' : 'bg-success' %>">
+                  <%= hora.hora_inicio %>-<%= hora.hora_final %>-<%= hora.nameAula
+                  %>-<%= hora.nameCurso %>-<%= hora.namePersona %>-<%=
+                  hora.nameGrupo %>
+                </td>
+              <% } else { %>
+                <td  class="<%= hora.id_horario ? 'bg-primary' : 'bg-success' %>" ></td>
+              <% } %>
+           
+
             <% }); %>
           </tr>
           <% }); %>
-
-          
         </tbody>
       </table>
     </div>
   </body>
+  <script>
+    const seleccionaPersona = document.getElementById("seleccionaPersona");
+    const tablaHorarios = document.getElementById("tablaHorario");
+    const seleccionaGrupo = document.getElementById("seleccionaGrupo");
+    seleccionaPersona.addEventListener("change", () => {
+      const filtroPersona = seleccionaPersona.value;
+      fetch(`/api/web/horarioTable?selectPersona=${filtroPersona}`)
+        .then((response) => response.json())
+        .then((data) => {
+          horariosHTML(data);
+        });
+    });
+    seleccionaGrupo.addEventListener("change", () => {
+      const filtroGrupo = seleccionaGrupo.value;
+      fetch(`/api/web/horarioTable?selectGrupo=${filtroGrupo}`)
+        .then((response) => response.json())
+        .then((data) => {
+          horariosHTML(data);
+        });
+    });
+    function horariosHTML(data) {
+      tablaHorarios.innerHTML = "";
+      data.forEach((resultados) => {
+        const tr = document.createElement("tr");
+       
+        tr.innerHTML = `<tr>
+                <td class='bg-warning'>${resultados.dia}</td>
+                </tr>`;
+
+        resultados.horarios.forEach((horario) => {
+          const td = document.createElement("td");
+          td.className = horario.id_horario ? 'bg-primary' : 'bg-success'
+          td.innerHTML = `${horario.namePersona}`;
+          tr.appendChild(td);
+        });
+        tablaHorarios.appendChild(tr);
+      });
+    }
+  </script>
 </html>

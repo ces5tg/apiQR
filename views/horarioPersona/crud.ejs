@@ -33,7 +33,7 @@
                       <% horarios.forEach(horario=> { %>
 
                       <option value="<%= horario._id %>">
-                        <%= horario.dia %>
+                        <%= horario.dia.toLocaleDateString() %> -  [ <%= horario.hora_inicio.toLocaleTimeString() %> - <%= horario.hora_fin.toLocaleTimeString() %> ] - <%= horario.aula.name %> 
                       </option>
                       <% }); %>
                     </select>
@@ -133,7 +133,7 @@
                       <!-- Opciones de Horarios -->
                       <% horarios.forEach(horario=> { %>
                       <option value="<%= horario._id %>">
-                        <%= horario.dia %>
+                        <%= horario.dia %> -
                       </option>
                       <% }); %>
                     </select>

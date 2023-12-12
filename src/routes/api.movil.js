@@ -71,7 +71,9 @@ function RouterApiMovil( io ) {
                 aula: idAula,
                 hora_inicio: { $lte: horaInicioFormateada },
                 hora_fin: { $gt: horaInicioFormateada },
+
             } );
+            /* "2023-12-12T03:15:00.000+00:00" */
 
 
             console.log( "ddddddddddd" )

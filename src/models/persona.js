@@ -6,6 +6,7 @@ const PersonaSchema = new mongoose.Schema({
     lastName: String,
     dni: String,
     estado: String,
+
     rol: {
         type: String,
         enum: [ 'admin', 'profesor', ' otro' ]
@@ -15,6 +16,7 @@ const PersonaSchema = new mongoose.Schema({
         email: String,
         password: String,
         profileImage: String,
+        token:String,
     }
 });
 

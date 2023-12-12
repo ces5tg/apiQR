@@ -80,7 +80,7 @@ router.get( '/grupos', async ( req, res ) => {
 // Rutas para CRUD de Horarios
 router.get( '/horarios', async ( req, res ) => {
     try {
-        const horarios=await Horario.find().populate( 'aula' );
+        const horarios=await Horario.find().populate( [{path:'aula'  , select:'name'}]);
         const aulas=await Aula.find();
         res.render( path.join( __dirname, '..', '..', 'views', 'horario', 'crud.ejs' ), { horarios, aulas, titulo: "Horarios2" } );
     } catch ( error ) {
@@ -188,10 +188,7 @@ router.get( '/horarioTable', async ( req, res ) => {
             { dia: "Domingo", horarios: [] },
             // Add more entries as needed
         ];
-
         // Agregar otro horario al final de la entrada correspondiente
-
-
         var countItem=0
         for ( item of listaHorarios ) {
 
@@ -311,7 +308,9 @@ router.get( '/horarioTable', async ( req, res ) => {
 
         console.log( "final de la peticion" )
 
-        res.render( path.join( __dirname, '..', '..', 'views', 'admin', 'horarioTable.ejs' ), { horarios: listaHorarios } );
+        const personas = await Persona.find()
+        const grupos = await Grupo.find()
+        res.render( path.join( __dirname, '..', '..', 'views', 'admin', 'horarioTable.ejs' ), { horarios: listaHorarios  , personas , grupos} );
     } catch ( error ) {
         res.status( 500 ).json( { message: 'Error al obtener los horarios existentes' } );
     }

@@ -1,7 +1,6 @@
 const express=require( 'express' );
 const router=express.Router();
 
-const moment = require('moment-timezone');
 
 // Importar los modelos
 const Persona=require( '../models/persona' );
@@ -13,6 +12,10 @@ const Horario=require( '../models/horario' );
 const HorarioPersona=require( '../models/horarioPersona' );
 const dotenv=require( 'dotenv' );
 const qrcode=require( 'qrcode' );
+
+const moment=require( 'moment' );
+
+const momentTime=require( 'moment-timezone' );
 dotenv.config();
 
 router.use( express.json() );
@@ -29,12 +32,12 @@ router.get( '/persona', async ( req, res ) => {
 
 router.post( '/persona', async ( req, res ) => {
     try {
-        const { name, firstName, lastName, dni, estado, rol, user } = req.body;
-        const nuevaPersona = new Persona({ name, firstName, lastName, dni, estado, rol, user });
-        const personaGuardada = await nuevaPersona.save();
-        res.json(personaGuardada);
-    } catch (error) {
-        res.status(500).json({ message: 'Error al guardar la persona' });
+        const { name, firstName, lastName, dni, estado, rol, user }=req.body;
+        const nuevaPersona=new Persona( { name, firstName, lastName, dni, estado, rol, user } );
+        const personaGuardada=await nuevaPersona.save();
+        res.json( personaGuardada );
+    } catch ( error ) {
+        res.status( 500 ).json( { message: 'Error al guardar la persona' } );
     }
 } );
 
@@ -49,15 +52,15 @@ router.get( '/persona/:id', async ( req, res ) => {
 
 router.put( '/persona/:id', async ( req, res ) => {
     try {
-        const { name, firstName, lastName, dni, estado, rol, user } = req.body;
-        const personaActualizada = await Persona.findByIdAndUpdate(
+        const { name, firstName, lastName, dni, estado, rol, user }=req.body;
+        const personaActualizada=await Persona.findByIdAndUpdate(
             req.params.id,
             { name, firstName, lastName, dni, estado, rol, user },
             { new: true }
         );
-        res.json(personaActualizada);
-    } catch (error) {
-        res.status(500).json({ message: 'Error al actualizar la persona' });
+        res.json( personaActualizada );
+    } catch ( error ) {
+        res.status( 500 ).json( { message: 'Error al actualizar la persona' } );
     }
 } );
 
@@ -192,12 +195,12 @@ router.post( '/curso', async ( req, res ) => {
     try {
         const { name, horas_lab, horas_teo, id_carrera }=req.body;
 
-        let horas_total = (horas_lab * 1) + (horas_teo * 1);
+        let horas_total=( horas_lab*1 )+( horas_teo*1 );
         const nuevoCurso=new Curso( { name, horas_lab, horas_teo, horas_total, id_carrera } );
         const cursoGuardado=await nuevoCurso.save();
         res.json( cursoGuardado );
     } catch ( error ) {
-        console.log(error);
+        console.log( error );
         res.status( 500 ).json( { message: 'Error al guardar el curso' } );
     }
 } );
@@ -224,7 +227,7 @@ router.put( '/curso/:id', async ( req, res ) => {
     try {
         const { name, horas_lab, horas_teo, id_carrera }=req.body;
 
-        let horas_total = parsInt(horas_lab,10) + parsInt(horas_teo,10);
+        let horas_total=parsInt( horas_lab, 10 )+parsInt( horas_teo, 10 );
         const cursoActualizado=await Curso.findByIdAndUpdate(
             req.params.id,
             { name, horas_lab, horas_teo, horas_total, id_carrera },
@@ -301,19 +304,20 @@ router.delete( '/grupo/:id', async ( req, res ) => {
 
 // CRUD para Horario
 router.post( '/horario', async ( req, res ) => {
-    const zonaHorariaPeru = 'America/Lima';
+    const zonaHorariaPeru='America/Lima';
     try {
         const { dia, hora_inicio_formt, hora_fin_formt, aula }=req.body;
 
-        const diaIncreased = moment.tz(dia, zonaHorariaPeru).format('YYYY-MM-DDTHH:mm:ss.SSSZ');
-        var var_hora_ini = `${dia}T${hora_inicio_formt}:00.000-05:00`;
-        var var_hora_fin = `${dia}T${hora_fin_formt}:00.000-05:00`;
+        const diaIncreased=moment.tz( dia, zonaHorariaPeru ).format( 'YYYY-MM-DDTHH:mm:ss.SSSZ' );
+        var var_hora_ini=`${ dia }T${ hora_inicio_formt }:00.000-05:00`;
+        var var_hora_fin=`${ dia }T${ hora_fin_formt }:00.000-05:00`;
 
         const nuevoHorario=new Horario( {
             dia: diaIncreased,
             hora_inicio: var_hora_ini,
             hora_fin: var_hora_fin,
-            aula: aula } );
+            aula: aula
+        } );
         const horarioGuardado=await nuevoHorario.save();
         res.json( horarioGuardado );
     } catch ( error ) {
@@ -340,30 +344,30 @@ router.get( '/horario/:id', async ( req, res ) => {
     }
 } );
 
-router.put('/horario/:id', async (req, res) => {
-    const zonaHorariaPeru = 'America/Lima';
+router.put( '/horario/:id', async ( req, res ) => {
+    const zonaHorariaPeru='America/Lima';
     try {
-        const { dia, hora_inicio_formt_edit, hora_fin_formt_edit, estado, aula } = req.body;
+        const { dia, hora_inicio_formt_edit, hora_fin_formt_edit, estado, aula }=req.body;
 
-        const diaIncreased = moment.tz(dia, zonaHorariaPeru).format('YYYY-MM-DDTHH:mm:ss.SSSZ');
-        let var_hora_ini = `${dia}T${hora_inicio_formt_edit}:00.000-05:00`;
-        let var_hora_fin = `${dia}T${hora_fin_formt_edit}:00.000-05:00`;
+        const diaIncreased=moment.tz( dia, zonaHorariaPeru ).format( 'YYYY-MM-DDTHH:mm:ss.SSSZ' );
+        let var_hora_ini=`${ dia }T${ hora_inicio_formt_edit }:00.000-05:00`;
+        let var_hora_fin=`${ dia }T${ hora_fin_formt_edit }:00.000-05:00`;
 
-        const hora_inicio = moment.tz(var_hora_ini, zonaHorariaPeru).format('YYYY-MM-DDTHH:mm:ss.SSSZ');
-        const hora_fin = moment.tz(var_hora_fin, zonaHorariaPeru).format('YYYY-MM-DDTHH:mm:ss.SSSZ');
+        const hora_inicio=moment.tz( var_hora_ini, zonaHorariaPeru ).format( 'YYYY-MM-DDTHH:mm:ss.SSSZ' );
+        const hora_fin=moment.tz( var_hora_fin, zonaHorariaPeru ).format( 'YYYY-MM-DDTHH:mm:ss.SSSZ' );
 
-        const horarioActualizado = await Horario.findByIdAndUpdate(
+        const horarioActualizado=await Horario.findByIdAndUpdate(
             req.params.id,
             { dia: diaIncreased, hora_inicio, hora_fin, estado, aula },
             { new: true }
-        ).populate('aula');
+        ).populate( 'aula' );
 
-        res.json(horarioActualizado);
-    } catch (error) {
-        console.error('Error al actualizar el horario:', error);
-        res.status(500).json({ message: 'Error al actualizar el horario' });
+        res.json( horarioActualizado );
+    } catch ( error ) {
+        console.error( 'Error al actualizar el horario:', error );
+        res.status( 500 ).json( { message: 'Error al actualizar el horario' } );
     }
-});
+} );
 
 
 router.delete( '/horario/:id', async ( req, res ) => {
@@ -388,16 +392,16 @@ router.get( '/horarioPersona/:id', async ( req, res ) => {
 
 router.post( '/horarioPersona', async ( req, res ) => {
     try {
-        const { id_horario, id_grupo, id_curso, id_persona}=req.body;
-        const horarioPersona=new HorarioPersona( { id_horario, id_grupo, id_curso, id_persona , asistencia:'F' } );
+        const { id_horario, id_grupo, id_curso, id_persona }=req.body;
+        const horarioPersona=new HorarioPersona( { id_horario, id_grupo, id_curso, id_persona, asistencia: 'F' } );
         const horarioPersonaGuardado=await horarioPersona.save();
-        
-        const result = await Horario.updateOne(
+
+        const result=await Horario.updateOne(
             { _id: id_horario },
             { $set: { estado: true } }
-          );
+        );
 
-          
+
         res.json( horarioPersonaGuardado );
     } catch ( error ) {
         console.error( 'Error al crear horario persona:', error );
@@ -407,7 +411,7 @@ router.post( '/horarioPersona', async ( req, res ) => {
 
 router.put( '/horarioPersona/:id', async ( req, res ) => {
     try {
-        const { id_horario, id_grupo, id_curso, id_persona}=req.body;
+        const { id_horario, id_grupo, id_curso, id_persona }=req.body;
         const horarioPersonaActualizado=await HorarioPersona.findByIdAndUpdate(
             req.params.id,
             { id_horario, id_grupo, id_curso, id_persona },
@@ -422,12 +426,12 @@ router.put( '/horarioPersona/:id', async ( req, res ) => {
 
 router.delete( '/horarioPersona/:id', async ( req, res ) => {
     try {
-        const deleteHorarioPersona = await HorarioPersona.findByIdAndDelete( req.params.id );
-        console.log(deleteHorarioPersona)
-        const result = await Horario.updateOne(
+        const deleteHorarioPersona=await HorarioPersona.findByIdAndDelete( req.params.id );
+        console.log( deleteHorarioPersona )
+        const result=await Horario.updateOne(
             { _id: deleteHorarioPersona.id_horario },
             { $set: { estado: false } }
-          );
+        );
 
 
         res.json( { message: 'Horario Persona eliminado correctamente' } );
@@ -471,7 +475,142 @@ router.get( '/horarioAsistencia', async ( req, res ) => {
     }
 } );
 
+router.get( '/horarioTable', async ( req, res ) => {
+    const selectPersona=req.query.selectPersona
+    const selectGrupo=req.query.selectGrupo
+    console.log( selectPersona+" -----------------" )
 
+    const listaHorarios=[
+        { dia: "Lunes", horarios: [] },
+        { dia: "Martes", horarios: [] },
+        { dia: "Miercoles", horarios: [] },
+        { dia: "Jueves", horarios: [] },
+        { dia: "Viernes", horarios: [] },
+        { dia: "Sabado", horarios: [] },
+        { dia: "Domingo", horarios: [] },
+
+    ];
+    var countItem=0
+    for ( item of listaHorarios ) {
+        var count=0
+        console.log( listaHorarios[ countItem ].dia+" - " )
+        while ( count<20 ) {
+            const currentDate=new Date();
+            currentDate.setHours( 6, 20, 0, 0 );
+            currentDate.setMinutes( currentDate.getMinutes()+50*count );
+
+            const formattedTimeInicio=currentDate.toLocaleTimeString( "en-US", {
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: false,
+            } );
+            const nuevaFechaFin=new Date( currentDate );
+            nuevaFechaFin.setMinutes( nuevaFechaFin.getMinutes()+50 );
+
+            const formattedTimeFin=nuevaFechaFin.toLocaleTimeString( "en-US", {
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: false,
+            } );
+            var nuevoHorario={
+                hora_inicio: formattedTimeInicio,
+                hora_fin: formattedTimeFin,
+                id_horario: "",
+                nameAula: "",
+                nameCurso: "",
+                namePersona: "",
+                nameGrupo: "",
+                imagenQR:""
+            };
+            listaHorarios[ countItem ].horarios.push( nuevoHorario );
+            count++;
+        }
+        countItem++
+        console.log( "----------------------" )
+    }
+    console.log( "#######################" )
+    /* const horarios=await Horario.find().populate( [
+        { path: 'aula', select: [ 'name' ] }
+    ] );; */
+    try {
+
+        const query={};
+        if ( selectPersona ) {
+            query.id_persona=selectPersona;
+        }
+
+        if ( selectGrupo ) {
+            query.id_grupo=selectGrupo;
+        }
+
+        const horarios=await HorarioPersona.find( query )
+            .populate( [
+                { path: 'id_horario', populate: { path: 'aula' } },
+                { path: 'id_grupo' },
+                { path: 'id_curso' },
+                { path: 'id_persona' }
+            ] );
+
+        // Convertir la cadena a un objeto Date
+        console.log( { horarios } )
+        console.log( "¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿" )
+
+
+        for ( const horario of horarios ) {// horarios de la BASE DE DATOS
+
+            console.log( horario.id_horario.dia )
+            var count=0
+            const diasSemana=[ 'Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado' ];
+            const diaSemana=diasSemana[ moment( horario.id_horario.dia ).tz( 'America/Lima' ).day() ];
+            console.log( diaSemana+" --  dia de la semana" )
+
+            const horaInicioPeru=momentTime( horario.id_horario.hora_inicio ).tz( 'America/Lima' ).format( 'HH:mm' );
+            console.log( horaInicioPeru+" esta es hora inicio PERU" )
+            for ( const j of listaHorarios ) { // FORMATO HORARIOS / DIAS - HORAS
+                console.log( j.dia )//Dia de la semana
+                /* i -> listaHorario -> dia
+                       i -> listaHorario -> horario[]
+                    */
+
+                for ( const i of j.horarios ) {
+                    /* 
+                        i -> HORARIO_INICIO - HORARIO_FIN
+                    */
+                    /* console.log(horaInicioPeru +" === "+ i.hora_inicio) */
+                    if ( j.dia==diaSemana&&( i.hora_inicio===horaInicioPeru ) ) {
+
+                        console.log( i.hora_inicio+" -- "+i.hora_fin )
+                        console.log( "1" )
+                        i.id_horario=horario.id_horario._id
+                        console.log( "2" )
+
+                        i.nameAula=horario.id_horario.aula.name,
+                            console.log( "3" )
+
+                        i.nameCurso=horario.id_curso.name,
+                            i.namePersona=horario.id_persona.name,
+                            i.nameGrupo=horario.id_grupo.name,
+                            i.imagenQR = horario.id_horario.aula.codigo
+
+                    }
+
+                }
+
+            }
+            count++
+        }
+
+        console.log( listaHorarios[ 3 ].horarios[ 8 ] )
+
+        console.log( "final de la peticion" )
+
+        res.json( listaHorarios )
+
+    } catch ( error ) {
+        res.status( 500 ).json( { message: 'Error al obtener los horarios existentes' } );
+    }
+
+} )
 
 
 
