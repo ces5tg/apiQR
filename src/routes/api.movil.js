@@ -1,14 +1,14 @@
 const express=require( 'express' );
 const bodyParser=require( 'body-parser' );
-const qr=require( 'qrcode' );
+
 const moment=require( 'moment' );
+const bcrypt = require('bcrypt');
 
 
 const Aula=require( '../models/aula' )
 const Horario=require( '../models/horario' )
 const HorarioPersona=require( '../models/horarioPersona' )
 const Persona = require('../models/persona')
-
 
 function RouterApiMovil( io ) {
     const router=express.Router();
@@ -29,18 +29,33 @@ function RouterApiMovil( io ) {
         }
     } );
 
-    
-    router.post( '/registrarse', async ( req, res ) => {
-        const { email, password }=req.body
-        console.log(email + '  --  '+ password)
 
+    router.post('/registrarse', async (req, res) => {
+        const { email, password } = req.body;
+      
         try {
-            const busquedaPersona=await Persona.findOne( { 'user.email':email , 'user.password':password } );
-            res.json( busquedaPersona );
-        } catch ( error ) {
-            res.status( 500 ).json( { error: 'error , no exite el usuario' } );
+
+          const existingUser = await Persona.findOne({ 'user.email': email });
+          if (existingUser) {
+            return res.status(400).json({ error: 'el usuario ya existe' });
+          }
+      
+          const hashedPassword = bcrypt.hashSync(password, 10);
+          const newPersona = new Persona({
+            user: {
+              email: email,
+              hashedPassword: hashedPassword,
+            },
+   
+          });
+
+          const savedPersona = await newPersona.save();
+          res.json(savedPersona);
+        } catch (error) {
+
+          res.status(500).json({ error: 'erro al insertar nuevo usuario' });
         }
-    } );
+      });
 
 
 
