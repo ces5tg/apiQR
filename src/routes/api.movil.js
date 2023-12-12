@@ -44,7 +44,7 @@ function RouterApiMovil( io ) {
           const newPersona = new Persona({
             user: {
               email: email,
-              hashedPassword: hashedPassword,
+              password: hashedPassword,
             },
    
           });
