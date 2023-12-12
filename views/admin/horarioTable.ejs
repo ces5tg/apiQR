@@ -116,19 +116,18 @@
 
           <tr>
             <td class="bg-warning"><%= horario.dia %></td>
-            <% horario.horarios.forEach( hora => { %>
-              <% if (hora.id_horario) { %>
-                <td class="<%= hora.id_horario ? 'bg-primary' : 'bg-success' %>">
-                  <%= hora.hora_inicio %>-<%= hora.hora_final %>-<%= hora.nameAula
-                  %>-<%= hora.nameCurso %>-<%= hora.namePersona %>-<%=
-                  hora.nameGrupo %>
-                </td>
-              <% } else { %>
-                <td  class="<%= hora.id_horario ? 'bg-primary' : 'bg-success' %>" ></td>
-              <% } %>
-           
-
-            <% }); %>
+            <% horario.horarios.forEach( hora => { %> <% if (hora.id_horario) {
+            %>
+            <td class="<%= hora.id_horario ? 'bg-primary' : 'bg-success' %>">
+              <%= hora.hora_inicio %>-<%= hora.hora_final %>-<%= hora.nameAula
+              %>-<%= hora.nameCurso %>-<%= hora.namePersona %>-<%=
+              hora.nameGrupo %>
+            </td>
+            <% } else { %>
+            <td
+              class="<%= hora.id_horario ? 'bg-primary' : 'bg-success' %>"
+            ></td>
+            <% } %> <% }); %>
           </tr>
           <% }); %>
         </tbody>
@@ -159,14 +158,14 @@
       tablaHorarios.innerHTML = "";
       data.forEach((resultados) => {
         const tr = document.createElement("tr");
-       
+
         tr.innerHTML = `<tr>
                 <td class='bg-warning'>${resultados.dia}</td>
                 </tr>`;
 
         resultados.horarios.forEach((horario) => {
           const td = document.createElement("td");
-          td.className = horario.id_horario ? 'bg-primary' : 'bg-success'
+          td.className = horario.id_horario ? "bg-primary" : "bg-success";
           td.innerHTML = `${horario.namePersona}`;
           tr.appendChild(td);
         });
