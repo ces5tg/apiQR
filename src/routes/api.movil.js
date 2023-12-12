@@ -68,8 +68,37 @@ function RouterApiMovil( io ) {
         }
       });
 
-
-
+      router.post('/cerrarSesion', async (req, res) => {
+        try {
+          // Obtener el token del encabezado de la solicitud
+          const token = req.body.user.tokens
+      
+          // Implementar la lógica para cerrar la sesión, como invalidar el token, etc.
+          // Por ejemplo, puedes mantener una lista de tokens válidos en la base de datos y 
+          // eliminar el token actual de la lista al cerrar sesión.
+      
+          // Verificar si el token está presente
+          if (!token) {
+            return res.status(401).json({ error: 'Token no proporcionado' });
+          }
+      
+          // Verificar y decodificar el token
+          jwt.verify(token, 'secreto', async (err, decodedToken) => {
+            if (err) {
+              return res.status(401).json({ error: 'Token no válido' });
+            }
+      
+            // Aquí puedes realizar acciones adicionales al cerrar sesión, como invalidar el token.
+            // Por ejemplo, podrías almacenar el token en una lista negra en la base de datos.
+      
+            // En este ejemplo, simplemente respondemos con un mensaje
+            res.json({ message: 'Sesión cerrada correctamente' });
+          });
+        } catch (error) {
+          console.error('Error al cerrar la sesión:', error);
+          res.status(500).json({ error: 'Error al cerrar la sesión' });
+        }
+      });
     router.get( '/validarCodigo/:nameAula', async ( req, res ) => {
         try {
             const busquedaAula=await Aula.findOne( { name: new RegExp( req.params.nameAula, 'i' ) } );
