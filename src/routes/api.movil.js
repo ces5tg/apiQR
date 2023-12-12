@@ -3,7 +3,7 @@ const bodyParser=require( 'body-parser' );
 
 const moment=require( 'moment' );
 const bcrypt = require('bcrypt');
-
+const jwt = require('jsonwebtoken');
 
 const Aula=require( '../models/aula' )
 const Horario=require( '../models/horario' )
@@ -17,21 +17,28 @@ function RouterApiMovil( io ) {
 
 
 
-    router.post( '/inicioSesion', async ( req, res ) => {
-        const { email, password }=req.body
-        console.log(email + '  --  '+ password)
-
+    router.post('/inicioSesion', async (req, res) => {
+        const { email, password } = req.body;
+      
         try {
-           /*  const busquedaPersona=await Persona.findOne( { 'user.email':email , 'user.password':password } ); */
-           const busquedaPersona = await Persona.findOne({ 'user.email': email });
-           if (busquedaPersona && bcrypt.compareSync(password, busquedaPersona.user.password)) {
-            res.json( busquedaPersona );
-           }
-            
-        } catch ( error ) {
-            res.status( 500 ).json( { error: 'error , no exite el usuario' } );
+          // Buscar al usuario por su dirección de correo electrónico
+          const persona = await Persona.findOne({ 'user.email': email });
+      
+          if (!persona || !bcrypt.compareSync(password, persona.user.password)) {
+            // Si el usuario no existe o la contraseña no coincide, devolver un error de autenticación
+            return res.status(401).json({ error: 'Credenciales incorrectas' });
+          }
+      
+          // Generar un token JWT
+          const token = jwt.sign({ userId: persona._id }, 'secreto', { expiresIn: '1h' });
+      
+          // Devolver el token como respuesta
+          res.json({ token });
+        } catch (error) {
+          console.error('Error en el inicio de sesión:', error);
+          res.status(500).json({ error: 'Error en el inicio de sesión' });
         }
-    } );
+      });
 
 
     router.post('/registrarse', async (req, res) => {
