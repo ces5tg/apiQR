@@ -90,7 +90,7 @@ function RouterApiMovil( io ) {
         try {
 
 
-            const { idAula, idPersona, password }=req.body
+            const {  idPersona,idAula, password }=req.body
             console.log( idAula+"  ---   "+idPersona )
             const allHorarios=await Horario.find( {} );
 
