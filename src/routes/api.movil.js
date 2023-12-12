@@ -29,6 +29,20 @@ function RouterApiMovil( io ) {
         }
     } );
 
+    
+    router.post( '/registrarse', async ( req, res ) => {
+        const { email, password }=req.body
+        console.log(email + '  --  '+ password)
+
+        try {
+            const busquedaPersona=await Persona.findOne( { 'user.email':email , 'user.password':password } );
+            res.json( busquedaPersona );
+        } catch ( error ) {
+            res.status( 500 ).json( { error: 'error , no exite el usuario' } );
+        }
+    } );
+
+
 
     router.get( '/validarCodigo/:nameAula', async ( req, res ) => {
         try {
