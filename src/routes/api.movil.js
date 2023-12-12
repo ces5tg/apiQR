@@ -7,24 +7,29 @@ const moment=require( 'moment' );
 const Aula=require( '../models/aula' )
 const Horario=require( '../models/horario' )
 const HorarioPersona=require( '../models/horarioPersona' )
-
-
+const Persona = require('../models/persona')
 
 
 function RouterApiMovil( io ) {
     const router=express.Router();
 
     router.use( bodyParser.json() );
-    router.get( '/inicioSesion', async ( req, res ) => {
+
+
+
+    router.post( '/inicioSesion', async ( req, res ) => {
         const { email, password }=req.body
+        console.log(email + '  --  '+ password)
 
         try {
-            const busquedaAula=await Persona.findOne( { name: new RegExp( req.params.nameAula, 'i' ) } );
-            res.json( busquedaAula );
+            const busquedaPersona=await Persona.findOne( { 'user.email':email , 'user.password':password } );
+            res.json( busquedaPersona );
         } catch ( error ) {
-            res.status( 500 ).json( { error: 'error , codigo QR , aula no existe' } );
+            res.status( 500 ).json( { error: 'error , no exite el usuario' } );
         }
     } );
+
+
     router.get( '/validarCodigo/:nameAula', async ( req, res ) => {
         try {
             const busquedaAula=await Aula.findOne( { name: new RegExp( req.params.nameAula, 'i' ) } );
