@@ -1,118 +1,124 @@
 <%- include('../layouts/head.ejs') %>
 
-<body>
-    <div class="wrapped">
-        
-        <div class="sidebar">
-            <%- include('../layouts/sideBar.ejs') %>
-        </div>
-        <div class="main-panel ps ps--active-y">
-            <div class="navbar navbar-expand-lg navbar-absolute navbar-transparent">
-                <%- include('../layouts/navBar.ejs') %>
-            </div>
-            
-        <div class="content">
-            <div class="main-panel">
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="card card-chart">
-                                <h1>CRUD de Horarios</h1>
+    <body>
+        <%- include('../layouts/sideBar.ejs') %>
 
-                                <!-- Formulario para Crear Horario -->
-                                <form id="createForm" action="/api/web/horario" method="POST" onsubmit="return createHorario()">
-                                    <label for="dia">Día:</label>
-                                    <input type="date" name="dia" id="horarioDia" required>
-                                    <label for="hora_inicio">Hora de Inicio:</label>
-                                    <input type="time" name="hora_inicio" id="horarioInicio" required>
-                                    <label for="hora_fin">Hora de Fin:</label>
-                                    <input type="time" name="hora_fin" id="horarioFin" required>
-                                    <!-- Agregar un campo para seleccionar el aula -->
-                                    <label for="aula">Aula:</label>
-                                    <select name="aula" id="horarioAula" required>
-                                        <% aulas.forEach(aula => { %>
-                                            <option value="<%= aula._id %>"><%= aula.name %></option>
-                                        <% }); %>
-                                    </select>
-                                    <button type="submit">Crear Horario</button>
-                                </form>
-                            
-                                <!-- Tabla de Horarios -->
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th>Día</th>
-                                            <th>Hora de Inicio</th>
-                                            <th>Hora de Fin</th>
-                                            <th>Estado</th>
-                                            <th>Aula</th>
-                                            <th>Acciones</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <% horarios.forEach(horario => { %>
-                                            <tr>
-                                                <!-- Detalles de Horario -->
-                                                <<td>
-                                                    <%= horario.dia ? horario.dia.toLocaleDateString() : 'N/A' %>
-                                                </td>
-                                                <td>
-                                                    <%=
-                                                    horario.hora_inicio.toLocaleTimeString('es-PE', {
-                                                    hour: '2-digit', minute: '2-digit' }) %>
-                                                  </td>
-                                                  <td>
-                                                    <%=
-                                                    horario.hora_fin.toLocaleTimeString('es-PE', {
-                                                    hour: '2-digit', minute: '2-digit' }) %>
-                                                  </td>
-                                                <!-- <td>
-                                                    <%= horario.hora_inicio ? ('0' + horario.hora_inicio.getHours()).slice(-2) : 'N/A' %>:<%= horario.hora_inicio ? ('0' + horario.hora_inicio.getMinutes()).slice(-2) : 'N/A' %>
-                                                </td>
-                                                <td>
-                                                    <%= horario.hora_fin ? ('0' + horario.hora_fin.getHours()).slice(-2) : 'N/A' %>:<%= horario.hora_fin ? ('0' + horario.hora_fin.getMinutes()).slice(-2) : 'N/A' %>
-                                                </td> -->
-                                                <td>
-                                                    <%= horario.estado %>
-                                                </td>                                               
-                                                <td><%= horario.aula.name %></td>
-                                                <!-- Enlace para Editar Horario -->
-                                                <td><a href="#" onclick="showEditForm('<%= horario._id %>', '<%= horario.dia %>', '<%= horario.hora_inicio %>', '<%= horario.hora_fin %>', '<%= horario.aula._id %>'); event.preventDefault();">Editar</a></td>
-                                                <!-- Botón para Eliminar Horario -->
-                                                <td>
-                                                    <button type="button" onclick="confirmDelete('<%= horario._id %>')">Eliminar</button>
-                                                </td>
-                                            </tr>
-                                        <% }); %>
-                                    </tbody>
-                                </table>
-                            
-                                <!-- Formulario para Editar Horario -->
-                                <form id="editForm" style="display: none;" onsubmit="return editHorario()">
-                                    <input type="hidden" id="editId" name="_id">
-                                    <label for="editDia">Nuevo Día:</label>
-                                    <input type="date" id="editDia" name="dia" required>
-                                    <label for="editInicio">Nueva Hora de Inicio:</label>
-                                    <input type="time" id="editInicio" name="hora_inicio" required>
-                                    <label for="editFin">Nueva Hora de Fin:</label>
-                                    <input type="time" id="editFin" name="hora_fin" required>
-                                    <!-- Agregar un campo para seleccionar el aula -->
-                                    <label for="editAula">Nueva Aula:</label>
-                                    <select id="editAula" name="aula" required>
-                                        <% aulas.forEach(aula => { %>
-                                            <option value="<%= aula._id %>"><%= aula.name %></option>
-                                        <% }); %>
-                                    </select>
-                                    <button type="submit">Guardar Cambios</button>
-                                </form>
-                            
-                            </div>
+            <div class="p-4 sm:ml-64">
+                <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div class="flex items-center justify-center rounded bg-gray-50 h-28 dark:bg-gray-800">
+                            <p class="text-2xl text-gray-400 dark:text-gray-500">CRUD de Horarios</p>
                         </div>
+                        <div class="flex items-center justify-center rounded bg-gray-50 h-50 light:bg-gray-900">
+                            <!-- Formulario para Crear Horario -->
+                            <form class="space-y-5" id="horarioForm" action="/api/web/horario" method="POST" onsubmit="return submitHorarioForm()">
+                                <input type="hidden" id="editId" name="_id">
+                            
+                                <div class="grid grid-cols-3 gap-3">
+                                    <div>                                      
+                                        <div class="grid grid-row-2 gap-3">
+                                            <div>            
+                                                <label for="horarioDia">Día:</label>
+                                                <input type="date" id="horarioDia" name="dia" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-10/12 p-2.5 dark:border-gray-600" required>
+                                            </div>
+                                            <div>
+                                                <label for="horarioAula">Aula:</label>
+                                                <select id="horarioAula" name="aula" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-9/12 p-2.5 light:bg-gray-700 light:border-gray-600 light:placeholder-gray-400 light:text-white light:focus:ring-blue-500 light:focus:border-blue-500" required>
+                                                    <% aulas.forEach(aula=> { %>
+                                                        <option value="<%= aula._id %>">
+                                                            <%= aula.name %>
+                                                        </option>
+                                                    <% }); %>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="grid grid-row-2 gap-3">
+                                            <div>
+                                                <label for="horarioInicio">Hora de Inicio:</label>
+                                                <input type="time" id="horarioInicio" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-10/12 p-2.5 dark:border-gray-600" name="hora_inicio" required>
+                                            </div>
+                                            <div>
+                                                <label for="horarioFin">Hora de Fin:</label>
+                                                <input type="time" id="horarioFin" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-10/12 p-2.5 dark:border-gray-600" name="hora_fin" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <div>
+                                            <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" id="submitBtn">Crear Horario</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                </div>
                     </div>
+                    <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+                        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                <tr>
+                                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">Día</th>
+                                    <th >Hora de Inicio</th>
+                                    <th scope="col" class="px-6 py-3">Hora de Fin</th>
+                                    <th scope="col" class="px-6 py-3">Estado</th>
+                                    <th scope="col" class="px-6 py-3">Aula</th>
+                                    <th scope="col" class="px-6 py-3">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                                            <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
+                                            </svg>
+                                    </th>
+                                    <th scope="col" class="px-6 py-3">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                                            <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0"/>
+                                            </svg>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% horarios.forEach(horario=> { %>
+                                    <tr class="bg-white dark:bg-gray-800">
+                                        <!-- Detalles de Horario -->
+                                        <td class="px-6 py-4"><%= horario.dia ? horario.dia.toLocaleDateString() : 'N/A' %>
+                                                </td>
+                                                <td class="px-6 py-4">
+                                                    <%= horario.hora_inicio ? ('0' +
+                                                        horario.hora_inicio.getHours()).slice(-2) : 'N/A' %>:<%=
+                                                            horario.hora_inicio ? ('0' +
+                                                            horario.hora_inicio.getMinutes()).slice(-2) : 'N/A' %>
+                                                </td>
+                                                <td class="px-6 py-4">
+                                                    <%= horario.hora_fin ? ('0' +
+                                                        horario.hora_fin.getHours()).slice(-2) : 'N/A' %>:<%=
+                                                            horario.hora_fin ? ('0' +
+                                                            horario.hora_fin.getMinutes()).slice(-2) : 'N/A' %>
+                                                </td>
+                                                <td class="px-6 py-4">
+                                                    <%= horario.estado %>
+                                                </td>
+                                                <td class="px-6 py-4">
+                                                    <%= horario.aula.name %>
+                                                </td>
+                                                <!-- Enlace para Editar Horario -->
+                                                
+                                                <td class="px-6 py-4">
+                                                    <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline" onclick="showEditForm('<%= horario._id %>', '<%= horario.dia %>', '<%= horario.hora_inicio %>', '<%= horario.hora_fin %>', '<%= horario.aula._id %>'); event.preventDefault();">Editar</a>
+                                                </td>
+                                                <!-- Botón para Eliminar Horario -->
+                                                
+                                                <td class="px-6 py-4">
+                                                    <button type="button" class="font-medium text-red-600 dark:text-red-500 hover:underline"                                                     onclick="confirmDelete('<%= horario._id %>')">Eliminar</button>
+                                                </td>
+                                    </tr>
+                                    <% }); %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>    
-    <script src="/js/web/horarios.js"></script>
-    <%- include('../layouts/footer.ejs') %>
-</body>
+        <%- include('../layouts/footer.ejs') %>
+        <script src="/js/web/horarios.js"></script>
+    </body>
 
-</html>
+    </html>

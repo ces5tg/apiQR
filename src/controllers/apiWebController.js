@@ -88,7 +88,6 @@ router.post( '/aula', async ( req, res ) => {
         const nuevaAula=new Aula( { name, descripcion, zona, codigo: codigoq } );
         const aulaGuardada=await nuevaAula.save();
 
-        console.log( aulaGuardada )
         res.json( aulaGuardada );
     } catch ( error ) {
         res.status( 500 ).json( { message: 'Error al guardar el aula' } );
@@ -121,6 +120,7 @@ router.put( '/aula/:id', async ( req, res ) => {
             { name, descripcion, zona, codigo },
             { new: true }
         );
+        console.log(aulaActualizada)
         res.json( aulaActualizada );
     } catch ( error ) {
         res.status( 500 ).json( { message: 'Error al actualizar el aula' } );
@@ -227,7 +227,7 @@ router.put( '/curso/:id', async ( req, res ) => {
     try {
         const { name, horas_lab, horas_teo, id_carrera }=req.body;
 
-        let horas_total=parsInt( horas_lab, 10 )+parsInt( horas_teo, 10 );
+        let horas_total = (horas_lab* 1) + ( horas_teo * 1 );
         const cursoActualizado=await Curso.findByIdAndUpdate(
             req.params.id,
             { name, horas_lab, horas_teo, horas_total, id_carrera },
@@ -588,10 +588,11 @@ router.get( '/horarioTable', async ( req, res ) => {
                             console.log( "3" )
 
                         i.nameCurso=horario.id_curso.name,
-                            i.namePersona=horario.id_persona.name,
-                            i.nameGrupo=horario.id_grupo.name,
-                            i.imagenQR = horario.id_horario.aula.codigo
+                        i.namePersona=horario.id_persona.name,
+                        i.nameGrupo=horario.id_grupo.name,
+                        i.imagenQR = horario.id_horario.aula.codigo
 
+                        console.log(i.imagenQR);
                     }
 
                 }

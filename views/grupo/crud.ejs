@@ -1,96 +1,87 @@
 <%- include('../layouts/head.ejs') %>
 
 <body>
-    
-    <div class="wrapped">
-        
-        <div class="sidebar">
-            <%- include('../layouts/sideBar.ejs') %>
-        </div>
-        <div class="main-panel ps ps--active-y">
-            <div class="navbar navbar-expand-lg navbar-absolute navbar-transparent">
-                <%- include('../layouts/navBar.ejs') %>
-            </div>
-            
-        <div class="content">
-            <div class="main-panel">
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="card card-chart">
-                                <h1>CRUD de Grupos</h1>
+    <%- include('../layouts/sideBar.ejs') %>
 
-                                <!-- Formulario para Crear Grupo -->
-                                <form id="createForm" action="/api/web/grupo" method="POST" onsubmit="return createGrupo()">
-                                    <label for="name">Nombre:</label>
-                                    <input type="text" name="name" id="grupoName" required>
-                                    <label for="nro_inscritos">Número de Inscritos:</label>
-                                    <input type="number" name="nro_inscritos" id="grupoInscritos" required>
-                                    <!-- Agregar un campo para seleccionar la carrera -->
-                                    <label for="id_carrera">Carrera:</label>
-                                    <select name="id_carrera" id="grupoCarrera" required>
-                                        <% carreras.forEach(carrera => { %>
-                                            <option value="<%= carrera._id %>"><%= carrera.name %></option>
-                                        <% }); %>
-                                    </select>
-                                    <button type="submit">Crear Grupo</button>
-                                </form>
-                            
-                                <!-- Detalles de grupo -->
-                                <div id="grupoDetails"></div>
-                            
-                            
-                                <!-- Tabla de Grupos -->
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th>Nombre</th>
-                                            <th>Número de Inscritos</th>
-                                            <th>Carrera</th>
-                                            <th>Acciones</th>
+        <div class="p-4 sm:ml-64">
+            <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div class="flex items-center justify-center rounded bg-gray-50 h-28 dark:bg-gray-800">
+                        <p class="text-2xl text-gray-400 dark:text-gray-500">CRUD de Grupos
+                        </div>
+                        <div class="flex items-center justify-center rounded bg-gray-50 h-60 light:bg-gray-900">
+                            <!-- Formulario para Crear Grupo -->
+                            <form id="createForm" class="space-y-5" onsubmit="return submitGrupoForm()">                        
+                                <input type="hidden" id="editId" name="_id">
+                                <div class="grid gap-6 mb-6 md:grid-cols-2">
+                                    <div class="grid grid-cols-1 items-center">
+                                        <label for="name" class="col-span-1 block text-sm font-medium text-gray-700">Nombre:</label>
+                                        <input type="text" name="name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600" id="grupoName" required>
+                                    </div>
+                                    <div class="grid grid-cols-1 items-center">
+                                        <label for="nro_inscritos" class="col-span-1 block text-sm font-medium text-gray-700">Número de Inscritos:</label>
+                                        <input type="number" name="nro_inscritos"  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600" id="grupoInscritos" required>
+                                    </div>
+                                    <div class="grid grid-cols-1 items-center">
+                                        <label for="id_carrera" class="col-span-1 block text-sm font-medium text-gray-700">Carrera:</label>
+                                        <select name="id_carrera" id="grupoCarrera"  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 light:bg-gray-700 light:border-gray-600 light:placeholder-gray-400 light:text-white light:focus:ring-blue-500 light:focus:border-blue-500" required>
+                                            <% carreras.forEach(carrera => { %>
+                                                <option value="<%= carrera._id %>"><%= carrera.name %></option>
+                                            <% }); %>
+                                        </select>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <div>
+                                            <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Crear Grupo</button>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                </div>
+                <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+                    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                            <tr>
+                                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">Nombre</th>
+                                            <th scope="col" class="px-6 py-3">Número de Inscritos</th>
+                                            <th scope="col" class="px-6 py-3">Carrera</th>
+                                            <th scope="col" class="px-6 py-3">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                                                    <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
+                                                    </svg>
+                                            </th>
+                                            <th scope="col" class="px-6 py-3">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                                                    <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0"/>
+                                                    </svg>
+                                            </th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <% grupos.forEach(grupo => { %>
-                                            <tr>
+                                            <tr class="bg-white dark:bg-gray-800">
                                                 <!-- Detalles de Grupo -->
-                                                <td><a href="#" onclick="showGrupoDetails('<%= grupo._id %>')"><%= grupo.name %></a></td>
-                                                <td><%= grupo.nro_inscritos %></td>
-                                                <td><%= grupo.id_carrera.name %></td>
+                                                <td class="px-6 py-4"><a href="#" onclick="showGrupoDetails('<%= grupo._id %>')"><%= grupo.name %></a></td>
+                                                <td class="px-6 py-4"><%= grupo.nro_inscritos %></td>
+                                                <td class="px-6 py-4"><%= grupo.id_carrera.name %></td>
                                                 <!-- Enlace para Editar Grupo -->
-                                                <td><a href="#" onclick="showEditForm('<%= grupo._id %>', '<%= grupo.name %>', '<%= grupo.nro_inscritos %>', '<%= grupo.id_carrera._id %>'); event.preventDefault();">Editar</a></td>
+                                                <td class="px-6 py-4"><a class="font-medium text-blue-600 dark:text-blue-500 hover:underline" href="#" onclick="showEditForm('<%= grupo._id %>', '<%= grupo.name %>', '<%= grupo.nro_inscritos %>', '<%= grupo.id_carrera._id %>'); event.preventDefault();">Editar</a></td>
                                                 <!-- Botón para Eliminar Grupo -->
-                                                <td>
-                                                    <button type="button" onclick="confirmDelete('<%= grupo._id %>')">Eliminar</button>
+                                                <td class="px-6 py-4">
+                                                    <button class="font-medium text-red-600 dark:text-red-500 hover:underline"  type="button" onclick="confirmDelete('<%= grupo._id %>')">Eliminar</button>
                                                 </td>
                                             </tr>
                                         <% }); %>
                                     </tbody>
                                 </table>
-                            
-                                <!-- Formulario para Editar Grupo -->
-                                <form id="editForm" style="display: none;" onsubmit="return editGrupo()">
-                                    <input type="hidden" id="editId" name="_id">
-                                    <label for="editName">Nuevo Nombre:</label>
-                                    <input type="text" id="editName" name="name" required>
-                                    <label for="editInscritos">Nuevo Número de Inscritos:</label>
-                                    <input type="number" id="editInscritos" name="nro_inscritos" required>
-                                    <!-- Agregar un campo para seleccionar la carrera -->
-                                    <label for="editCarrera">Nueva Carrera:</label>
-                                    <select id="editCarrera" name="id_carrera" required>
-                                        <% carreras.forEach(carrera => { %>
-                                            <option value="<%= carrera._id %>"><%= carrera.name %></option>
-                                        <% }); %>
-                                    </select>
-                                    <button type="submit">Guardar Cambios</button>
-                                </form>                            
-                            </div>
-                        </div>
-                    </div>
+                </div>
             </div>
+            <%- include('../layouts/footer.ejs') %>
         </div>
     </div>  
     <script src="/js/web/grupos.js"></script>
-    <%- include('../layouts/footer.ejs') %>
 </body>
 
 </html>

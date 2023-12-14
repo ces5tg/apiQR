@@ -1,83 +1,68 @@
 // Función para mostrar el formulario de edición
 function showEditForm(id, name) {
-    // Ocultar todos los formularios de edición antes de mostrar uno nuevo
-    hideAllEditForms();
     document.getElementById('editId').value = id;
-    document.getElementById('editName').value = name;
-    document.getElementById('editForm').style.display = 'block';
+    document.getElementById('aulaName').value = name;
+    document.getElementById('submitBtn').innerText = 'Guardar Cambios';
 }
 
-// Función para ocultar todos los formularios de edición
-function hideAllEditForms() {
-    const editForms = document.querySelectorAll('.edit-form');
-    editForms.forEach(form => {
-        form.style.display = 'none';
-    });
-}
 
 // Función para confirmar antes de eliminar
 function confirmDelete(aulaId) {
     if (confirm('¿Estás seguro de que deseas eliminar esta aula?')) {
         // Realizar eliminación de manera asíncrona (AJAX)
         fetch(`/api/web/aula/${aulaId}`, {
-            method: 'DELETE'
-        })
-        .then(response => response.json())
-        .then(data => {
-            // Actualizar la página sin recargar
-            location.reload();
-        })
-        .catch(error => console.error('Error al eliminar aula:', error));
+                method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Actualizar la página sin recargar
+                location.reload();
+            })
+            .catch(error => console.error('Error al eliminar aula:', error));
     }
 }
 
-// Función para realizar la creación de aula y recargar la página
-function createAula() {
-    // Obtener el valor del campo de nombre
-    const aulaName = document.getElementById('aulaName').value;
-
-    // Realizar la creación de manera asíncrona (AJAX)
-    fetch("/api/web/aula", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ name: aulaName }), // Enviar el nombre como JSON
-    })
-        .then((response) => response.json())
-        .then((data) => {
-            // Actualizar la página sin recargar
-            location.reload();
-            return false; // Evitar la recarga por defecto del formulario
-        })
-        .catch((error) => console.error("Error al crear aula:", error));
-
-    return false; // Evitar el envío por defecto del formulario
-}
-
-// Función para realizar la edición de aula y recargar la página
-function editAula() {
-    // Obtener el valor del campo de nombre y el ID
+// Función para realizar la creación o edición de aula y recargar la página
+function submitAulaForm() {
     const aulaId = document.getElementById('editId').value;
-    const newAulaName = document.getElementById('editName').value;
-
-    // Realizar la edición de manera asíncrona (AJAX)
-    fetch(`/api/web/aula/${aulaId}`, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ name: newAulaName }), // Enviar el nuevo nombre como JSON
-    })
-        .then(response => response.json())
-        .then(data => {
-            // Ocultar el formulario de edición
-            document.getElementById('editForm').style.display = 'none';
-            // Actualizar la página sin recargar
-            location.reload();
-            return false; // Evitar la recarga por defecto del formulario
-        })
-        .catch(error => console.error('Error al editar aula:', error));
+    const aulaName = document.getElementById('aulaName').value;
+    console.log(aulaId);
+    console.log(aulaName);
+    if (aulaId) {
+        // Edición de aula
+        fetch(`/api/web/aula/${aulaId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: aulaName
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Actualizar la página sin recargar
+                location.reload();
+            })
+            .catch(error => console.error('Error al editar aula:', error));
+    } else {
+        // Creación de aula
+        fetch("/api/web/aula/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    name: aulaName
+                }),
+            })
+            .then((response) => response.json())
+            .then((data) => {
+                // Actualizar la página sin recargar
+                location.reload();
+            })
+            .catch((error) => console.error("Error al crear aula:", error));
+    }
 
     return false; // Evitar el envío por defecto del formulario
 }
@@ -97,12 +82,14 @@ function loadAulaDetails(aulaId) {
             if (data) {
                 // Renderiza el contenido de detalles directamente en la variable
                 renderedContent = `
-                    <h2>Detalles del Aula</h2>
-                    <p><strong>ID:</strong> ${data._id}</p>
-                    <p><strong>Nombre:</strong> ${data.name}</p>
-                    <p><strong>Descripcion:</strong> ${data.descripcion}</p>
-                    <img src="${data.codigo}" alt="Imagen del Aula">
-
+                    <figure class="bg-slate-100 rounded-xl p-8 light:bg-slate-800">
+                    <figcaption class="font-medium">
+                    <div class="text-sky-500 dark:text-sky-400">
+                        ${data.name}
+                    </div>
+                    </figcaption>
+                    <img class="w-24 h-24 rounded-full mx-auto" src="${data.codigo}" alt="QR de Aula" width="384" height="512">
+                    </div>
                 `;
             }
 

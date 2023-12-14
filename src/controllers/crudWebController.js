@@ -296,10 +296,9 @@ router.get( '/horarioTable', async ( req, res ) => {
                         i.nameCurso=horario.id_curso.name,
                         i.namePersona=horario.id_persona.name,
                         i.nameGrupo=horario.id_grupo.name
-                        i.imagenQR= horario.id_horario.aula.codigo
-                    
+                        i.imagenQR = horario.id_horario.aula.codigo
+                        
                     }
-
                 }
                 
             }
@@ -307,8 +306,6 @@ router.get( '/horarioTable', async ( req, res ) => {
         }
 
         console.log(listaHorarios[3].horarios[8])
-
-        console.log( "final de la peticion" )
 
         const personas = await Persona.find()
         const grupos = await Grupo.find()

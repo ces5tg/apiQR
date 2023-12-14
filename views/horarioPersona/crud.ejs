@@ -1,33 +1,21 @@
-<!-- Este es tu archivo CRUD para Horarios Personas -->
-
-<!DOCTYPE html>
-<html lang="en">
   <%- include('../layouts/head.ejs') %>
 
   <body>
-    <div class="wrapped">
-      <div class="sidebar"><%- include('../layouts/sideBar.ejs') %></div>
-      <div class="main-panel ps ps--active-y">
-        <div class="navbar navbar-expand-lg navbar-absolute navbar-transparent">
-          <%- include('../layouts/navBar.ejs') %>
-        </div>
-
-        <div class="content">
-          <div class="main-panel">
-            <div class="row">
-              <div class="col-12">
-                <div class="card card-chart">
-                  <h1>CRUD de Horarios Personas</h1>
-
-                  <!-- Formulario para Crear Horario Persona -->
-                  <form
-                    id="createForm"
-                    action="/api/web/horarioPersona"
-                    method="POST"
-                    onsubmit="return createHorarioPersona()"
-                  >
-                    <label for="id_horario">ID Horario:</label>
-                    <select name="id_horario" id="id_horario" required>
+    <%- include('../layouts/sideBar.ejs') %>
+    
+    <div class="p-4 sm:ml-64">
+        <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
+            <div class="grid grid-cols-2 gap-4 mb-4">
+              <div class="flex items-center justify-center rounded bg-gray-50 h-28 dark:bg-gray-800">
+                <p class="text-2xl text-gray-400 dark:text-gray-500">CRUD de Horarios Personas</p>
+              </div>
+              <div class="flex items-center justify-center rounded bg-gray-50 h-70 light:bg-gray-900">
+                <!-- Formulario para Crear Horario Persona -->
+                <form id="editForm" onsubmit="return submitHorarioPersonaForm()">
+                  <input type="hidden" id="editId" name="_id">
+                  <div class="grid grid-cols-1 items-center">
+                    <label for="id_horario" class="col-span-1 block text-sm font-medium text-gray-700">ID Horario:</label>
+                    <select name="id_horario" id="id_horario"  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 light:bg-gray-700 light:border-gray-600 light:placeholder-gray-400 light:text-white light:focus:ring-blue-500 light:focus:border-blue-500" required>
                       <option value="" selected>Seleccione un horario</option>
                       <!-- Opciones de Horarios -->
                       <% horarios.forEach(horario=> { %>
@@ -37,143 +25,167 @@
                       </option>
                       <% }); %>
                     </select>
-
-                    <label for="id_grupo">ID Grupo:</label>
-                    <select name="id_grupo" id="id_grupo" required>
-                      <!-- Opciones de Grupos -->
-                      <% grupos.forEach(grupo=> { %>
-                      <option value="<%= grupo._id %>">
-                        <%= grupo.name %>
-                      </option>
-                      <% }); %>
-                    </select>
-
-                    <label for="id_curso">ID Curso:</label>
-                    <select name="id_curso" id="id_curso" required>
-                      <!-- Opciones de Cursos -->
-                      <% cursos.forEach(curso=> { %>
-                      <option value="<%= curso._id %>">
-                        <%= curso.name %>
-                      </option>
-                      <% }); %>
-                    </select>
-
-                    <label for="id_persona">Persona:</label>
-                    <select name="id_persona" id="id_persona" required>
-                      <!-- Opciones de Cursos -->
-                      <% personas.forEach(persona=> { %>
-                      <option value="<%= persona._id %>">
-                        <%= persona.name %>
-                      </option>
-                      <% }); %>
-                    </select>
-
-                    <button type="submit">Crear Horario Persona</button>
-                  </form>
-
-                  <!-- Tabla de Horarios Personas -->
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>ID Horario</th>
-                        <th>ID Grupo</th>
-                        <th>ID Curso</th>
-                        <th>ID Persona</th>
-                        <th>Asistencia</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <% horariosPersonas.forEach(horarioPersona=> { %>
-                      <tr>
-                        <!-- Detalles de Horario Persona -->
-                        <td>
-                          <%= horarioPersona.id_horario ?
-                          horarioPersona.id_horario.dia.toLocaleDateString() :
-                          'N/A' %>
-                        </td>
-                        <td><%= horarioPersona.id_grupo.name %></td>
-                        <td><%= horarioPersona.id_curso.name %></td>
-                        <td><%= horarioPersona.id_persona.name %></td>
-                        <td><%= horarioPersona.asistencia %></td>
-                        <td><%= horarioPersona.estado %></td>
-                        <!-- Enlace para Editar Horario Persona -->
-                        <td>
-                          <a
-                            href="#"
-                            onclick="showEditForm('<%= horarioPersona._id %>', '<%= horarioPersona.id_horario._id %>', '<%= horarioPersona.id_grupo._id %>', '<%= horarioPersona.id_curso._id %>', '<%= horarioPersona.id_persona._id %>');"
-                            >Editar</a
-                          >
-                        </td>
-                        <!-- Botón para Eliminar Horario Persona -->
-                        <td>
-                          <button
-                            type="button"
-                            onclick="confirmDelete('<%= horarioPersona._id %>')"
-                          >
-                            Eliminar
-                          </button>
-                        </td>
-                      </tr>
-                      <% }); %>
-                    </tbody>
-                  </table>
-
-                  <!-- Formulario para Editar Horario Persona -->
-                  <form
-                    id="editForm"
-                    class="edit-form"
-                    style="display: none"
-                    onsubmit="return editHorarioPersona()"
-                  >
-                    <input type="hidden" id="editId" name="_id" />
-                    <label for="editHorario">Nuevo ID Horario:</label>
-                    <select name="id_horario" id="editHorario" required>
-                      <!-- Opciones de Horarios -->
-                      <% horarios.forEach(horario=> { %>
-                      <option value="<%= horario._id %>">
-                        <%= horario.dia %> -
-                      </option>
-                      <% }); %>
-                    </select>
-                    <label for="editGrupo">Nuevo ID Grupo:</label>
-                    <select name="id_grupo" id="editGrupo" required>
-                      <!-- Opciones de Grupos -->
-                      <% grupos.forEach(grupo=> { %>
-                      <option value="<%= grupo._id %>">
-                        <%= grupo.name %>
-                      </option>
-                      <% }); %>
-                    </select>
-                    <label for="editCurso">Nuevo ID Curso:</label>
-                    <select name="id_curso" id="editCurso" required>
-                      <!-- Opciones de Cursos -->
-                      <% cursos.forEach(curso=> { %>
-                      <option value="<%= curso._id %>">
-                        <%= curso.name %>
-                      </option>
-                      <% }); %>
-                    </select>
-                    <label for="editPersona">Nuevo ID Persona:</label>
-                    <select name="id_persona" id="editPersona" required>
-                      <!-- Opciones de Cursos -->
-                      <% personas.forEach(persona=> { %>
-                      <option value="<%= persona._id %>">
-                        <%= persona.name %>
-                      </option>
-                      <% }); %>
-                    </select>
-                    <button type="submit">Guardar Cambios</button>
-                  </form>
-                </div>
+                  </div>
+                  <br>
+                  <div class="grid gap-6 mb-6 md:grid-cols-2">
+                    <div>
+                      <label for="id_grupo" class="col-span-1 block text-sm font-medium text-gray-700">ID Grupo:</label>
+                      <select name="id_grupo" id="id_grupo"  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 light:bg-gray-700 light:border-gray-600 light:placeholder-gray-400 light:text-white light:focus:ring-blue-500 light:focus:border-blue-500" required>
+                        <!-- Opciones de Grupos -->
+                        <% grupos.forEach(grupo=> { %>
+                        <option value="<%= grupo._id %>">
+                          <%= grupo.name %>
+                        </option>
+                        <% }); %>
+                      </select>
+                    </div>
+                    <div>
+                      <label for="id_curso" class="col-span-1 block text-sm font-medium text-gray-700">ID Curso:</label>
+                      <select name="id_curso" id="id_curso"  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 light:bg-gray-700 light:border-gray-600 light:placeholder-gray-400 light:text-white light:focus:ring-blue-500 light:focus:border-blue-500" required>
+                        <!-- Opciones de Cursos -->
+                        <% cursos.forEach(curso=> { %>
+                        <option value="<%= curso._id %>">
+                          <%= curso.name %>
+                        </option>
+                        <% }); %>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="grid gap-6 mb-6 md:grid-cols-2">
+                    <div>
+                      <label for="id_persona" class="col-span-1 block text-sm font-medium text-gray-700">Persona:</label>
+                      <select name="id_persona" id="id_persona" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 light:bg-gray-700 light:border-gray-600 light:placeholder-gray-400 light:text-white light:focus:ring-blue-500 light:focus:border-blue-500" required>
+                        <!-- Opciones de Cursos -->
+                        <% personas.forEach(persona=> { %>
+                        <option value="<%= persona._id %>">
+                          <%= persona.name %>
+                        </option>
+                        <% }); %>
+                      </select>
+                    </div>
+                    <button type="submit" id="submitBtn" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Crear Horario Persona</button>
+                  </div>
+                </form>
               </div>
             </div>
-          </div>
+            <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+              <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                  <tr>
+                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">ID Horario</th>
+                    <th scope="col" class="px-6 py-3">ID Grupo</th>
+                    <th scope="col" class="px-6 py-3">ID Curso</th>
+                    <th scope="col" class="px-6 py-3">ID Persona</th>
+                    <th scope="col" class="px-6 py-3">Asistencia</th>
+                    <th scope="col" class="px-6 py-3">Estado</th>
+                    <th scope="col" class="px-6 py-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                            <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
+                            </svg>
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                            <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0"/>
+                            </svg>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% horariosPersonas.forEach(horarioPersona=> { %>
+                  <tr class="bg-white dark:bg-gray-800">
+                    <!-- Detalles de Horario Persona -->
+                    <td class="px-6 py-4">
+                      <%= horarioPersona.id_horario ?
+                      horarioPersona.id_horario.dia.toLocaleDateString() :
+                      'N/A' %>
+                    </td>
+                    <td class="px-6 py-4"><%= horarioPersona.id_grupo.name %></td>
+                    <td class="px-6 py-4"><%= horarioPersona.id_curso.name %></td>
+                    <td class="px-6 py-4"><%= horarioPersona.id_persona.name %></td>
+                    <td class="px-6 py-4"><%= horarioPersona.asistencia %></td>
+                    <td class="px-6 py-4"><%= horarioPersona.estado %></td>
+                    <!-- Enlace para Editar Horario Persona -->
+                    <td class="px-6 py-4">
+                      <a
+                        href="#"
+                        onclick="showEditForm('<%= horarioPersona._id %>', '<%= horarioPersona.id_horario._id %>', '<%= horarioPersona.id_grupo._id %>', '<%= horarioPersona.id_curso._id %>', '<%= horarioPersona.id_persona._id %>');"
+                        >Editar</a
+                      >
+                    </td>
+                    <!-- Botón para Eliminar Horario Persona -->
+                    <td class="px-6 py-4">
+                      <button type="button" onclick="confirmDelete('<%= horarioPersona._id %>')">
+                        Eliminar
+                      </button>
+                    </td>
+                  </tr>
+                  <% }); %>
+                </tbody>
+              </table>
+            </div>
+            
+            <div style="display: none;" id="editForm" class="flex items-center justify-center rounded bg-gray-50 h-70 light:bg-green-900">
+              <br>
+              <!-- Formulario para Editar Horario Persona -->
+              <form onsubmit="return editHorarioPersona()">
+                <input type="hidden" id="editId" name="_id" />
+                <div class="grid grid-cols-3 gap-6">
+                  <div class="grid-rows-2">
+                    <div>
+                      <label for="editHorario">Nuevo ID Horario:</label>
+                      <select name="id_horario" id="editHorario"  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-9/12 p-2.5 light:bg-gray-700 light:border-gray-600 light:placeholder-gray-400 light:text-white light:focus:ring-blue-500 light:focus:border-blue-500" required>
+                        <!-- Opciones de Horarios -->
+                        <% horarios.forEach(horario=> { %>
+                        <option value="<%= horario._id %>">
+                          <%= horario.dia %> -
+                        </option>
+                        <% }); %>
+                      </select></div>
+                    <div>
+                      <label for="editGrupo">Nuevo ID Grupo:</label>
+                      <select name="id_grupo" id="editGrupo"  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-9/12 p-2.5 light:bg-gray-700 light:border-gray-600 light:placeholder-gray-400 light:text-white light:focus:ring-blue-500 light:focus:border-blue-500" required>
+                        <!-- Opciones de Grupos -->
+                        <% grupos.forEach(grupo=> { %>
+                        <option value="<%= grupo._id %>">
+                          <%= grupo.name %>
+                        </option>
+                        <% }); %>
+                      </select></div>
+                  </div>
+                  <div class="grid grid-rows-2 gap-3">
+                    <div>
+                      <label for="editCurso">Nuevo ID Curso:</label>
+                      <select name="id_curso" id="editCurso"  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-9/12 p-2.5 light:bg-gray-700 light:border-gray-600 light:placeholder-gray-400 light:text-white light:focus:ring-blue-500 light:focus:border-blue-500" required>
+                        <!-- Opciones de Cursos -->
+                        <% cursos.forEach(curso=> { %>
+                        <option value="<%= curso._id %>">
+                          <%= curso.name %>
+                        </option>
+                        <% }); %>
+                      </select></div>
+                    <div>
+                      <label for="editPersona">Nuevo ID Persona:</label>
+                      <select name="id_persona" id="editPersona" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-9/12 p-2.5 light:bg-gray-700 light:border-gray-600 light:placeholder-gray-400 light:text-white light:focus:ring-blue-500 light:focus:border-blue-500"  required>
+                        <!-- Opciones de Cursos -->
+                        <% personas.forEach(persona=> { %>
+                        <option value="<%= persona._id %>">
+                          <%= persona.name %>
+                        </option>
+                        <% }); %>
+                      </select></div>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <div>
+                      <button type="submit" class="text-white bg-yellow-700 hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 font-medium rounded-lg text-sm w-9/12 sm:w-auto px-5 py-2.5 text-center dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">Guardar Cambios</button>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
         </div>
+        <%- include('../layouts/footer.ejs') %>
       </div>
     </div>
     <script src="/js/web/horariosPersonas.js"></script>
-    <%- include('../layouts/footer.ejs') %>
   </body>
 </html>

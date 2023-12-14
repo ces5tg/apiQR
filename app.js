@@ -11,15 +11,9 @@ const apiMovil=require( './src/routes/api.movil' );
 const apiWeb = require('./src/controllers/apiWebController');
 const crudWeb = require('./src/controllers/crudWebController')
 
-
-
-
 const app=express();
 app.use(express.static('src/assets'));
 app.use(cors());
-
-
-
   
 app.set( 'view engine', 'ejs' );
 app.use( bodyParser.urlencoded( { extended: false } ) );
