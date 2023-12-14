@@ -16,7 +16,7 @@ const PersonaSchema = new mongoose.Schema({
         email: String,
         password: String,
         profileImage: String,
-        token:String,
+        tokens: [{ type: String }], 
     }
 });
 
