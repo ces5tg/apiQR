@@ -1,0 +1,1 @@
+export const RTDatabase = "https://apiqr.elvisquecara.repl.co/api/web/persona"
