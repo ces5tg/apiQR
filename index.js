@@ -22,5 +22,5 @@ exports.module = io
 
 sockets(io);
 
-/* const routerApiMovil = RouterApiMovil(io);
-app.use('/api/movil', routerApiMovil); */
+const routerApiMovil = RouterApiMovil(io);
+app.use('/api/movil', routerApiMovil);
