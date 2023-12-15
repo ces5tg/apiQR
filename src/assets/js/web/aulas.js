@@ -88,7 +88,7 @@ function loadAulaDetails(aulaId) {
                         ${data.name}
                     </div>
                     </figcaption>
-                    <img class="w-24 h-24 rounded-full mx-auto" src="${data.codigo}" alt="QR de Aula" width="384" height="512">
+                    <img class="w-24 h-24 rounded-lg mx-auto" src="${data.codigo}" alt="QR de Aula" width="384" height="512">
                     </div>
                 `;
             }

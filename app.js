@@ -11,6 +11,10 @@ const apiMovil=require( './src/routes/api.movil' );
 const apiWeb = require('./src/controllers/apiWebController');
 const crudWeb = require('./src/controllers/crudWebController')
 
+const RouterApiMovil = require('./src/routes/api.movil');
+
+const {io} = require('./index')
+
 const app=express();
 app.use(express.static('src/assets'));
 app.use(cors());
@@ -21,7 +25,9 @@ app.use( bodyParser.urlencoded( { extended: false } ) );
 //IMPORTANTE -> NO TOQUEN NADA DE API/ARDUINO Y MOVIL
 app.use( '/api/arduino', apiArduino);
 /* app.use( '/api/movil', apiMovil); */
+const routerApiMovil = RouterApiMovil(io);
 
+app.use('/api/movil', routerApiMovil);
 // Rutas para Api - Equipo Web
 app.use('/api/web/', apiWeb);
 app.use('/web/', crudWeb);
