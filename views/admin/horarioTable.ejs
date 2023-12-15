@@ -129,7 +129,7 @@
                   <% horario.horarios.forEach( hora=> { %>
                     <% if (hora.id_horario) { %>
                       <td class="<%= hora.id_horario %> px-6 py-4">
-                        <button data-modal-target="default-modal-<%=hora.id_horario%>" data-modal-toggle="default-modal-<%=hora.id_horario%>" class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button" onclick="console.log('button')">
+                        <button data-modal-target="default-modal-<%=hora.id_horario%>" data-modal-toggle="default-modal-<%=hora.id_horario%>" class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
                           <%= hora.nameAula %>-<%= hora.nameCurso%>-<%= hora.namePersona %>
                         </button>
                       </td>
@@ -197,8 +197,7 @@
                     </div>
                     <!-- Modal footer -->
                     <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
-                        <button data-modal-hide="default-modal-<%=hora.id_horario%>" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">I accept</button>
-                        <button data-modal-hide="default-modal-<%=hora.id_horario%>" type="button" class="ms-3 text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">Decline</button>
+                        <button data-modal-hide="default-modal-<%=hora.id_horario%>" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Aceptar</button>
                     </div>
                 </div>
             </div>
@@ -242,13 +241,11 @@
           const td = document.createElement("td");
 
           if (horario.id_horario) {
-            console.log("push");
             const button = document.createElement("button");
             button.type = "button";
             button.className = "block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800";
             button.setAttribute("data-modal-target", `default-modal-${horario.id_horario}`);
             button.setAttribute("data-modal-toggle", `default-modal-${horario.id_horario}`);
-            button.setAttribute('onclick','console.log("button")');
             button.innerHTML = `${horario.hora_inicio}-${horario.hora_fin}-${horario.nameAula}-${horario.nameCurso}-${horario.namePersona}-${horario.nameGrupo}`;
 
             td.appendChild(button);
