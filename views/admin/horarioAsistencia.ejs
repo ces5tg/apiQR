@@ -10,42 +10,42 @@
               <p class="text-2xl text-gray-400 dark:text-gray-500">Horario Asistencia</p>
             </div>
           </div>
-            <div class="flex items-center justify-center rounded bg-gray-50 h-40 light:bg-gray-900">
-
+          <div class="relative overflow-x-auto shadow-md sm:rounded-lg h-auto flex items-center justify-center">
               <% if (horariosPersonas.length> 0) { %>
-                <table id="miTabla" class="table">
-                  <thead>
-                    <tr>
-                      <th>Aula</th>
-                      <th>Profesor</th>
-                      <th>Grupo</th>
-                      <th colspan="2">Horario</th>
-                      <th>Estado-Asistencia</th>
+                <table id="miTabla" class="table-fixed w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">           
+                  <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                    <tr class="medium">
+                      <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">Aula</th>
+                      <th scope="col" class="px-6 py-3">Profesor</th>
+                      <th scope="col" class="px-6 py-3">Grupo</th>
+                      <th scope="col" class="px-6 py-3">Horario Inicio</th>
+                      <th scope="col" class="px-6 py-3">Horario Fin</th>
+                      <th scope="col" class="px-6 py-3">Estado-Asistencia</th>
                     </tr>
                   </thead>
                   <tbody>
                     <% horariosPersonas.forEach(horarioPersona=> { %>
-                      <tr>
-                        <td>
-                          <%= horarioPersona.id_horario.aula._id %>
+                      <tr class="bg-white dark:bg-gray-800 items-center">
+                        <td class="bg-warning px-6 py-4">
+                          <%= horarioPersona.id_horario.aula.name %>
                         </td>
-                        <td>| - |<%= horarioPersona.id_persona._id %>
+                        <td class="<%= horarioPersona.id_horario %> px-6 py-4"><%= horarioPersona.id_persona.name %>
                         </td>
-                        <td>
+                        <td class="<%= horarioPersona.id_horario %> px-6 py-4">
                           <%= horarioPersona.id_grupo.name %>
                         </td>
-                        <td>
+                        <td class="<%= horarioPersona.id_horario %> px-6 py-4">
                           <%= horarioPersona.id_horario.hora_inicio.toLocaleTimeString('es-PE', { hour: '2-digit' ,
                             minute: '2-digit' }) %>
                         </td>
-                        <td>
+                        <td class="<%= horarioPersona.id_horario %> px-6 py-4">
                           <%= horarioPersona.id_horario.hora_fin.toLocaleTimeString('es-PE', { hour: '2-digit' ,
                             minute: '2-digit' }) %>
                         </td>
-                        <% let color; switch (horarioPersona.asistencia) { case 'A' : color='bg-info' ; break; case 'T'
-                          : color='bg-warning' ; break; case 'F' : color='bg-danger' ; break; default: color='bg-gray' ;
+                        <% let color; switch (horarioPersona.asistencia) { case 'A' : color='bg-blue-500' ; break; case 'T'
+                          : color='bg-yellow-500' ; break; case 'F' : color='bg-red-500' ; break; default: color='bg-gray-500' ;
                           } %>
-                          <td data-id="<%= horarioPersona._id %>" class="<%= color %>">
+                          <td data-id="<%= horarioPersona._id %>" class="<%= color %> text-black">
                             <%= horarioPersona.asistencia %>
                           </td>
 
@@ -58,8 +58,8 @@
               <p>No hay horarios de personas disponibles.</p>
               <% } %>
           </div>
+          <%- include('../layouts/footer.ejs') %>
         </div>
-        <%- include('../layouts/footer.ejs') %>
       </div>
     </div>
 
