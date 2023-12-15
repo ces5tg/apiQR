@@ -79,7 +79,7 @@ router.post( '/aula', async ( req, res ) => {
         console.log( "ingreso a aula post" )
         const { name, descripcion, zona, codigo }=req.body;
         console.log( "antes" )
-        const url=`http://${ process.env.IP_LOCALHOST }/api/movil/validarCodigo/${ name }`
+        const url=`http://${process.env.IP_LOCALHOST}/api/movil/validarCodigo/${ name }`
         console.log( url )
 
         const codigoq=await qrcode.toDataURL( url )
