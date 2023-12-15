@@ -82,14 +82,18 @@ function loadAulaDetails(aulaId) {
             if (data) {
                 // Renderiza el contenido de detalles directamente en la variable
                 renderedContent = `
-                    <figure class="bg-slate-100 rounded-xl p-8 light:bg-slate-800">
-                    <figcaption class="font-medium">
-                    <div class="text-sky-500 dark:text-sky-400">
-                        ${data.name}
-                    </div>
-                    </figcaption>
-                    <img class="w-24 h-24 rounded-lg mx-auto" src="${data.codigo}" alt="QR de Aula" width="384" height="512">
-                    </div>
+                    <br>
+                    <figure class="bg-slate-100 rounded-xl p-8 light:bg-slate-800 w-full">
+                        <figcaption class="font-medium">
+                            <div class="text-sky-500 dark:text-sky-400">
+                                ${data.name}
+                            </div>
+                        </figcaption>
+                        <div class="w-40 h-40 rounded-lg mx-auto w-full h-50 overflow-hidden">
+                            <img class="object-cover object-center w-full h-full" src="${data.codigo}" alt="QR de Aula">
+                        </div>
+                    </figure>
+
                 `;
             }
 
