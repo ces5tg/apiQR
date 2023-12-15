@@ -10,7 +10,7 @@ export const inicioSesion = async (datos) => {
   const response =  await axios.post(apiUrl , datos)
   console.log(response)
   console.log("se logeo correctamente :"  + response.data._id)
-  return  response;
+  return await  response;
 };
 
 export const listaHorarios = async (id_persona) => {
@@ -33,8 +33,11 @@ export const validarHorario = async (id_aula , id_persona) => {
     idPersona:id_persona,
     idAula:id_aula
   }
+  console.log("antes de ... ")
   const apiUrl = `${API}/api/movil/validarHorario`
   const response = await axios.post(apiUrl , data);
-  return response
+  console.log(response.data)
+  
+  return  response
 };
 

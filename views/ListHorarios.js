@@ -1,21 +1,15 @@
-import React, { useEffect , useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, FlatList, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { listaHorarios } from '../api';
-const ListHorarios = ({ route  , navigation}) => {
-  const {datos} = route.params
-  console.log("antes")
-  console.log(datos.data._id)
-  console.log("despues")
 
+const ListHorarios = ({ route, navigation }) => {
+  const { datos } = route.params;
   const [horarios, setHorarios] = useState([]);
 
   useEffect(() => {
     const obtenerHorarios = async () => {
       try {
         const response = await listaHorarios(datos.data._id);
-        // Suponiendo que la respuesta de la API es un arreglo de objetos similar a 'data'
-        console.log("mostrando response")
-        console.log(response.data)
         setHorarios(response.data);
       } catch (error) {
         console.error('Error al obtener los horarios:', error);
@@ -24,69 +18,95 @@ const ListHorarios = ({ route  , navigation}) => {
 
     obtenerHorarios();
   }, []);
-  
-  const vistaqr = (item)=>{
-    console.log("este es el id de horario => ")
-    console.log(item)
-    console.log("este es el id de persona = >")
-    console.log(datos.data._id)
-    navigation.navigate('Scanned' , {idPersona:datos.data._id})
-  }
 
+  const vistaqr = (item) => {
+    navigation.navigate('Scanned', { idPersona: datos.data._id });
+  };
 
-  // Función para renderizar cada elemento de la lista
-  const renderItem = ({ item }) => (
-    <View style={styles.itemContainer}>
-      <View style={styles.itemContent}>
-        <Text style={styles.itemText}>{item._id}</Text>
-        <Text style={styles.itemText}>{item.id_grupo.name}</Text>
-        <Text style={styles.itemText}>{item.id_curso.name}</Text>
-        <Text style={styles.itemText}>{item.atributo3}</Text>
+  const formatHora = (fechaMongoDB) => {
+    const fecha = new Date(fechaMongoDB);
+    const horas = fecha.getHours().toString().padStart(2, '0');  // Asegura que siempre tenga dos dígitos
+    const minutos = fecha.getMinutes().toString().padStart(2, '0');
+    return `${horas}:${minutos}`;
+  };
+  const renderHorarioItem = ({ item }) => (
+    <TouchableOpacity onPress={() => vistaqr(item)} style={styles.itemContainer}>
+      <View style={styles.itemDetails}>
+        <Text style={styles.itemText}>ID: {item.id_horario.aula.name}</Text>
+        <Text style={styles.itemText}>Grupo: {item.id_grupo.name}</Text>
+        <Text style={styles.itemText}>Curso: {item.id_curso.name}</Text>
+        <Text style={styles.itemText}>hora inicio: {formatHora(item.id_horario.hora_inicio)}</Text>
+        <Text style={styles.itemText}>hora fin: {formatHora(item.id_horario.hora_fin)}</Text>
+
       </View>
-      <TouchableOpacity style={styles.button}>
-        <Text style={styles.buttonText} onPress={() => vistaqr(item._id)}>Botón</Text>
+      <TouchableOpacity style={styles.button} onPress={() => vistaqr(item)}>
+        <Text style={styles.buttonText}>Ver QR</Text>
       </TouchableOpacity>
-    </View>
+    </TouchableOpacity>
   );
 
   return (
     <View style={styles.container}>
+      <Text style={styles.title}>Lista de Horarios</Text>
       <FlatList
         data={horarios}
         keyExtractor={(item) => item._id}
-        renderItem={renderItem}
+        renderItem={renderHorarioItem}
+        contentContainerStyle={styles.list}
       />
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    backgroundColor: '#121212',
+    paddingHorizontal: 20,
+    paddingTop: 40,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    color: '#FFFFFF',
+    textAlign: 'center',
+  },
+  list: {
+    paddingBottom: 16,
   },
   itemContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-    paddingVertical: 10,
+    justifyContent: 'space-between',
+    backgroundColor: '#1E1E1E',
+    borderRadius: 10,
+    elevation: 4,
+    marginBottom: 16,
+    paddingVertical: 20,
+    paddingHorizontal: 24,
   },
-  itemContent: {
+  itemDetails: {
     flex: 1,
   },
   itemText: {
     fontSize: 16,
-    marginBottom: 4,
+    fontWeight: 'bold',
+    marginBottom: 8,
+    color: '#FFFFFF',
   },
   button: {
     backgroundColor: '#3498db',
-    padding: 10,
-    borderRadius: 5,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 6,
   },
   buttonText: {
-    color: '#fff',
+    color: '#FFFFFF',
     fontWeight: 'bold',
+    fontSize: 16,
+    textAlign: 'center',
   },
 });
+
 export default ListHorarios;
