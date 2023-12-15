@@ -18,7 +18,7 @@ function RouterApiMovil( io ) {
 
 
   router.post( '/inicioSesion', async ( req, res ) => {
-    console.log("inicio sesion")
+    console.log( "inicio sesion" )
     const { email, password }=req.body;
 
     try {
@@ -102,44 +102,45 @@ function RouterApiMovil( io ) {
     }
   } );
   router.get( '/listarHorarios/:id', async ( req, res ) => {
-    console.log("entro al al ruta")
-   try{
-    const id_persona=req.params.id
+    console.log( "entro al al ruta" )
+    try {
+      const id_persona=req.params.id
 
-    // Obtén la fecha actual
+      // Obtén la fecha actual
 
-    const fechaActual=new Date();
-    console.log( fechaActual )
-    console.log( id_persona+"este es el id de la persona" )
-    /* const listaHorarioPersona=await HorarioPersona.find( { id_persona: id_persona } ).populate( [
-      {
-        path: 'id_horario',
-        match: {
-
-          dia: { $eq: "2023-12-14T05:00:00.000+00:00"},
+      const fechaActual=new Date();
+      console.log( fechaActual )
+      console.log( id_persona+"este es el id de la persona" )
+      /* const listaHorarioPersona=await HorarioPersona.find( { id_persona: id_persona } ).populate( [
+        {
+          path: 'id_horario',
+          match: {
   
+            dia: { $eq: "2023-12-14T05:00:00.000+00:00"},
+    
+          },
         },
-      },
-      { path: 'id_grupo', select: [ 'name' ] },
-      { path: 'id_curso', select: [ 'name' ] },
-      { path: 'id_persona', select: [ 'name' ] },
-    ] ); */
-    const listaHorarioPersona=await HorarioPersona.find( { id_persona: id_persona } ).populate( [
-      {
-        path: 'id_horario',
-      },
-      { path: 'id_grupo', select: [ 'name' ] },
-      { path: 'id_curso', select: [ 'name' ] },
-      { path: 'id_persona', select: [ 'name' ] },
-    ] );
+        { path: 'id_grupo', select: [ 'name' ] },
+        { path: 'id_curso', select: [ 'name' ] },
+        { path: 'id_persona', select: [ 'name' ] },
+      ] ); */
+      const listaHorarioPersona=await HorarioPersona.find( { id_persona: id_persona } ).populate( [
+        {
+          path: 'id_horario',
+        },
+        { path: 'id_grupo', select: [ 'name' ] },
+        { path: 'id_curso', select: [ 'name' ] },
+        { path: 'id_persona', select: [ 'name' ] },
+      ] );
 
-    res.json( listaHorarioPersona );
-   }catch(error){
-    console.error( 'Error al cerrar la sesión:', error );
+      res.json( listaHorarioPersona );
+    } catch ( error ) {
+      console.error( 'Error al cerrar la sesión:', error );
       res.status( 500 ).json( { error: 'Error al encontrar horarioPersonas' } );
-   }
-  })
+    }
+  } )
   router.get( '/validarCodigo/:nameAula', async ( req, res ) => {
+    console.log("validar codigo por aula - ruta")
     try {
       const busquedaAula=await Aula.findOne( { name: new RegExp( req.params.nameAula, 'i' ) } );
       res.json( busquedaAula );
@@ -150,13 +151,14 @@ function RouterApiMovil( io ) {
 
 
   router.post( '/validarHorario', async ( req, res ) => {
+    console.log("valida horario ruta")
     /*  const horaActual = moment().tz('America/Lima');
      console.log("la hora actual es ---> "+ horaActual.format('HH:mm'))
      const horaActual2 = moment()
      console.log("la hora actual es ---> "+ horaActual2.format('HH:mm'))
      const { idAula, idPersona, password }=req.body
      console.log(idAula + " --  " + idPersona + " --  " +password) */
-     
+
     try {
 
 
@@ -190,10 +192,17 @@ function RouterApiMovil( io ) {
         hora_fin: { $gt: horaInicioFormateada },
 
       } );
+
+
       /* "2023-12-12T03:15:00.000+00:00" */
 
 
       console.log( "ddddddddddd" )
+
+      if ( !searchHorario ) {
+        console.log( 'No se encontró un horario para la aula en el tiempo especificado.' );
+        return res.status( 404 ).json( { error: 'No se encontró un horario para la aula en el tiempo especificado.' } );
+      }
       console.log( { searchHorario }+searchHorario._id+" --- "+idPersona )
       const searchHorarioPersona=await HorarioPersona.findOne( {
         id_horario: { $exists: true, $eq: searchHorario._id },
