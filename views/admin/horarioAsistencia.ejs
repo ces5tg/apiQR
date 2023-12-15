@@ -1,23 +1,18 @@
-<!-- Este es tu archivo CRUD para Aulas -->
-
 <%- include('../layouts/head.ejs') %>
 
-<body>
-  
-  <div class="wrapped">
-    <div class="sidebar"><%- include('../layouts/sideBar.ejs') %></div>
-    <div class="main-panel ps ps--active-y">
-      <div class="navbar navbar-expand-lg navbar-absolute navbar-transparent">
- 
-      </div>
+  <body>
+    <%- include('../layouts/sideBar.ejs') %>
 
-      <div class="content">
-        <div class="main-panel">
-          <div class="row">
-            <div class="col-12">
-              <div class="card card-chart">
-                <h1>CRUD de Aulas</h1>
-                <% if (horariosPersonas.length > 0) { %>
+      <div class="p-4 sm:ml-64">
+        <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
+          <div class="grid grid-cols-2 gap-4 mb-4">
+            <div class="flex items-center justify-center rounded bg-gray-50 h-28 dark:bg-gray-800">
+              <p class="text-2xl text-gray-400 dark:text-gray-500">Horario Asistencia</p>
+            </div>
+          </div>
+            <div class="flex items-center justify-center rounded bg-gray-50 h-40 light:bg-gray-900">
+
+              <% if (horariosPersonas.length> 0) { %>
                 <table id="miTabla" class="table">
                   <thead>
                     <tr>
@@ -29,70 +24,59 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <% horariosPersonas.forEach(horarioPersona => { %>
-                    <tr>
-                      <!-- Detalles de Horario Persona -->
-                      <td><%= horarioPersona.id_horario.aula._id %></td>
-                      <td>| - |<%= horarioPersona.id_persona._id %></td>
-                      <td><%= horarioPersona.id_grupo.name %></td>
-                      <td>
-                        <%=
-                        horarioPersona.id_horario.hora_inicio.toLocaleTimeString('es-PE',
-                        { hour: '2-digit', minute: '2-digit' }) %>
-                      </td>
-                      <!-- cols -->
-                      <td>
-                        <%=
-                        horarioPersona.id_horario.hora_fin.toLocaleTimeString('es-PE',
-                        { hour: '2-digit', minute: '2-digit' }) %>
-                      </td>
-                      <!-- cols -->
-                      <% let color; switch (horarioPersona.asistencia) { case
-                      'A': color = 'bg-info'; break; case 'T': color =
-                      'bg-warning'; break; case 'F': color = 'bg-danger'; break;
-                      default: color = 'bg-gray'; } %>
-                      <td
-                        data-id="<%= horarioPersona._id %>"
-                        class="<%= color %>"
-                      >
-                        <%= horarioPersona.asistencia %>
-                      </td>
+                    <% horariosPersonas.forEach(horarioPersona=> { %>
+                      <tr>
+                        <td>
+                          <%= horarioPersona.id_horario.aula._id %>
+                        </td>
+                        <td>| - |<%= horarioPersona.id_persona._id %>
+                        </td>
+                        <td>
+                          <%= horarioPersona.id_grupo.name %>
+                        </td>
+                        <td>
+                          <%= horarioPersona.id_horario.hora_inicio.toLocaleTimeString('es-PE', { hour: '2-digit' ,
+                            minute: '2-digit' }) %>
+                        </td>
+                        <td>
+                          <%= horarioPersona.id_horario.hora_fin.toLocaleTimeString('es-PE', { hour: '2-digit' ,
+                            minute: '2-digit' }) %>
+                        </td>
+                        <% let color; switch (horarioPersona.asistencia) { case 'A' : color='bg-info' ; break; case 'T'
+                          : color='bg-warning' ; break; case 'F' : color='bg-danger' ; break; default: color='bg-gray' ;
+                          } %>
+                          <td data-id="<%= horarioPersona._id %>" class="<%= color %>">
+                            <%= horarioPersona.asistencia %>
+                          </td>
 
-                      <!-- Enlace para Editar Horario Persona -->
-                    </tr>
-                    <% }); %>
+                      </tr>
+                      <% }); %>
                   </tbody>
                 </table>
-
-                <% } else { %>
-                <p>No hay horarios de personas disponibles.</p>
-                <% } %>
-              </div>
             </div>
+            <% } else { %>
+              <p>No hay horarios de personas disponibles.</p>
+              <% } %>
           </div>
         </div>
+        <%- include('../layouts/footer.ejs') %>
       </div>
     </div>
+
     <script src="/js/web/aulas.js"></script>
     <script src="/socket.io/socket.io.js"></script>
-    <!--  -->
     <script>
       const socket = io.connect();
       socket.on("asistenciaCambiada", (data) => {
         console.log("Asistencia cambiada:", data);
 
-        // Actualiza el campo de asistencia en la tabla sin recargar
         actualizarCampoDeAsistencia(
           data.idHorarioPersona,
           data.nuevaAsistencia
         );
-        // Realizar acciones adicionales según sea necesario
-        // Por ejemplo, puedes actualizar la interfaz de usuario, mostrar una notificación, etc.
       });
       let tiempoRestante = 60;
       function actualizarTabla() {
-        console.log("w");
-        // Simula la actualización de la tabla (reemplaza con tu lógica real)
 
         fetch(`/api/web/horarioAsistencia`)
           .then((response) => response.json())
@@ -118,20 +102,18 @@
                 default:
                   color = "bg-gray";
               }
-
               row.innerHTML = `
-                              <td>${horarioPersona.id_horario.dia.toLocaleString()}</td>
-                              <td>${horarioPersona.id_grupo.name}</td>
-                              <td>${horarioPersona.id_curso.name}</td>
-                              <td>${horarioPersona.id_persona.name}</td>
-                              <td data-id="${
-                                horarioPersona._id
-                              }" class="${color}">
-                                ${horarioPersona.asistencia}
-                              </td>
-                              <td>${horarioPersona.estado}</td>
-                              <td>${horarioPersona.contrasena}</td>
-                          `;
+                          <td>${horarioPersona.id_horario.dia.toLocaleString()}</td>
+                          <td>${horarioPersona.id_grupo.name}</td>
+                          <td>${horarioPersona.id_curso.name}</td>
+                          <td>${horarioPersona.id_persona.name}</td>
+                          <td data-id="${horarioPersona._id
+                }" class="${color}">
+                            ${horarioPersona.asistencia}
+                          </td>
+                          <td>${horarioPersona.estado}</td>
+                          <td>${horarioPersona.contrasena}</td>
+                      `;
 
               tbody.appendChild(row);
             });
@@ -141,13 +123,11 @@
           );
       }
       function actualizarCampoDeAsistencia(idHorarioPersona, nuevaAsistencia) {
-        // Encuentra la celda en la tabla con el data-id correspondiente
         const celdaAsistencia = document.querySelector(
           `td[data-id="${idHorarioPersona}"] `
         );
 
         if (celdaAsistencia) {
-          // Actualiza el contenido de la celda de asistencia
           celdaAsistencia.textContent = nuevaAsistencia;
           let nuevoColor;
           switch (nuevaAsistencia) {
@@ -163,8 +143,6 @@
             default:
               nuevoColor = "bg-gray";
           }
-
-          // Remueve todas las clases existentes y establece la nueva clase
           celdaAsistencia.className = nuevoColor;
         }
       }
@@ -172,9 +150,6 @@
         console.log("Campo de asistencia actualizado");
         socket.emit("campoAsistenciaActualizado", "asf");
       }
-      // Configura un intervalo para actualizar la tabla cada 50 minutos (50 * 60 * 1000 milisegundos)
       setInterval(actualizarTabla, 1000 * 60 * 5);
     </script>
-    <%- include('../layouts/footer.ejs') %>
-  </div>
-</body>
+  </body>

@@ -110,39 +110,25 @@ router.get( '/horariosPersonas', async ( req, res ) => {
     }
 } );
 
-// Rutas para CRUD de Horarios-Persona
+// Rutas para CRUD de Horarios-Asistencia
 router.get( '/horarioAsistencia', async ( req, res ) => {
-    // estableciendo un rango de horario  , 
     try {
-        // Obtén la hora actual y la hora actual más una hora
-        const horaActual2=moment().utcOffset( '-05:00' );
-
-        // Obtén la hora actual en la zona horaria de Perú (UTC-05:00)
         const horaActual3=moment().utcOffset( '-05:00' );
 
-        // Establece la hora de referencia a las 00:30 am
         const horaReferencia=moment().utcOffset( '-05:00' ).set( { hours: 0, minutes: 30, seconds: 0, milliseconds: 0 } );
 
-        // Calcula la diferencia en minutos entre la hora actual y la hora de referencia
         const diferenciaEnMinutos=horaActual3.diff( horaReferencia, 'minutes' );
 
-        // Calcula los minutos redondeados al intervalo de 50 minutos
-        const intervalo=50;
-        const minutosRedondeados=Math.floor( diferenciaEnMinutos/intervalo )*intervalo;
+        const intervalo = 50;
+        const minutosRedondeados = Math.floor(diferenciaEnMinutos/intervalo )*intervalo;
 
-        // Agrega los minutos redondeados a la hora de referencia
         const horaActual=horaReferencia.add( minutosRedondeados, 'minutes' );
         console.log( horaActual+"hora actual" )
 
         const horaDespues=horaActual.clone().add( 50, 'minutes' )
         console.log( horaDespues+" horas despues" )
 
-        //console.log(horaActual.format('HH:mm'))
-        //const h = horaActual
-        //console.log(horaActual.format('HH:mm') + ' --zz-- '+ horaDespues.format('HH:mm'))
-
-        // Obtén la lista de horariosPersonas
-        const h2=await HorarioPersona.find()
+        const h2 = await HorarioPersona.find()
             .populate( [
                 { path: 'id_horario', populate: { path: 'aula' } },
                 { path: 'id_grupo', select: [ 'name' ] },
@@ -150,18 +136,14 @@ router.get( '/horarioAsistencia', async ( req, res ) => {
                 { path: 'id_persona', select: [ 'name' ] }
             ] );
 
-        // Filtra la lista de horariosPersonas
         console.log( { h2 } )
         const horariosPersonas=h2.filter( horarioPersona => {
+
             const horaHorario_db=moment( horarioPersona.id_horario.hora_inicio, 'HH:mm' );
+            
             console.log( "----------------------"+horarioPersona.id_horario.hora_inicio )
 
-            // Aumenta 5 horas
             console.log( horaHorario_db.format( 'HH:mm' )+" zzzzzz " )
-            //const horaAumentada = horaHorario_db.add(5, 'hours');
-
-            // Formatea la nueva hora
-            //const horaForm_db_aumentada = horaAumentada.format('HH:mm');
 
             console.log( horaActual.format( 'HH:mm' )+' -- '+horaHorario_db.format( 'HH:mm' )+' -- '+horaDespues.format( 'HH:mm' ) )
             return horaHorario_db.format( 'HH:mm' )>=horaActual.format( 'HH:mm' )&&horaHorario_db.format( 'HH:mm' )<horaDespues.format( 'HH:mm' );
