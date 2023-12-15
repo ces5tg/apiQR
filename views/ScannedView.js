@@ -4,8 +4,10 @@ import { Camera } from 'expo-camera';
 import { Ionicons } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
+import { validarCodigo, validarHorario } from '../api';
 
-export default function App() {
+export default function App({ route}) {
+  const {idPersona} = route.params
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [scannedData, setScannedData] = useState('Aún no se ha escaneado nada');
@@ -13,7 +15,7 @@ export default function App() {
   const scanLineAnimation = useRef(new Animated.Value(0)).current;
   const cameraRef = useRef(null);
   const navigation = useNavigation();
-
+  const [id_aula, setId_aula] = useState("")
   useEffect(() => {
     (async () => {
       const { status } = await Camera.requestPermissionsAsync();
@@ -21,10 +23,25 @@ export default function App() {
     })();
   }, []);
 
-  const handleBarCodeScanned = ({ data }) => {
+  const validar = async(url) =>{
+    const response = await validarCodigo(url)
+    return response
+  }
+  const handleBarCodeScanned = async({ data }) => {
     setScanned(true);
     setScannedData(data);
+    console.log("antes de validar el codigo==============================================================================")
+    const valor = await validarCodigo(data)
+    console.log(valor.data._id)
+    setId_aula(valor.data._id)
+    console.log("despues de validar el codigo oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo")
+
   };
+  const validarInformacion = async ()=>{
+    console.log(id_aula +" -------- "+idPersona)
+    const response = validarHorario(id_aula , idPersona)
+    console.log("termino yyyyyyyyyyyy")
+  }
 
   useEffect(() => {
     if (scanned) {
@@ -124,6 +141,12 @@ export default function App() {
             onPress={() => setScanned(false)}
           >
             <Text style={styles.buttonText}>Escanear de nuevo</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.scanAgainButton}
+            onPress={() => validarInformacion()}
+          >
+            <Text style={styles.buttonText}>Validar</Text>
           </TouchableOpacity>
         </View>
       )}
