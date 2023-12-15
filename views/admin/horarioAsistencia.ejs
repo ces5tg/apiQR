@@ -91,16 +91,16 @@
 
               switch (horarioPersona.asistencia) {
                 case "A":
-                  color = "bg-info";
+                  color = "bg-blue-500";
                   break;
                 case "T":
-                  color = "bg-warning";
+                  color = "bg-yellow-500";
                   break;
                 case "F":
-                  color = "bg-danger";
+                  color = "bg-red-500";
                   break;
                 default:
-                  color = "bg-gray";
+                  color = "bg-gray-500";
               }
               row.innerHTML = `
                           <td>${horarioPersona.id_horario.dia.toLocaleString()}</td>
@@ -132,16 +132,16 @@
           let nuevoColor;
           switch (nuevaAsistencia) {
             case "A":
-              nuevoColor = "bg-info";
+              nuevoColor = "bg-blue-500";
               break;
             case "T":
-              nuevoColor = "bg-warning";
+              nuevoColor = "bg-yellow-500";
               break;
             case "F":
-              nuevoColor = "bg-danger";
+              nuevoColor = "bg-red-500";
               break;
             default:
-              nuevoColor = "bg-gray";
+              nuevoColor = "bg-gray-500";
           }
           celdaAsistencia.className = nuevoColor;
         }
